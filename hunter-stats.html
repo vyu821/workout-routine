@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hunter Stats">
+<meta name="theme-color" content="#05050f">
+<title>Hunter Stats</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#05050f; --surface:#0a0a1a; --surface2:#0f0f24;
+  --border:#1a1a3a; --border2:#252550;
+  --blue:#4a9eff; --blue-dim:#1a3a6a;
+  --purple:#9b59ff; --purple-dim:#2a1a5a;
+  --gold:#ffd700; --gold-dim:#4a3a00;
+  --green:#26c47a; --text:#d0d8f0; --muted:#6070a0; --dim:#2a3050;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-top:env(safe-area-inset-top,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;display:flex;flex-direction:column;}
+
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% -10%,rgba(74,158,255,0.07) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 30% at 85% 55%,rgba(155,89,255,0.05) 0%,transparent 60%);
+}
+
+/* TOP BAR */
+.top-bar{
+  flex-shrink:0;position:relative;z-index:10;
+  padding:13px 16px 11px;padding-top:max(13px,var(--safe-top));
+  border-bottom:1px solid var(--border);
+  background:rgba(5,5,15,0.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+}
+.top-bar-inner{display:flex;align-items:center;justify-content:space-between;}
+.top-bar h1{font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.05rem;letter-spacing:2px;text-transform:uppercase;color:var(--blue);text-shadow:0 0 20px rgba(74,158,255,0.5);}
+.rank-badge{font-family:'Orbitron',sans-serif;font-weight:700;font-size:0.8rem;letter-spacing:3px;padding:4px 11px;border-radius:4px;border:1px solid;transition:all 0.5s;}
+.rank-E{color:#8899aa;border-color:#334455;background:rgba(50,60,80,0.3);}
+.rank-D{color:#66aaff;border-color:#2255aa;background:rgba(20,40,100,0.3);}
+.rank-C{color:#44ddaa;border-color:#227755;background:rgba(10,50,40,0.3);}
+.rank-B{color:#aa77ff;border-color:#5533aa;background:rgba(40,20,80,0.3);}
+.rank-A{color:#ff9933;border-color:#aa5500;background:rgba(60,30,0,0.3);}
+.rank-S{color:var(--gold);border-color:var(--gold);background:rgba(80,60,0,0.4);animation:rankPulse 3s ease-in-out infinite;}
+@keyframes rankPulse{0%,100%{box-shadow:0 0 10px rgba(255,215,0,0.3);}50%{box-shadow:0 0 28px rgba(255,215,0,0.6),0 0 50px rgba(255,215,0,0.15);}}
+
+/* SCROLL */
+.scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;position:relative;z-index:1;padding:12px 12px calc(16px + var(--safe-bottom));}
+
+/* TABS */
+.tab-row{display:flex;gap:5px;margin-bottom:14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:4px;}
+.tab-btn{flex:1;padding:7px 4px;border:none;border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:0.75rem;letter-spacing:1.5px;text-transform:uppercase;transition:all 0.2s;}
+.tab-btn.active{background:var(--blue-dim);color:var(--blue);text-shadow:0 0 10px rgba(74,158,255,0.4);}
+.tab-content{display:none;}
+.tab-content.active{display:block;animation:fadeUp 0.18s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
+
+/* SECTION LABEL */
+.section-label{font-family:'Orbitron',sans-serif;font-size:0.55rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);padding-bottom:8px;margin-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.section-label::before{content:'';width:3px;height:11px;background:var(--blue);border-radius:2px;box-shadow:0 0 8px rgba(74,158,255,0.6);flex-shrink:0;}
+
+/* PROFILE CARD */
+.profile-card{background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:13px 15px;margin-bottom:12px;position:relative;overflow:hidden;}
+.profile-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),var(--purple),transparent);}
+.profile-top{display:flex;align-items:center;gap:11px;margin-bottom:11px;}
+.hunter-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--blue-dim),var(--purple-dim));border:2px solid var(--blue-dim);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.hunter-name{font-family:'Orbitron',sans-serif;font-size:0.9rem;font-weight:700;color:var(--text);letter-spacing:1px;}
+.hunter-title{font-size:0.68rem;color:var(--muted);letter-spacing:1px;margin-top:2px;}
+.xp-label-row{display:flex;justify-content:space-between;margin-bottom:4px;}
+.xp-label{font-size:0.65rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.xp-val{font-family:'Orbitron',sans-serif;font-size:0.78rem;font-weight:700;color:var(--blue);}
+.overall-bar-wrap{height:4px;background:var(--dim);border-radius:2px;overflow:hidden;margin-bottom:11px;}
+.overall-bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:2px;transition:width 1s cubic-bezier(0.4,0,0.2,1);}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;}
+.stat-mini{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:6px 8px;text-align:center;}
+.stat-mini-val{font-family:'Orbitron',sans-serif;font-size:0.95rem;font-weight:700;color:var(--blue);line-height:1;}
+.stat-mini-label{font-size:0.55rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+
+/* ═══════════════════════
+   BODY DIAGRAM — full SVG
+═══════════════════════ */
+.body-svg-wrap{
+  width:100%;
+  position:relative;
+  margin-bottom:4px;
+}
+.body-svg-wrap svg{
+  width:100%;
+  height:auto;
+  display:block;
+  overflow:visible;
+}
+
+/* QUESTS */
+.quest-card{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:12px 13px;margin-bottom:7px;position:relative;overflow:hidden;}
+.quest-card.active-quest{border-color:rgba(74,158,255,0.3);}
+.quest-card.active-quest::before{content:'';position:absolute;top:0;left:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--blue),var(--purple));}
+.quest-card.complete-quest{border-color:rgba(38,196,122,0.2);opacity:0.6;}
+.quest-card.complete-quest::before{content:'';position:absolute;top:0;left:0;bottom:0;width:2px;background:var(--green);}
+.quest-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px;}
+.quest-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:0.5px;text-transform:uppercase;color:var(--text);line-height:1.2;}
+.quest-type{font-size:0.54rem;letter-spacing:1.5px;text-transform:uppercase;padding:2px 6px;border-radius:3px;white-space:nowrap;flex-shrink:0;margin-top:1px;}
+.quest-type.daily{background:var(--blue-dim);color:var(--blue);}
+.quest-type.weekly{background:var(--purple-dim);color:var(--purple);}
+.quest-type.milestone{background:var(--gold-dim);color:var(--gold);}
+.quest-desc{font-size:0.68rem;color:var(--muted);margin-bottom:7px;line-height:1.5;}
+.quest-prog-row{display:flex;align-items:center;gap:7px;}
+.quest-bar-wrap{flex:1;height:3px;background:var(--dim);border-radius:2px;overflow:hidden;}
+.quest-bar{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--blue),var(--purple));transition:width 0.8s ease;}
+.quest-bar.done{background:var(--green);}
+.quest-pct{font-family:'Orbitron',sans-serif;font-size:0.58rem;color:var(--muted);white-space:nowrap;}
+.quest-reward{font-size:0.62rem;color:var(--gold);margin-top:5px;}
+
+/* ACHIEVEMENTS */
+.achievement-grid{display:flex;flex-direction:column;gap:7px;}
+.achievement{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:11px 13px;display:flex;align-items:center;gap:11px;position:relative;overflow:hidden;}
+.achievement.unlocked{border-color:var(--border2);}
+.achievement.unlocked::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.achievement.locked{opacity:0.38;filter:grayscale(0.7);}
+.ach-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.achievement.unlocked .ach-icon{background:linear-gradient(135deg,var(--gold-dim),rgba(80,60,0,0.4));border:1px solid rgba(255,215,0,0.25);}
+.achievement.locked .ach-icon{background:var(--surface2);border:1px solid var(--border);}
+.ach-body{flex:1;min-width:0;}
+.ach-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:0.5px;text-transform:uppercase;}
+.achievement.unlocked .ach-name{color:var(--gold);}
+.achievement.locked .ach-name{color:var(--text);}
+.ach-desc{font-size:0.65rem;color:var(--muted);margin-top:2px;line-height:1.4;}
+.ach-right{flex-shrink:0;font-size:0.95rem;}
+.ach-check{color:var(--gold);}
+.ach-lock{color:var(--dim);}
+
+/* NOTIFICATION */
+.notif{position:fixed;top:max(76px,calc(76px + var(--safe-top)));left:50%;transform:translateX(-50%) translateY(-16px);background:rgba(8,8,25,0.97);border:1px solid var(--gold);border-radius:9px;padding:10px 16px;z-index:500;opacity:0;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);pointer-events:none;white-space:nowrap;box-shadow:0 0 20px rgba(255,215,0,0.3);text-align:center;}
+.notif.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.notif-title{font-family:'Orbitron',sans-serif;font-size:0.55rem;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:2px;}
+.notif-body{font-family:'Rajdhani',sans-serif;font-size:0.85rem;font-weight:600;color:var(--text);}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <h1>Hunter Stats</h1>
+    <div class="rank-badge rank-E" id="rankBadge">RANK E</div>
+  </div>
+</div>
+
+<div class="scroll-area">
+  <div class="tab-row">
+    <button class="tab-btn active" onclick="switchTab('stats',this)">Stats</button>
+    <button class="tab-btn" onclick="switchTab('quests',this)">Quests</button>
+    <button class="tab-btn" onclick="switchTab('achievements',this)">Feats</button>
+  </div>
+
+  <!-- ── STATS TAB ── -->
+  <div id="tab-stats" class="tab-content active">
+
+    <div class="profile-card">
+      <div class="profile-top">
+        <div class="hunter-avatar">⚔️</div>
+        <div>
+          <div class="hunter-name">Victor</div>
+          <div class="hunter-title" id="hunterTitle">Awakened Hunter</div>
+        </div>
+      </div>
+      <div class="xp-label-row">
+        <div class="xp-label">Total Power</div>
+        <div class="xp-val" id="totalXpVal">0 XP</div>
+      </div>
+      <div class="overall-bar-wrap"><div class="overall-bar" id="overallBar" style="width:0%"></div></div>
+      <div class="stat-grid">
+        <div class="stat-mini"><div class="stat-mini-val" id="smStreak">0</div><div class="stat-mini-label">Streak</div></div>
+        <div class="stat-mini"><div class="stat-mini-val" id="smSessions">0</div><div class="stat-mini-label">Sessions</div></div>
+        <div class="stat-mini"><div class="stat-mini-val" id="smWeek">0</div><div class="stat-mini-label">This Week</div></div>
+      </div>
+    </div>
+
+    <div class="section-label">Muscle Attributes</div>
+
+    <!-- FULL SVG BODY DIAGRAM -->
+    <div class="body-svg-wrap">
+      <!--
+        viewBox: 320 wide x 520 tall
+        Body figure centered at x=160, spanning y=20 to y=460
+        Left labels: x=0..118, connected to body
+        Right labels: x=202..320, connected to body
+      -->
+      <svg id="bodyDiagramSvg" viewBox="0 0 320 520" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Glow filters per muscle color -->
+          <filter id="glow-push" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="glow-pull" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="glow-legs" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="glow-abs" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <!-- Arrowhead markers -->
+          <marker id="arr" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 Z" fill="#4a9eff" opacity="0.6"/>
+          </marker>
+          <marker id="arr-push" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 Z" fill="#e85d26" opacity="0.7"/>
+          </marker>
+          <marker id="arr-pull" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 Z" fill="#2688e8" opacity="0.7"/>
+          </marker>
+          <marker id="arr-legs" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 Z" fill="#26c47a" opacity="0.7"/>
+          </marker>
+          <marker id="arr-abs" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L6,3 Z" fill="#e8c426" opacity="0.7"/>
+          </marker>
+          <!-- Base body gradient -->
+          <linearGradient id="bodyBase" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1a1f3a"/>
+            <stop offset="100%" stop-color="#0e1228"/>
+          </linearGradient>
+        </defs>
+
+        <!-- ══════════════════════════════════
+             BODY SILHOUETTE (base dark shape)
+        ══════════════════════════════════ -->
+        <!-- Head -->
+        <ellipse cx="160" cy="42" rx="22" ry="24" fill="#131828" stroke="#1e2540" stroke-width="1"/>
+        <!-- Neck -->
+        <rect x="152" y="63" width="16" height="14" rx="4" fill="#131828" stroke="#1e2540" stroke-width="0.5"/>
+
+        <!-- Torso outline -->
+        <path d="M118,77 Q112,110 114,150 Q116,168 120,175 L140,178 L160,180 L180,178 L200,175 Q204,168 206,150 Q208,110 202,77 Q180,70 160,69 Q140,70 118,77 Z"
+              fill="#131828" stroke="#1e2540" stroke-width="1"/>
+
+        <!-- Left arm outline -->
+        <path d="M118,80 Q104,90 98,118 Q94,138 96,158 Q98,170 104,172 Q110,170 112,156 Q114,136 116,116 Q118,96 120,84 Z"
+              fill="#131828" stroke="#1e2540" stroke-width="0.8"/>
+        <!-- Left forearm -->
+        <path d="M104,174 Q98,182 96,202 Q94,218 97,226 Q102,228 106,224 Q110,212 110,194 Q110,180 106,174 Z"
+              fill="#131828" stroke="#1e2540" stroke-width="0.8"/>
+
+        <!-- Right arm outline -->
+        <path d="M202,80 Q216,90 222,118 Q226,138 224,158 Q222,170 216,172 Q210,170 208,156 Q206,136 204,116 Q202,96 200,84 Z"
+              fill="#131828" stroke="#1e2540" stroke-width="0.8"/>
+        <!-- Right forearm -->
+        <path d="M216,174 Q222,182 224,202 Q226,218 223,226 Q218,228 214,224 Q210,212 210,194 Q210,180 214,174 Z"
+              fill="#131828" stroke="#1e2540" stroke-width="0.8"/>
+
+        <!-- Hips -->
+        <path d="M120,175 Q114,184 114,198 Q114,210 118,216 L160,220 L202,216 Q206,210 206,198 Q206,184 200,175 Z"
+              fill="#131828" stroke="#1e2540" stroke-width="0.8"/>
+
+        <!-- Left thigh -->
+        <path d="M118,216 Q112,228 112,258 Q112,278 116,290 Q122,296 130,294 Q138,290 138,272 Q138,250 136,228 Q134,216 126,214 Z"
+              fill="#131828" stroke="#1e2540" stroke-width="0.8"/>
+        <!-- Right thigh -->
+        <path d="M202,216 Q208,228 208,258 Q208,278 204,290 Q198,296 190,294 Q182,290 182,272 Q182,250 184,228 Q186,216 194,214 Z"
+              fill="#131828" stroke="#1e2540" stroke-width="0.8"/>
+
+        <!-- Left shin -->
+        <path d="M116,292 Q110,304 110,330 Q110,352 114,364 Q118,372 124,372 Q130,370 132,360 Q134,344 132,318 Q130,300 122,294 Z"
+              fill="#131828" stroke="#1e2540" stroke-width="0.8"/>
+        <!-- Right shin -->
+        <path d="M204,292 Q210,304 210,330 Q210,352 206,364 Q202,372 196,372 Q190,370 188,360 Q186,344 188,318 Q190,300 198,294 Z"
+              fill="#131828" stroke="#1e2540" stroke-width="0.8"/>
+
+        <!-- Feet -->
+        <ellipse cx="124" cy="376" rx="14" ry="6" fill="#131828" stroke="#1e2540" stroke-width="0.8"/>
+        <ellipse cx="196" cy="376" rx="14" ry="6" fill="#131828" stroke="#1e2540" stroke-width="0.8"/>
+
+        <!-- ══════════════════════════════════
+             MUSCLE REGIONS (colored overlays, filled dynamically)
+        ══════════════════════════════════ -->
+
+        <!-- CHEST -->
+        <path id="mr-chest" class="mregion"
+          d="M122,78 Q160,72 198,78 L196,114 Q178,120 160,121 Q142,120 124,114 Z"
+          fill="#12122a" opacity="0.9"/>
+
+        <!-- SHOULDERS left + right -->
+        <ellipse id="mr-shoulders-l" class="mregion" cx="113" cy="85" rx="13" ry="11" fill="#12122a" opacity="0.9"/>
+        <ellipse id="mr-shoulders-r" class="mregion" cx="207" cy="85" rx="13" ry="11" fill="#12122a" opacity="0.9"/>
+
+        <!-- TRICEPS left + right (outer arm) -->
+        <path id="mr-triceps-l" class="mregion"
+          d="M105,94 Q98,108 97,132 Q96,148 100,158 Q104,166 108,164 Q112,152 113,130 Q114,108 112,92 Z"
+          fill="#12122a" opacity="0.9"/>
+        <path id="mr-triceps-r" class="mregion"
+          d="M215,94 Q222,108 223,132 Q224,148 220,158 Q216,166 212,164 Q208,152 207,130 Q206,108 208,92 Z"
+          fill="#12122a" opacity="0.9"/>
+
+        <!-- BICEPS left + right (inner/front arm) -->
+        <path id="mr-biceps-l" class="mregion"
+          d="M113,92 Q119,100 120,124 Q120,144 116,158 Q112,166 108,164 Q109,148 110,124 Q111,104 111,92 Z"
+          fill="#12122a" opacity="0.9"/>
+        <path id="mr-biceps-r" class="mregion"
+          d="M207,92 Q201,100 200,124 Q200,144 204,158 Q208,166 212,164 Q211,148 210,124 Q209,104 209,92 Z"
+          fill="#12122a" opacity="0.9"/>
+
+        <!-- FOREARMS left + right -->
+        <path id="mr-forearms-l" class="mregion"
+          d="M104,175 Q97,186 95,206 Q94,220 98,227 Q103,229 107,225 Q111,213 111,195 Q111,181 107,175 Z"
+          fill="#12122a" opacity="0.9"/>
+        <path id="mr-forearms-r" class="mregion"
+          d="M216,175 Q223,186 225,206 Q226,220 222,227 Q217,229 213,225 Q209,213 209,195 Q209,181 213,175 Z"
+          fill="#12122a" opacity="0.9"/>
+
+        <!-- BACK/LATS left + right (side flanks of torso) -->
+        <path id="mr-back-l" class="mregion"
+          d="M118,80 Q110,94 112,130 Q114,154 118,168 Q122,172 126,170 Q124,148 122,120 Q120,96 120,82 Z"
+          fill="#12122a" opacity="0.9"/>
+        <path id="mr-back-r" class="mregion"
+          d="M202,80 Q210,94 208,130 Q206,154 202,168 Q198,172 194,170 Q196,148 198,120 Q200,96 200,82 Z"
+          fill="#12122a" opacity="0.9"/>
+
+        <!-- CORE/ABS -->
+        <path id="mr-core" class="mregion"
+          d="M128,122 Q160,126 192,122 L190,172 Q174,176 160,177 Q146,176 130,172 Z"
+          fill="#12122a" opacity="0.9"/>
+
+        <!-- GLUTES left + right -->
+        <path id="mr-glutes-l" class="mregion"
+          d="M120,176 Q112,186 112,202 Q112,216 118,222 L140,224 L160,226 Q154,210 148,196 Q140,182 128,176 Z"
+          fill="#12122a" opacity="0.9"/>
+        <path id="mr-glutes-r" class="mregion"
+          d="M200,176 Q208,186 208,202 Q208,216 202,222 L180,224 L160,226 Q166,210 172,196 Q180,182 192,176 Z"
+          fill="#12122a" opacity="0.9"/>
+
+        <!-- QUADS left + right (front thigh) -->
+        <path id="mr-quads-l" class="mregion"
+          d="M118,218 Q112,232 112,260 Q112,280 116,292 Q120,298 126,296 Q132,292 134,272 Q136,250 132,228 Q130,216 122,216 Z"
+          fill="#12122a" opacity="0.9"/>
+        <path id="mr-quads-r" class="mregion"
+          d="M202,218 Q208,232 208,260 Q208,280 204,292 Q200,298 194,296 Q188,292 186,272 Q184,250 188,228 Q190,216 198,216 Z"
+          fill="#12122a" opacity="0.9"/>
+
+        <!-- HAMSTRINGS left + right (inner thigh) -->
+        <path id="mr-hams-l" class="mregion"
+          d="M134,218 Q138,234 138,262 Q138,282 132,294 Q128,298 126,296 Q130,280 130,258 Q130,234 130,220 Z"
+          fill="#12122a" opacity="0.9"/>
+        <path id="mr-hams-r" class="mregion"
+          d="M186,218 Q182,234 182,262 Q182,282 188,294 Q192,298 194,296 Q190,280 190,258 Q190,234 190,220 Z"
+          fill="#12122a" opacity="0.9"/>
+
+        <!-- CALVES left + right -->
+        <path id="mr-calves-l" class="mregion"
+          d="M114,294 Q108,308 108,334 Q108,356 112,366 Q116,374 122,374 Q128,372 130,360 Q132,344 130,318 Q128,302 120,296 Z"
+          fill="#12122a" opacity="0.9"/>
+        <path id="mr-calves-r" class="mregion"
+          d="M206,294 Q212,308 212,334 Q212,356 208,366 Q204,374 198,374 Q192,372 190,360 Q188,344 190,318 Q192,302 200,296 Z"
+          fill="#12122a" opacity="0.9"/>
+
+        <!-- ══════════════════════════════════
+             CONNECTOR LINES (drawn by JS, placeholder group)
+        ══════════════════════════════════ -->
+        <g id="connectors"></g>
+
+        <!-- ══════════════════════════════════
+             LABEL CARDS — LEFT SIDE
+             Each is a foreignObject OR SVG rect+text group
+        ══════════════════════════════════ -->
+
+        <!-- LEFT labels: Chest, Back, Biceps, Quads, Calves -->
+        <!-- We'll use SVG <g> label groups, rendered by JS -->
+        <g id="label-chest"></g>
+        <g id="label-back"></g>
+        <g id="label-biceps"></g>
+        <g id="label-quads"></g>
+        <g id="label-calves"></g>
+
+        <!-- RIGHT labels: Shoulders, Triceps, Forearms, Core, Glutes, Hamstrings -->
+        <g id="label-shoulders"></g>
+        <g id="label-triceps"></g>
+        <g id="label-forearms"></g>
+        <g id="label-core"></g>
+        <g id="label-glutes"></g>
+        <g id="label-hamstrings"></g>
+
+      </svg>
+    </div>
+
+  </div><!-- /tab-stats -->
+
+  <!-- ── QUESTS TAB ── -->
+  <div id="tab-quests" class="tab-content">
+    <div class="section-label">Daily Missions</div>
+    <div id="dailyQuests"></div>
+    <div class="section-label" style="margin-top:14px">Weekly Targets</div>
+    <div id="weeklyQuests"></div>
+    <div class="section-label" style="margin-top:14px">Milestones</div>
+    <div id="milestoneQuests"></div>
+  </div>
+
+  <!-- ── FEATS TAB ── -->
+  <div id="tab-achievements" class="tab-content">
+    <div class="section-label">Feat Unlocks</div>
+    <div class="achievement-grid" id="achievementGrid"></div>
+  </div>
+
+</div><!-- /scroll-area -->
+
+<div class="notif" id="notif">
+  <div class="notif-title">Achievement Unlocked</div>
+  <div class="notif-body" id="notifBody"></div>
+</div>
+
+<script>
+// ─────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────
+var STORE = 'ppl_v3';
+function getData(){try{return JSON.parse(localStorage.getItem(STORE)||'{}');}catch(e){return {};}}
+
+var MUSCLES = [
+  // id, name, day, color (hex), side, body anchor (in SVG coords), label position
+  {id:'chest',      name:'Chest',      day:'push', color:'#e85d26',
+    side:'left',  bodyXY:[160,97],  regions:['mr-chest']},
+  {id:'back',       name:'Back',       day:'pull', color:'#2688e8',
+    side:'left',  bodyXY:[118,125], regions:['mr-back-l','mr-back-r']},
+  {id:'biceps',     name:'Biceps',     day:'pull', color:'#40a0ff',
+    side:'left',  bodyXY:[111,128], regions:['mr-biceps-l','mr-biceps-r']},
+  {id:'quads',      name:'Quads',      day:'legs', color:'#26c47a',
+    side:'left',  bodyXY:[118,254], regions:['mr-quads-l','mr-quads-r']},
+  {id:'calves',     name:'Calves',     day:'legs', color:'#80ffbc',
+    side:'left',  bodyXY:[116,332], regions:['mr-calves-l','mr-calves-r']},
+  {id:'shoulders',  name:'Shoulders',  day:'push', color:'#ff7a40',
+    side:'right', bodyXY:[207,85],  regions:['mr-shoulders-l','mr-shoulders-r']},
+  {id:'triceps',    name:'Triceps',    day:'push', color:'#ff9a60',
+    side:'right', bodyXY:[215,130], regions:['mr-triceps-l','mr-triceps-r']},
+  {id:'forearms',   name:'Forearms',   day:'pull', color:'#60b8ff',
+    side:'right', bodyXY:[218,200], regions:['mr-forearms-l','mr-forearms-r']},
+  {id:'core',       name:'Core',       day:'abs',  color:'#e8c426',
+    side:'right', bodyXY:[160,147], regions:['mr-core']},
+  {id:'glutes',     name:'Glutes',     day:'legs', color:'#40dc90',
+    side:'right', bodyXY:[200,200], regions:['mr-glutes-l','mr-glutes-r']},
+  {id:'hamstrings', name:'Hams',       day:'legs', color:'#26c47a',
+    side:'right', bodyXY:[192,256], regions:['mr-hams-l','mr-hams-r']},
+];
+
+var DAY_MUSCLES = {
+  push:['chest','shoulders','triceps'],
+  pull:['back','biceps','forearms'],
+  legs:['quads','hamstrings','glutes','calves'],
+  abs:['core']
+};
+
+// ─────────────────────────────────────────
+// XP / LEVEL
+// ─────────────────────────────────────────
+function xpForLevel(lvl){if(lvl<=1)return 0;return Math.round(30*(lvl-1)+10*(lvl-1)*(lvl-2));}
+function levelFromXp(xp){var l=1;while(xpForLevel(l+1)<=xp)l++;return Math.min(l,99);}
+function xpProgress(xp){
+  var l=levelFromXp(xp);
+  if(l>=99)return{cur:1,need:1,pct:100};
+  var s=xpForLevel(l),e=xpForLevel(l+1);
+  return{cur:xp-s,need:e-s,pct:Math.round((xp-s)/(e-s)*100)};
+}
+
+// ─────────────────────────────────────────
+// RANK
+// ─────────────────────────────────────────
+var RANKS=[
+  {rank:'E',min:0,  label:'Rank E',cls:'rank-E',title:'Awakened Hunter'},
+  {rank:'D',min:10, label:'Rank D',cls:'rank-D',title:'Iron-Grade Hunter'},
+  {rank:'C',min:25, label:'Rank C',cls:'rank-C',title:'Bronze-Grade Hunter'},
+  {rank:'B',min:50, label:'Rank B',cls:'rank-B',title:'Silver-Grade Hunter'},
+  {rank:'A',min:90, label:'Rank A',cls:'rank-A',title:'Gold-Grade Hunter'},
+  {rank:'S',min:150,label:'Rank S',cls:'rank-S',title:'Shadow Sovereign'},
+];
+function getRank(n){var r=RANKS[0];RANKS.forEach(function(x){if(n>=x.min)r=x;});return r;}
+
+// ─────────────────────────────────────────
+// STATS COMPUTE
+// ─────────────────────────────────────────
+function pad(n){return n<10?'0'+n:''+n;}
+function toDateStr(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+
+function computeStats(){
+  var data=getData();
+  var counts={};MUSCLES.forEach(function(m){counts[m.id]=0;});
+  var allDates=Object.keys(data).filter(function(k){return data[k]&&!data[k].rest;}).sort();
+  var dateSet={};allDates.forEach(function(k){dateSet[k]=true;});
+  var totalSessions=allDates.length;
+  var today=new Date();today.setHours(0,0,0,0);
+  var streak=0,check=new Date(today);
+  while(true){
+    var ds=toDateStr(check);
+    if(dateSet[ds]){streak++;check.setDate(check.getDate()-1);}
+    else if(ds===toDateStr(today)){check.setDate(check.getDate()-1);}
+    else break;
+  }
+  var dow=(today.getDay()+6)%7,weekSessions=0;
+  for(var i=0;i<=dow;i++){var d=new Date(today);d.setDate(today.getDate()-i);if(dateSet[toDateStr(d)])weekSessions++;}
+  allDates.forEach(function(ds){
+    var e=data[ds];
+    if(e&&!e.rest&&DAY_MUSCLES[e.type])DAY_MUSCLES[e.type].forEach(function(mid){counts[mid]=(counts[mid]||0)+1;});
+  });
+  return{counts,totalSessions,streak,weekSessions,data,allDates,dateSet};
+}
+
+// ─────────────────────────────────────────
+// COLOR UTILS
+// ─────────────────────────────────────────
+function hexToRgbArr(hex){
+  return[parseInt(hex.slice(1,3),16),parseInt(hex.slice(3,5),16),parseInt(hex.slice(5,7),16)];
+}
+function blend(a,b,t){
+  var ac=hexToRgbArr(a),bc=hexToRgbArr(b);
+  return 'rgb('+Math.round(ac[0]+(bc[0]-ac[0])*t)+','+Math.round(ac[1]+(bc[1]-ac[1])*t)+','+Math.round(ac[2]+(bc[2]-ac[2])*t)+')';
+}
+function colorWithAlpha(hex,alpha){
+  var c=hexToRgbArr(hex);
+  return 'rgba('+c[0]+','+c[1]+','+c[2]+','+alpha+')';
+}
+
+// ─────────────────────────────────────────
+// SVG LABEL BUILDER
+// ─────────────────────────────────────────
+// Layout:
+//   Left labels X range: 2..118  (label right edge at 118, connects right → body)
+//   Right labels X range: 202..318 (label left edge at 202, connects left → body)
+//   Label width: 94, height: 36
+//   Vertical positions spaced evenly
+
+var LEFT_MUSCLES  = ['chest','back','biceps','quads','calves'];
+var RIGHT_MUSCLES = ['shoulders','triceps','forearms','core','glutes','hamstrings'];
+
+var LABEL_W = 90;
+var LABEL_H = 36;
+var LABEL_R = 5; // border radius
+var LEFT_X  = 2;       // left edge of left labels
+var RIGHT_X = 228;     // left edge of right labels
+var SVG_H   = 520;
+var TOP_PAD = 30;
+var BOT_PAD = 40;
+
+function getLabelY(side, index){
+  var muscles = side === 'left' ? LEFT_MUSCLES : RIGHT_MUSCLES;
+  var count = muscles.length;
+  var available = SVG_H - TOP_PAD - BOT_PAD;
+  var step = available / count;
+  return TOP_PAD + step * index + step/2 - LABEL_H/2;
+}
+
+function makeSvgNS(tag,attrs){
+  var el=document.createElementNS('http://www.w3.org/2000/svg',tag);
+  Object.keys(attrs).forEach(function(k){el.setAttribute(k,attrs[k]);});
+  return el;
+}
+
+function buildLabel(m, lvl, prog, labelY){
+  var g = document.getElementById('label-'+m.id);
+  while(g.firstChild)g.removeChild(g.firstChild);
+
+  var isLeft = m.side === 'left';
+  var lx = isLeft ? LEFT_X : RIGHT_X;
+
+  var active = lvl >= 1;
+  var borderCol = active ? colorWithAlpha(m.color, 0.55) : '#1e2540';
+  var bgCol = active ? colorWithAlpha(m.color, 0.10) : '#0c0c1e';
+  var textCol = active ? m.color : '#4a5580';
+
+  // Background rect
+  var rect = makeSvgNS('rect',{
+    x:lx, y:labelY, width:LABEL_W, height:LABEL_H, rx:LABEL_R,
+    fill:bgCol, stroke:borderCol, 'stroke-width':'1'
+  });
+  g.appendChild(rect);
+
+  // Muscle name
+  var nameEl = makeSvgNS('text',{
+    x: isLeft ? lx+LABEL_W-8 : lx+8,
+    y: labelY+13,
+    'text-anchor': isLeft ? 'end' : 'start',
+    fill: textCol,
+    'font-family': 'Orbitron, sans-serif',
+    'font-size': '7.5',
+    'font-weight': '700',
+    'letter-spacing': '1'
+  });
+  nameEl.textContent = m.name.toUpperCase();
+  g.appendChild(nameEl);
+
+  // Level text
+  var lvlEl = makeSvgNS('text',{
+    x: isLeft ? lx+LABEL_W-8 : lx+8,
+    y: labelY+23,
+    'text-anchor': isLeft ? 'end' : 'start',
+    fill: active ? '#d0d8f0' : '#3a4060',
+    'font-family': 'Orbitron, sans-serif',
+    'font-size': '6.5',
+    'font-weight': '400',
+    'letter-spacing': '0.5'
+  });
+  lvlEl.textContent = 'LV ' + lvl;
+  g.appendChild(lvlEl);
+
+  // XP bar background
+  var barPad = 8;
+  var barW = LABEL_W - barPad*2;
+  var barY = labelY + LABEL_H - 9;
+  var barBg = makeSvgNS('rect',{
+    x:lx+barPad, y:barY, width:barW, height:3, rx:1.5,
+    fill:'#1a2040'
+  });
+  g.appendChild(barBg);
+
+  // XP bar fill (animated via CSS transition on width attribute change)
+  var barFill = makeSvgNS('rect',{
+    x:lx+barPad, y:barY, width:0, height:3, rx:1.5,
+    fill: active ? m.color : '#2a3060',
+    opacity: active ? '0.9' : '0.3'
+  });
+  barFill.setAttribute('class','xp-bar-fill');
+  g.appendChild(barFill);
+
+  // Animate bar fill
+  var targetW = Math.round(barW * prog.pct / 100);
+  setTimeout(function(){
+    barFill.setAttribute('width', targetW);
+  }, 150);
+
+  // Connector line to body
+  buildConnector(m, lvl, labelY, lx, isLeft);
+}
+
+function buildConnector(m, lvl, labelY, lx, isLeft){
+  var svg = document.getElementById('bodyDiagramSvg');
+  var conns = document.getElementById('connectors');
+
+  // Remove old connector for this muscle
+  var old = document.getElementById('conn-'+m.id);
+  if(old) old.parentNode.removeChild(old);
+
+  var active = lvl >= 1;
+  var alpha = active ? 0.65 : 0.18;
+  var col = active ? m.color : '#3a4565';
+
+  // Line endpoints
+  // Label attachment point (middle of label's inner edge)
+  var ly = labelY + LABEL_H/2;
+  var lEdgeX = isLeft ? lx + LABEL_W : lx;  // right edge of left label, left edge of right label
+
+  // Body target
+  var bx = m.bodyXY[0];
+  var by = m.bodyXY[1];
+
+  // Midpoint for elbow
+  var midX = isLeft ? lEdgeX + (bx - lEdgeX)*0.45 : lEdgeX - (lEdgeX - bx)*0.45;
+
+  var markerId = 'arr-' + m.day;
+
+  var g = makeSvgNS('g', {id:'conn-'+m.id});
+
+  // Two-segment polyline: label → midpoint (horizontal) → body target
+  var pts = isLeft
+    ? (lEdgeX+','+ly+' '+midX+','+ly+' '+bx+','+by)
+    : (lEdgeX+','+ly+' '+midX+','+ly+' '+bx+','+by);
+
+  var line = makeSvgNS('polyline',{
+    points: pts,
+    stroke: col,
+    'stroke-width': '1.2',
+    'stroke-opacity': alpha,
+    'stroke-dasharray': active ? 'none' : '3,3',
+    fill: 'none',
+    'marker-end': 'url(#'+markerId+')'
+  });
+  g.appendChild(line);
+
+  // Dot at body anchor
+  var dot = makeSvgNS('circle',{
+    cx:bx, cy:by, r:'2.5',
+    fill:col, opacity: active ? '0.85' : '0.3'
+  });
+  g.appendChild(dot);
+
+  // Insert connectors BEFORE labels so labels render on top
+  conns.appendChild(g);
+}
+
+// ─────────────────────────────────────────
+// REGION FILL
+// ─────────────────────────────────────────
+function applyRegionFill(m, lvl){
+  var intensity = Math.min(lvl / 25, 1.0);
+  var baseFill = blend('#12122a', m.color, intensity * 0.65);
+  var baseOpacity = 0.5 + intensity * 0.5;
+  m.regions.forEach(function(rid){
+    var el = document.getElementById(rid);
+    if(!el) return;
+    el.setAttribute('fill', baseFill);
+    el.setAttribute('opacity', baseOpacity.toFixed(2));
+    // Glow effect at higher levels
+    if(lvl >= 10){
+      el.setAttribute('filter', 'url(#glow-'+m.day+')');
+    } else {
+      el.removeAttribute('filter');
+    }
+  });
+}
+
+// ─────────────────────────────────────────
+// RENDER STATS
+// ─────────────────────────────────────────
+function renderStats(){
+  var s = computeStats();
+  var rank = getRank(s.totalSessions);
+
+  document.getElementById('rankBadge').textContent = rank.label;
+  document.getElementById('rankBadge').className = 'rank-badge ' + rank.cls;
+  document.getElementById('hunterTitle').textContent = rank.title;
+  document.getElementById('smStreak').textContent = s.streak;
+  document.getElementById('smSessions').textContent = s.totalSessions;
+  document.getElementById('smWeek').textContent = s.weekSessions;
+
+  var totalXp = 0;
+  MUSCLES.forEach(function(m){totalXp += (s.counts[m.id]||0)*10;});
+  document.getElementById('totalXpVal').textContent = totalXp.toLocaleString() + ' XP';
+
+  var nextIdx = RANKS.indexOf(rank)+1;
+  var oPct = 100;
+  if(nextIdx < RANKS.length){var f=rank.min,t=RANKS[nextIdx].min;oPct=Math.round((s.totalSessions-f)/(t-f)*100);}
+  setTimeout(function(){document.getElementById('overallBar').style.width=oPct+'%';},80);
+
+  // Build labels and update regions
+  var leftIdx = 0, rightIdx = 0;
+  MUSCLES.forEach(function(m){
+    var xp = (s.counts[m.id]||0)*10;
+    var lvl = levelFromXp(xp);
+    var prog = xpProgress(xp);
+    var idx = m.side === 'left' ? leftIdx++ : rightIdx++;
+    var labelY = getLabelY(m.side, idx);
+    buildLabel(m, lvl, prog, labelY);
+    applyRegionFill(m, lvl);
+  });
+}
+
+// ─────────────────────────────────────────
+// TOUCH/CLICK on regions → flash
+// ─────────────────────────────────────────
+function setupRegionInteraction(){
+  MUSCLES.forEach(function(m){
+    m.regions.forEach(function(rid){
+      var el = document.getElementById(rid);
+      if(!el) return;
+      function flash(){
+        var orig = el.getAttribute('fill');
+        el.setAttribute('fill', blend(orig||'#12122a', '#ffffff', 0.5));
+        setTimeout(function(){el.setAttribute('fill', orig);}, 350);
+      }
+      el.addEventListener('click', flash);
+      el.addEventListener('touchstart', flash, {passive:true});
+      el.style.cursor = 'pointer';
+    });
+  });
+}
+
+// ─────────────────────────────────────────
+// QUESTS
+// ─────────────────────────────────────────
+function countUniquePPL(s){
+  var today=new Date();today.setHours(0,0,0,0);
+  var dow=(today.getDay()+6)%7,types={};
+  for(var i=0;i<=dow;i++){var d=new Date(today);d.setDate(today.getDate()-i);var ds=toDateStr(d);var e=s.data[ds];if(e&&!e.rest&&e.type!=='abs')types[e.type]=true;}
+  return Object.keys(types).length;
+}
+function questCard(name,type,desc,cur,target,reward,done){
+  var pct=Math.min(100,Math.round(cur/target*100));
+  return '<div class="quest-card '+(done?'complete-quest':'active-quest')+'">'
+    +'<div class="quest-header"><div class="quest-name">'+(done?'✓ ':'')+name+'</div><div class="quest-type '+type+'">'+type+'</div></div>'
+    +'<div class="quest-desc">'+desc+'</div>'
+    +'<div class="quest-prog-row"><div class="quest-bar-wrap"><div class="quest-bar'+(done?' done':'')+'" style="width:'+pct+'%"></div></div><div class="quest-pct">'+Math.min(cur,target)+'/'+target+'</div></div>'
+    +'<div class="quest-reward">★ '+reward+'</div></div>';
+}
+function renderQuests(){
+  var s=computeStats();
+  var tk=toDateStr((function(){var d=new Date();d.setHours(0,0,0,0);return d;})());
+  var tl=s.dateSet[tk]?1:0;
+  document.getElementById('dailyQuests').innerHTML=
+    questCard('Daily Training','daily','Complete today\'s workout.',tl,1,'+ 50 XP',tl>=1)
+    +questCard('Keep the Streak','daily','Don\'t break the chain.',Math.min(s.streak,1),1,'+ 25 XP',s.streak>=1);
+  var uppl=countUniquePPL(s);
+  document.getElementById('weeklyQuests').innerHTML=
+    questCard('3 Sessions','weekly','3 sessions this week.',s.weekSessions,3,'+ 150 XP',s.weekSessions>=3)
+    +questCard('Full PPL Cycle','weekly','Push, Pull and Legs in one week.',uppl,3,'+ 200 XP',uppl>=3)
+    +questCard('4 Sessions','weekly','4+ sessions this week.',s.weekSessions,4,'+ 300 XP',s.weekSessions>=4);
+  var ms=[
+    {n:'First Blood',d:'Log your first session.',t:1,c:s.totalSessions,r:'Awakened'},
+    {n:'10-Session Gate',d:'10 total sessions.',t:10,c:s.totalSessions,r:'Rank D'},
+    {n:'Iron Will',d:'7-day streak.',t:7,c:s.streak,r:'+ 500 XP'},
+    {n:'25 Sessions',d:'25 total sessions.',t:25,c:s.totalSessions,r:'Rank C'},
+    {n:'Dungeon Breaker',d:'14-day streak.',t:14,c:s.streak,r:'+ 1000 XP'},
+    {n:'50 Sessions',d:'50 total sessions.',t:50,c:s.totalSessions,r:'Rank B'},
+    {n:'Shadow Runner',d:'30-day streak.',t:30,c:s.streak,r:'+ 2000 XP'},
+    {n:'Century Hunter',d:'100 total sessions.',t:100,c:s.totalSessions,r:'+ 5000 XP'},
+    {n:'Arise',d:'150 sessions. Shadow Sovereign.',t:150,c:s.totalSessions,r:'Rank S'},
+  ];
+  document.getElementById('milestoneQuests').innerHTML=ms.map(function(m){return questCard(m.n,'milestone',m.d,m.c,m.t,'+ '+m.r,m.c>=m.t);}).join('');
+}
+
+// ─────────────────────────────────────────
+// ACHIEVEMENTS
+// ─────────────────────────────────────────
+var ACHIEVEMENTS=[
+  {id:'first', icon:'🌟',name:'Arise',          desc:'Log your first workout.',       check:function(s){return s.totalSessions>=1;}},
+  {id:'s3',    icon:'🔥',name:'Three-Day Flame', desc:'3-day streak.',                 check:function(s){return s.streak>=3;}},
+  {id:'s7',    icon:'⚡',name:'Iron Resolve',    desc:'7-day streak.',                 check:function(s){return s.streak>=7;}},
+  {id:'s14',   icon:'💎',name:'Dungeon Clearer', desc:'14 consecutive days.',          check:function(s){return s.streak>=14;}},
+  {id:'s30',   icon:'👑',name:'Shadow Monarch',  desc:'30 consecutive days.',          check:function(s){return s.streak>=30;}},
+  {id:'n10',   icon:'🗡️',name:'First Gate',      desc:'10 total sessions.',            check:function(s){return s.totalSessions>=10;}},
+  {id:'n25',   icon:'⚔️',name:'Gate Breaker',    desc:'25 total sessions.',            check:function(s){return s.totalSessions>=25;}},
+  {id:'n50',   icon:'🛡️',name:'S-Grade Dungeon', desc:'50 total sessions.',            check:function(s){return s.totalSessions>=50;}},
+  {id:'n100',  icon:'🌑',name:'Shadow Army',     desc:'100 total sessions.',           check:function(s){return s.totalSessions>=100;}},
+  {id:'ppl',   icon:'🎯',name:'Complete System', desc:'Push, Pull and Legs in one week.',check:function(s){return countUniquePPL(s)>=3;}},
+  {id:'lv10',  icon:'📈',name:'Attribute Surge', desc:'Any muscle at Level 10+.',     check:function(s){return MUSCLES.some(function(m){return levelFromXp((s.counts[m.id]||0)*10)>=10;});}},
+  {id:'lv20',  icon:'🔮',name:'Elite Training',  desc:'Any muscle at Level 20+.',     check:function(s){return MUSCLES.some(function(m){return levelFromXp((s.counts[m.id]||0)*10)>=20;});}},
+  {id:'bal',   icon:'⚖️',name:'Balanced Hunter', desc:'All muscles at Level 3+.',     check:function(s){return MUSCLES.every(function(m){return levelFromXp((s.counts[m.id]||0)*10)>=3;});}},
+  {id:'wk4',   icon:'🌀',name:'Weekly Grind',    desc:'4+ sessions in one week.',     check:function(s){return s.weekSessions>=4;}},
+];
+var _prevAch={};
+try{_prevAch=JSON.parse(localStorage.getItem('hunter_ach')||'{}');}catch(e){}
+
+function renderAchievements(){
+  var s=computeStats();var html='';var fresh=[];
+  ACHIEVEMENTS.forEach(function(a){
+    var ok=a.check(s);
+    if(ok&&!_prevAch[a.id]){fresh.push(a);_prevAch[a.id]=true;}
+    html+='<div class="achievement '+(ok?'unlocked':'locked')+'">'
+      +'<div class="ach-icon">'+a.icon+'</div>'
+      +'<div class="ach-body"><div class="ach-name">'+a.name+'</div><div class="ach-desc">'+a.desc+'</div></div>'
+      +'<div class="ach-right '+(ok?'ach-check':'ach-lock')+'">'+(ok?'✓':'🔒')+'</div></div>';
+  });
+  document.getElementById('achievementGrid').innerHTML=html;
+  try{localStorage.setItem('hunter_ach',JSON.stringify(_prevAch));}catch(e){}
+  if(fresh.length){var i=0;(function loop(){if(i>=fresh.length)return;showNotif(fresh[i].icon+' '+fresh[i].name);i++;setTimeout(loop,3000);})();}
+}
+
+// ─────────────────────────────────────────
+// TAB SWITCH
+// ─────────────────────────────────────────
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(function(el){el.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='stats')renderStats();
+  else if(id==='quests')renderQuests();
+  else if(id==='achievements')renderAchievements();
+}
+
+// ─────────────────────────────────────────
+// NOTIF
+// ─────────────────────────────────────────
+var _nt;
+function showNotif(msg){
+  var el=document.getElementById('notif');
+  document.getElementById('notifBody').textContent=msg;
+  el.classList.add('show');
+  clearTimeout(_nt);
+  _nt=setTimeout(function(){el.classList.remove('show');},2600);
+}
+
+// ─────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────
+renderStats();
+setupRegionInteraction();
+</script>
+</body>
+</html>
