@@ -10,1558 +10,368 @@
 <meta name="theme-color" content="#0d0d0d">
 <title>PPL Routine</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
 :root {
-  --bg: #0d0d0d;
-  --surface: #161616;
-  --surface2: #1f1f1f;
-  --surface3: #252525;
-  --border: #272727;
-  --push: #e85d26;
-  --pull: #2688e8;
-  --legs: #26c47a;
-  --abs: #e8c426;
-  --log: #a855f7;
-  --text: #f0ede8;
-  --muted: #888;
-  --dim: #4a4a4a;
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-top: env(safe-area-inset-top, 0px);
+  --bg:#0d0d0d;--surface:#161616;--surface2:#1f1f1f;--surface3:#252525;
+  --border:#272727;--push:#e85d26;--pull:#2688e8;--legs:#26c47a;
+  --abs:#e8c426;--log:#a855f7;--text:#f0ede8;--muted:#888;--dim:#4a4a4a;
+  --safe-bottom:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);
 }
-* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html,body { height:100%; overflow:hidden; }
-body { background:var(--bg); color:var(--text); font-family:'Barlow',sans-serif; display:flex; flex-direction:column; }
-
-/* ── TOP BAR ── */
-.top-bar {
-  flex-shrink:0;
-  padding: 12px 16px 10px;
-  padding-top: max(12px, var(--safe-top));
-  border-bottom:1px solid var(--border);
-  background:rgba(13,13,13,0.97);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-}
-.top-bar-row1 { display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
-.top-bar h1 { font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:1.5rem; text-transform:uppercase; letter-spacing:-0.5px; line-height:1; transition:color 0.3s; }
-body.day-push .top-bar h1 { color:var(--push); }
-body.day-pull .top-bar h1 { color:var(--pull); }
-body.day-legs .top-bar h1 { color:var(--legs); }
-body.day-abs  .top-bar h1 { color:var(--abs); }
-body.day-log  .top-bar h1 { color:var(--log); }
-.quote-text { font-size:0.65rem; color:var(--dim); font-style:italic; font-weight:300; margin-top:4px; line-height:1.4; letter-spacing:0.2px; }
-
-/* ── SCHEDULE BAR ── */
-.schedule-bar { flex-shrink:0; display:flex; gap:4px; padding:8px 12px; background:var(--surface); border-bottom:1px solid var(--border); overflow-x:auto; scrollbar-width:none; }
-.schedule-bar::-webkit-scrollbar { display:none; }
-.sched-day { flex:1; min-width:36px; text-align:center; padding:5px 3px; border-radius:6px; border:1px solid var(--border); background:var(--bg); position:relative; cursor:pointer; transition:border-color 0.2s; }
-.sched-day .sd { font-family:'Barlow Condensed',sans-serif; font-size:0.58rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--dim); }
-.sched-day .st { font-family:'Barlow Condensed',sans-serif; font-size:0.8rem; font-weight:900; text-transform:uppercase; margin-top:1px; }
-.sched-day.t-push .st { color:var(--push); }
-.sched-day.t-pull .st { color:var(--pull); }
-.sched-day.t-legs .st { color:var(--legs); }
-.sched-day.t-rest .st { color:var(--dim); }
-.sched-day.done::after { content:''; position:absolute; bottom:3px; left:50%; transform:translateX(-50%); width:4px; height:4px; border-radius:50%; }
-.sched-day.t-push.done::after { background:var(--push); }
-.sched-day.t-pull.done::after { background:var(--pull); }
-.sched-day.t-legs.done::after { background:var(--legs); }
-.sched-day.today { border-color:var(--muted); }
-
-/* ── SCROLL ── */
-.scroll-area { flex:1; overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; padding:14px 14px calc(72px + var(--safe-bottom)); }
-
-/* ── PANELS ── */
-.day-panel { display:none; }
-.day-panel.active { display:block; animation:fadeUp 0.2s ease; }
-@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
-
-/* ── DAY HEADER ── */
-.day-header { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
-.day-label { font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:3.4rem; text-transform:uppercase; letter-spacing:-2px; line-height:1; }
-.push .day-label  { color:var(--push); }
-.pull .day-label  { color:var(--pull); }
-.legs .day-label  { color:var(--legs); }
-.abs-d .day-label { color:var(--abs); }
-.day-meta { border-left:1px solid var(--border); padding-left:12px; }
-.day-meta .focus  { font-size:0.65rem; letter-spacing:2px; text-transform:uppercase; color:var(--muted); }
-.day-meta .muscles{ font-size:0.82rem; color:var(--text); margin-top:2px; line-height:1.3; }
-.day-meta .duration{ font-size:0.68rem; color:var(--dim); margin-top:3px; }
-
-/* start workout button */
-.start-btn { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
-.btn-start-workout {
-  flex:1; padding:10px 16px; border-radius:8px; border:none; cursor:pointer;
-  font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.9rem;
-  letter-spacing:1px; text-transform:uppercase; transition:all 0.2s;
-}
-.push  .btn-start-workout { background:var(--push); color:#fff; }
-.pull  .btn-start-workout { background:var(--pull); color:#fff; }
-.legs  .btn-start-workout { background:var(--legs); color:#000; }
-.abs-d .btn-start-workout { background:var(--abs);  color:#000; }
-.btn-rest-day {
-  padding:10px 14px; border-radius:8px; border:1px solid var(--border);
-  background:transparent; color:var(--muted); cursor:pointer;
-  font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.85rem;
-  letter-spacing:1px; text-transform:uppercase;
-}
-
-/* ── NOTES BOX ── */
-.notes-box { background:var(--surface); border:1px solid var(--border); border-left-width:3px; border-radius:8px; padding:10px 13px; margin-bottom:14px; font-size:0.78rem; color:var(--muted); line-height:1.6; }
-.push  .notes-box { border-left-color:var(--push); }
-.pull  .notes-box { border-left-color:var(--pull); }
-.legs  .notes-box { border-left-color:var(--legs); }
-.abs-d .notes-box { border-left-color:var(--abs); }
-.notes-box strong { display:block; font-family:'Barlow Condensed',sans-serif; font-size:0.62rem; letter-spacing:2px; text-transform:uppercase; color:var(--dim); margin-bottom:4px; }
-
-/* ── SECTION ── */
-.section { margin-bottom:20px; }
-.section-title { font-family:'Barlow Condensed',sans-serif; font-size:0.62rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--dim); padding-bottom:7px; margin-bottom:7px; border-bottom:1px solid var(--border); }
-
-/* ── SUPERSET ── */
-.superset-group { position:relative; padding-left:10px; }
-.superset-group::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; border-radius:2px; }
-.push  .superset-group::before { background:var(--push); opacity:0.6; }
-.pull  .superset-group::before { background:var(--pull); opacity:0.6; }
-.legs  .superset-group::before { background:var(--legs); opacity:0.6; }
-.superset-label { font-family:'Barlow Condensed',sans-serif; font-size:0.58rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--dim); padding:0 0 4px 2px; display:block; }
-
-/* ── EXERCISE CARD ── */
-.exercise { background:var(--surface); border:1px solid var(--border); border-radius:10px; margin-bottom:6px; overflow:hidden; transition:border-color 0.15s; }
-.exercise.open { border-color:#333; }
-.exercise.logged { border-color:#2a2a2a; }
-.exercise.logged .ex-name { opacity:0.6; }
-
-.ex-header { display:flex; align-items:center; justify-content:space-between; padding:11px 13px; cursor:pointer; user-select:none; gap:8px; min-height:52px; }
-.ex-header-left { flex:1; min-width:0; }
-.ex-name { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.95rem; text-transform:uppercase; letter-spacing:0.2px; color:var(--text); line-height:1.2; }
-.ex-tags { display:flex; flex-wrap:wrap; gap:3px; margin-top:4px; }
-.tag { font-size:0.58rem; font-weight:500; letter-spacing:0.8px; text-transform:uppercase; padding:2px 5px; border-radius:3px; background:var(--surface2); color:var(--dim); border:1px solid var(--border); white-space:nowrap; }
-.tag.cali { color:var(--muted); }
-.push  .tag.target { background:rgba(232,93,38,0.12);  color:var(--push); border-color:rgba(232,93,38,0.3); }
-.pull  .tag.target { background:rgba(38,136,232,0.12); color:var(--pull); border-color:rgba(38,136,232,0.3); }
-.legs  .tag.target { background:rgba(38,196,122,0.12); color:var(--legs); border-color:rgba(38,196,122,0.3); }
-.abs-d .tag.target { background:rgba(232,196,38,0.12); color:var(--abs);  border-color:rgba(232,196,38,0.3); }
-
-.ex-header-right { display:flex; flex-direction:column; align-items:flex-end; flex-shrink:0; gap:2px; }
-.sets-reps { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:1rem; color:var(--text); white-space:nowrap; }
-.rest-label { font-size:0.62rem; color:var(--dim); white-space:nowrap; }
-.chevron { width:15px; height:15px; margin-left:5px; flex-shrink:0; color:var(--dim); transition:transform 0.2s; }
-.exercise.open .chevron { transform:rotate(180deg); }
-
-/* ── EXERCISE EXPAND BODY ── */
-.ex-body { display:none; border-top:1px solid var(--border); }
-.exercise.open .ex-body { display:block; }
-.ex-desc { font-size:0.8rem; color:var(--muted); line-height:1.6; font-weight:300; padding:10px 13px; }
-
-/* ── LOG SETS AREA ── */
-.log-area { padding:0 13px 13px; }
-.log-area-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
-.log-area-title { font-family:'Barlow Condensed',sans-serif; font-size:0.62rem; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--dim); }
-.last-session { font-size:0.68rem; color:var(--dim); font-style:italic; }
-.sets-grid { display:flex; flex-direction:column; gap:5px; margin-bottom:8px; }
-.set-row { display:grid; grid-template-columns:28px 1fr 1fr auto; gap:6px; align-items:center; }
-.set-num { font-family:'Barlow Condensed',sans-serif; font-size:0.75rem; font-weight:700; color:var(--dim); text-align:center; }
-.set-input {
-  background:var(--surface3); border:1px solid var(--border); border-radius:6px;
-  color:var(--text); font-family:'Barlow',sans-serif; font-size:0.82rem;
-  padding:7px 9px; width:100%; outline:none; transition:border-color 0.15s;
-}
-.set-input:focus { border-color:var(--muted); }
-.set-input::placeholder { color:var(--dim); font-size:0.75rem; }
-.set-skip { background:none; border:1px solid var(--border); border-radius:6px; color:var(--dim); cursor:pointer; padding:6px 8px; font-size:0.7rem; white-space:nowrap; transition:all 0.15s; font-family:'Barlow',sans-serif; }
-.set-skip.skipped { background:var(--surface3); color:var(--muted); border-color:var(--muted); text-decoration:line-through; }
-.log-actions { display:flex; gap:6px; }
-.btn-log-save { flex:1; padding:9px; border-radius:7px; border:none; cursor:pointer; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.82rem; letter-spacing:1px; text-transform:uppercase; }
-.push  .btn-log-save { background:rgba(232,93,38,0.15);  color:var(--push); }
-.pull  .btn-log-save { background:rgba(38,136,232,0.15); color:var(--pull); }
-.legs  .btn-log-save { background:rgba(38,196,122,0.15); color:var(--legs); }
-.abs-d .btn-log-save { background:rgba(232,196,38,0.15); color:var(--abs); }
-.btn-log-skip-all { padding:9px 12px; border-radius:7px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.82rem; letter-spacing:1px; text-transform:uppercase; }
-.logged-summary { font-size:0.75rem; color:var(--muted); padding:4px 0; display:none; }
-.logged-summary.show { display:block; }
-
-/* ── LOG TAB ── */
-.log-panel { display:none; }
-.log-panel.active { display:block; animation:fadeUp 0.2s ease; }
-.log-section-title { font-family:'Barlow Condensed',sans-serif; font-size:0.72rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--dim); padding-bottom:8px; margin-bottom:12px; border-bottom:1px solid var(--border); }
-
-/* calendar */
-.calendar-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
-.cal-nav { background:none; border:1px solid var(--border); border-radius:6px; color:var(--muted); cursor:pointer; padding:6px 10px; font-size:0.8rem; }
-.cal-month { font-family:'Barlow Condensed',sans-serif; font-size:1rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--text); }
-.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; margin-bottom:20px; }
-.cal-dow { font-family:'Barlow Condensed',sans-serif; font-size:0.58rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--dim); text-align:center; padding:3px 0; }
-.cal-day { aspect-ratio:1; border-radius:6px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-size:0.82rem; font-weight:700; color:var(--dim); background:var(--surface); border:1px solid transparent; position:relative; cursor:pointer; transition:all 0.15s; gap:1px; }
-.cal-day.other-month { opacity:0.25; }
-.cal-day.today { border-color:var(--muted); color:var(--text); }
-.cal-day.has-push { background:rgba(232,93,38,0.15); color:var(--push); border-color:rgba(232,93,38,0.25); }
-.cal-day.has-pull { background:rgba(38,136,232,0.15); color:var(--pull); border-color:rgba(38,136,232,0.25); }
-.cal-day.has-legs { background:rgba(38,196,122,0.15); color:var(--legs); border-color:rgba(38,196,122,0.25); }
-.cal-day.has-abs  { background:rgba(232,196,38,0.15);  color:var(--abs);  border-color:rgba(232,196,38,0.25); }
-.cal-day.has-rest { background:var(--surface2); color:var(--muted); }
-.cal-day-type { font-size:0.5rem; letter-spacing:0.5px; text-transform:uppercase; opacity:0.8; }
-
-/* streak */
-.streak-row { display:flex; gap:8px; margin-bottom:20px; }
-.streak-card { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 12px; }
-.streak-card .sc-val { font-family:'Barlow Condensed',sans-serif; font-size:1.8rem; font-weight:900; color:var(--log); line-height:1; }
-.streak-card .sc-label { font-size:0.65rem; color:var(--dim); margin-top:2px; text-transform:uppercase; letter-spacing:1px; }
-
-/* graph */
-.filter-row { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
-.filter-select {
-  background:var(--surface); border:1px solid var(--border); border-radius:6px;
-  color:var(--text); font-family:'Barlow',sans-serif; font-size:0.75rem;
-  padding:7px 10px; outline:none; cursor:pointer; flex:1; min-width:120px;
-}
-.filter-select option { background:var(--surface2); }
-.chart-wrap { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:20px; position:relative; min-height:200px; }
-.chart-empty { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:0.8rem; color:var(--dim); font-style:italic; }
-
-/* recent log list */
-.log-entry { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 12px; margin-bottom:6px; }
-.log-entry-header { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px; }
-.log-entry-name { font-family:'Barlow Condensed',sans-serif; font-size:0.88rem; font-weight:700; text-transform:uppercase; color:var(--text); }
-.log-entry-date { font-size:0.68rem; color:var(--dim); }
-.log-entry-sets { font-size:0.75rem; color:var(--muted); line-height:1.5; }
-.btn-delete-log { background:none; border:none; color:var(--dim); cursor:pointer; font-size:0.75rem; padding:2px 4px; }
-.btn-delete-log:hover { color:#e85d26; }
-.no-logs { font-size:0.8rem; color:var(--dim); font-style:italic; text-align:center; padding:24px 0; }
-
-/* ── BOTTOM NAV ── */
-.bottom-nav { flex-shrink:0; display:flex; background:var(--surface); border-top:1px solid var(--border); padding-bottom:var(--safe-bottom); }
-.nav-btn { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:9px 2px; border:none; background:transparent; cursor:pointer; gap:3px; min-height:52px; }
-.nav-btn .nav-label { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.72rem; letter-spacing:1px; text-transform:uppercase; color:var(--dim); transition:color 0.15s; }
-.nav-btn .nav-dot { width:4px; height:4px; border-radius:50%; background:transparent; transition:background 0.15s; }
-.nav-btn.active-push .nav-label { color:var(--push); } .nav-btn.active-push .nav-dot { background:var(--push); }
-.nav-btn.active-pull .nav-label { color:var(--pull); } .nav-btn.active-pull .nav-dot { background:var(--pull); }
-.nav-btn.active-legs .nav-label { color:var(--legs); } .nav-btn.active-legs .nav-dot { background:var(--legs); }
-.nav-btn.active-abs  .nav-label { color:var(--abs);  } .nav-btn.active-abs  .nav-dot  { background:var(--abs);  }
-.nav-btn.active-log  .nav-label { color:var(--log);  } .nav-btn.active-log  .nav-dot  { background:var(--log);  }
-
-/* modal */
-.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:200; align-items:flex-end; }
-.modal-overlay.open { display:flex; }
-.modal { background:var(--surface); border-radius:14px 14px 0 0; padding:20px 16px; padding-bottom:calc(20px + var(--safe-bottom)); width:100%; max-height:80vh; overflow-y:auto; border-top:1px solid var(--border); }
-.modal h3 { font-family:'Barlow Condensed',sans-serif; font-size:1.1rem; font-weight:900; text-transform:uppercase; color:var(--text); margin-bottom:4px; }
-.modal p { font-size:0.78rem; color:var(--muted); margin-bottom:16px; }
-.modal-actions { display:flex; gap:8px; margin-top:16px; }
-.btn-modal-confirm { flex:1; padding:12px; border-radius:8px; border:none; cursor:pointer; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.9rem; letter-spacing:1px; text-transform:uppercase; background:var(--log); color:#fff; }
-.btn-modal-cancel { flex:1; padding:12px; border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.9rem; letter-spacing:1px; text-transform:uppercase; }
-
-/* toast */
-.toast { position:fixed; bottom:calc(70px + var(--safe-bottom)); left:50%; transform:translateX(-50%) translateY(20px); background:var(--surface3); border:1px solid var(--border); border-radius:8px; padding:10px 16px; font-size:0.78rem; color:var(--text); opacity:0; transition:all 0.25s; z-index:300; white-space:nowrap; pointer-events:none; }
-.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
-
-@media (min-width:700px) {
-  body { overflow:auto; height:auto; }
-  .scroll-area { overflow:visible; padding:20px 32px 80px; max-width:760px; margin:0 auto; width:100%; }
-  .top-bar { padding:20px 32px 12px; }
-  .schedule-bar { padding:8px 32px; max-width:760px; margin:0 auto; }
-  .bottom-nav { position:sticky; bottom:0; }
-  .ex-body { display:block !important; }
-  .chevron { display:none; }
-}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;display:flex;flex-direction:column;}
+.top-bar{flex-shrink:0;padding:12px 16px 10px;padding-top:max(12px,var(--safe-top));border-bottom:1px solid var(--border);background:rgba(13,13,13,0.97);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
+.top-bar h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.5rem;text-transform:uppercase;letter-spacing:-0.5px;line-height:1;transition:color 0.3s;}
+body.day-push .top-bar h1{color:var(--push);}body.day-pull .top-bar h1{color:var(--pull);}
+body.day-legs .top-bar h1{color:var(--legs);}body.day-abs .top-bar h1{color:var(--abs);}
+body.day-log .top-bar h1{color:var(--log);}
+.quote-text{font-size:0.65rem;color:var(--dim);font-style:italic;font-weight:300;margin-top:4px;line-height:1.4;}
+.schedule-bar{flex-shrink:0;display:flex;gap:4px;padding:8px 12px;background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;}
+.schedule-bar::-webkit-scrollbar{display:none;}
+.sched-day{flex:1;min-width:36px;text-align:center;padding:5px 3px;border-radius:6px;border:1px solid var(--border);background:var(--bg);position:relative;}
+.sched-day .sd{font-family:'Barlow Condensed',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);}
+.sched-day .st{font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;font-weight:900;text-transform:uppercase;margin-top:1px;}
+.sched-day.t-push .st{color:var(--push);}.sched-day.t-pull .st{color:var(--pull);}
+.sched-day.t-legs .st{color:var(--legs);}.sched-day.t-rest .st{color:var(--dim);}
+.sched-day.today{border-color:var(--muted);}
+.sched-day.done::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;}
+.sched-day.t-push.done::after{background:var(--push);}.sched-day.t-pull.done::after{background:var(--pull);}
+.sched-day.t-legs.done::after{background:var(--legs);}
+.scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:14px 14px calc(72px + var(--safe-bottom));}
+.day-panel{display:none;}.day-panel.active{display:block;animation:fadeUp 0.2s ease;}
+.log-panel{display:none;}.log-panel.active{display:block;animation:fadeUp 0.2s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.day-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.day-label{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:3.4rem;text-transform:uppercase;letter-spacing:-2px;line-height:1;}
+.push .day-label{color:var(--push);}.pull .day-label{color:var(--pull);}
+.legs .day-label{color:var(--legs);}.abs-d .day-label{color:var(--abs);}
+.day-meta{border-left:1px solid var(--border);padding-left:12px;}
+.day-meta .focus{font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.day-meta .muscles{font-size:0.82rem;color:var(--text);margin-top:2px;line-height:1.3;}
+.day-meta .duration{font-size:0.68rem;color:var(--dim);margin-top:3px;}
+.log-day-row{display:flex;gap:6px;margin-bottom:10px;}
+.btn-log-day{flex:1;padding:10px 16px;border-radius:8px;border:none;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.88rem;letter-spacing:1px;text-transform:uppercase;}
+.push .btn-log-day{background:var(--push);color:#fff;}.pull .btn-log-day{background:var(--pull);color:#fff;}
+.legs .btn-log-day{background:var(--legs);color:#000;}.abs-d .btn-log-day{background:var(--abs);color:#000;}
+.btn-log-rest{padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:1px;text-transform:uppercase;}
+.day-logged-badge{display:none;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface);margin-bottom:10px;}
+.day-logged-badge.show{display:flex;}
+.badge-dot{width:6px;height:6px;border-radius:50%;}
+.notes-box{background:var(--surface);border:1px solid var(--border);border-left-width:3px;border-radius:8px;padding:10px 13px;margin-bottom:14px;font-size:0.78rem;color:var(--muted);line-height:1.6;}
+.push .notes-box{border-left-color:var(--push);}.pull .notes-box{border-left-color:var(--pull);}
+.legs .notes-box{border-left-color:var(--legs);}.abs-d .notes-box{border-left-color:var(--abs);}
+.notes-box strong{display:block;font-family:'Barlow Condensed',sans-serif;font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:4px;}
+.section{margin-bottom:20px;}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--dim);padding-bottom:7px;margin-bottom:7px;border-bottom:1px solid var(--border);}
+.superset-group{position:relative;padding-left:10px;}
+.superset-group::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;border-radius:2px;}
+.push .superset-group::before{background:var(--push);opacity:0.6;}.pull .superset-group::before{background:var(--pull);opacity:0.6;}
+.legs .superset-group::before{background:var(--legs);opacity:0.6;}
+.superset-label{font-family:'Barlow Condensed',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);padding:0 0 4px 2px;display:block;}
+.exercise{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:6px;overflow:hidden;}
+.exercise.open{border-color:#333;}
+.ex-header{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;cursor:pointer;user-select:none;gap:8px;min-height:52px;}
+.ex-header-left{flex:1;min-width:0;}
+.ex-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.95rem;text-transform:uppercase;letter-spacing:0.2px;color:var(--text);line-height:1.2;}
+.ex-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px;}
+.tag{font-size:0.58rem;font-weight:500;letter-spacing:0.8px;text-transform:uppercase;padding:2px 5px;border-radius:3px;background:var(--surface2);color:var(--dim);border:1px solid var(--border);white-space:nowrap;}
+.tag.cali{color:var(--muted);}
+.push .tag.target{background:rgba(232,93,38,0.12);color:var(--push);border-color:rgba(232,93,38,0.3);}
+.pull .tag.target{background:rgba(38,136,232,0.12);color:var(--pull);border-color:rgba(38,136,232,0.3);}
+.legs .tag.target{background:rgba(38,196,122,0.12);color:var(--legs);border-color:rgba(38,196,122,0.3);}
+.abs-d .tag.target{background:rgba(232,196,38,0.12);color:var(--abs);border-color:rgba(232,196,38,0.3);}
+.ex-header-right{display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;gap:2px;}
+.sets-reps{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;color:var(--text);white-space:nowrap;}
+.rest-label{font-size:0.62rem;color:var(--dim);white-space:nowrap;}
+.chevron{width:15px;height:15px;margin-left:5px;flex-shrink:0;color:var(--dim);transition:transform 0.2s;}
+.exercise.open .chevron{transform:rotate(180deg);}
+.ex-body{display:none;padding:0 13px 13px;border-top:1px solid var(--border);}
+.exercise.open .ex-body{display:block;}
+.ex-desc{font-size:0.8rem;color:var(--muted);line-height:1.6;font-weight:300;padding-top:10px;}
+/* LOG TAB */
+.log-section-title{font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--dim);padding-bottom:8px;margin-bottom:12px;border-bottom:1px solid var(--border);}
+.streak-row{display:flex;gap:8px;margin-bottom:20px;}
+.streak-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 12px;}
+.streak-card .sc-val{font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:900;color:var(--log);line-height:1;}
+.streak-card .sc-label{font-size:0.62rem;color:var(--dim);margin-top:2px;text-transform:uppercase;letter-spacing:1px;}
+.calendar-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.cal-nav{background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer;padding:6px 12px;font-size:0.85rem;}
+.cal-month{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:24px;}
+.cal-dow{font-family:'Barlow Condensed',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--dim);text-align:center;padding:3px 0 5px;}
+.cal-day{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:0.8rem;font-weight:700;color:var(--dim);background:var(--surface);border:1px solid transparent;gap:1px;}
+.cal-day.other-month{opacity:0.2;}.cal-day.today{border-color:var(--muted);color:var(--text);}
+.cal-day.has-push{background:rgba(232,93,38,0.15);color:var(--push);border-color:rgba(232,93,38,0.25);}
+.cal-day.has-pull{background:rgba(38,136,232,0.15);color:var(--pull);border-color:rgba(38,136,232,0.25);}
+.cal-day.has-legs{background:rgba(38,196,122,0.15);color:var(--legs);border-color:rgba(38,196,122,0.25);}
+.cal-day.has-abs{background:rgba(232,196,38,0.15);color:var(--abs);border-color:rgba(232,196,38,0.25);}
+.cal-day.has-rest{background:var(--surface2);color:var(--dim);}
+.cal-day-type{font-size:0.48rem;letter-spacing:0.5px;text-transform:uppercase;opacity:0.8;}
+.muscle-summary{margin-bottom:20px;}
+.muscle-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.muscle-row:last-child{border-bottom:none;}
+.muscle-name{font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;font-weight:700;text-transform:uppercase;color:var(--text);width:95px;flex-shrink:0;}
+.muscle-bar-wrap{flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+.muscle-bar{height:100%;border-radius:3px;transition:width 0.4s ease;}
+.muscle-count{font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;color:var(--dim);width:32px;text-align:right;flex-shrink:0;}
+.history-entry{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.history-day-label{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:900;text-transform:uppercase;}
+.history-date{font-size:0.68rem;color:var(--dim);margin-top:1px;}
+.history-muscles{font-size:0.72rem;color:var(--muted);margin-top:3px;}
+.btn-del{background:none;border:none;color:var(--dim);cursor:pointer;font-size:0.8rem;padding:4px;}
+.no-history{font-size:0.8rem;color:var(--dim);font-style:italic;text-align:center;padding:24px 0;}
+.toast{position:fixed;bottom:calc(68px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(12px);background:var(--surface3);border:1px solid var(--border);border-radius:8px;padding:9px 16px;font-size:0.78rem;color:var(--text);opacity:0;transition:all 0.25s;z-index:300;white-space:nowrap;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:flex-end;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border-radius:14px 14px 0 0;padding:20px 16px;padding-bottom:calc(20px + var(--safe-bottom));width:100%;border-top:1px solid var(--border);}
+.modal h3{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:900;text-transform:uppercase;color:var(--text);margin-bottom:6px;}
+.modal p{font-size:0.78rem;color:var(--muted);margin-bottom:16px;line-height:1.5;}
+.modal-actions{display:flex;gap:8px;}
+.btn-modal-confirm{flex:1;padding:12px;border-radius:8px;border:none;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:1px;text-transform:uppercase;background:var(--log);color:#fff;}
+.btn-modal-cancel{flex:1;padding:12px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:1px;text-transform:uppercase;}
+.bottom-nav{flex-shrink:0;display:flex;background:var(--surface);border-top:1px solid var(--border);padding-bottom:var(--safe-bottom);}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9px 2px;border:none;background:transparent;cursor:pointer;gap:3px;min-height:52px;}
+.nav-btn .nav-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:1px;text-transform:uppercase;color:var(--dim);transition:color 0.15s;}
+.nav-btn .nav-dot{width:4px;height:4px;border-radius:50%;background:transparent;transition:background 0.15s;}
+.nav-btn.active-push .nav-label{color:var(--push);}.nav-btn.active-push .nav-dot{background:var(--push);}
+.nav-btn.active-pull .nav-label{color:var(--pull);}.nav-btn.active-pull .nav-dot{background:var(--pull);}
+.nav-btn.active-legs .nav-label{color:var(--legs);}.nav-btn.active-legs .nav-dot{background:var(--legs);}
+.nav-btn.active-abs .nav-label{color:var(--abs);}.nav-btn.active-abs .nav-dot{background:var(--abs);}
+.nav-btn.active-log .nav-label{color:var(--log);}.nav-btn.active-log .nav-dot{background:var(--log);}
+@media(min-width:700px){body{overflow:auto;height:auto;}.scroll-area{overflow:visible;padding:20px 32px 80px;max-width:760px;margin:0 auto;width:100%;}.top-bar{padding:20px 32px 12px;}.schedule-bar{padding:8px 32px;max-width:760px;margin:0 auto;}.bottom-nav{position:sticky;bottom:0;}.ex-body{display:block!important;}.chevron{display:none;}}
 </style>
 </head>
 <body class="day-push">
-
 <div class="top-bar">
-  <div class="top-bar-row1">
-    <h1>Push / Pull / Legs</h1>
-  </div>
+  <h1>Push / Pull / Legs</h1>
   <div class="quote-text" id="dailyQuote"></div>
 </div>
-
-<div class="schedule-bar" id="scheduleBar">
-  <div class="sched-day t-push" data-dow="0"><div class="sd">Mon</div><div class="st">Push</div></div>
-  <div class="sched-day t-pull" data-dow="1"><div class="sd">Tue</div><div class="st">Pull</div></div>
-  <div class="sched-day t-legs" data-dow="2"><div class="sd">Wed</div><div class="st">Legs</div></div>
-  <div class="sched-day t-rest" data-dow="3"><div class="sd">Thu</div><div class="st">Rest</div></div>
-  <div class="sched-day t-push" data-dow="4"><div class="sd">Fri</div><div class="st">Push</div></div>
-  <div class="sched-day t-pull" data-dow="5"><div class="sd">Sat</div><div class="st">Pull</div></div>
-  <div class="sched-day t-legs" data-dow="6"><div class="sd">Sun</div><div class="st">Legs</div></div>
+<div class="schedule-bar">
+  <div class="sched-day t-push"><div class="sd">Mon</div><div class="st">Push</div></div>
+  <div class="sched-day t-pull"><div class="sd">Tue</div><div class="st">Pull</div></div>
+  <div class="sched-day t-legs"><div class="sd">Wed</div><div class="st">Legs</div></div>
+  <div class="sched-day t-rest"><div class="sd">Thu</div><div class="st">Rest</div></div>
+  <div class="sched-day t-push"><div class="sd">Fri</div><div class="st">Push</div></div>
+  <div class="sched-day t-pull"><div class="sd">Sat</div><div class="st">Pull</div></div>
+  <div class="sched-day t-legs"><div class="sd">Sun</div><div class="st">Legs</div></div>
 </div>
-
 <div class="scroll-area">
 
-<!-- ===== PUSH ===== -->
+<!-- PUSH -->
 <div id="panel-push" class="day-panel push active">
-  <div class="day-header">
-    <div class="day-label">Push</div>
-    <div class="day-meta">
-      <div class="focus">Focus</div>
-      <div class="muscles">Chest · Shoulders · Triceps</div>
-      <div class="duration">~50 min</div>
-    </div>
-  </div>
-  <div class="start-btn">
-    <button class="btn-start-workout" onclick="startWorkout('push')">Start Session</button>
-    <button class="btn-rest-day" onclick="logRestDay('push')">Log Rest</button>
-  </div>
+  <div class="day-header"><div class="day-label">Push</div><div class="day-meta"><div class="focus">Focus</div><div class="muscles">Chest · Shoulders · Triceps</div><div class="duration">~50 min</div></div></div>
+  <div class="log-day-row"><button class="btn-log-day" onclick="logDay('push')">Log Today's Push</button><button class="btn-log-rest" onclick="logRest()">Rest Day</button></div>
+  <div class="day-logged-badge" id="badge-push"><span class="badge-dot" style="background:var(--push)"></span><span>Logged today</span></div>
   <div class="notes-box"><strong>Tips</strong>Superset laterals with front raises to save time. Flat and incline press are your heaviest lifts so do those first. If you're short on time, drop one of the finisher push-up sets.</div>
   <div style="height:4px"></div>
-
-  <div class="section">
-    <div class="section-title">Chest</div>
-    <div class="exercise" data-exid="db-flat-press" data-day="push" data-muscle="Chest" data-sets="4">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left">
-          <div class="ex-name">Dumbbell Flat Bench Press</div>
-          <div class="ex-tags"><span class="tag target">Pec major (sternal)</span></div>
-        </div>
-        <div class="ex-header-right"><div class="sets-reps">4 × 8–10</div><div class="rest-label">90s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body">
-        <div class="ex-desc">Primary chest mass builder. Control the descent, pause briefly at the chest, drive up. Keep your shoulder blades pinched back into the bench throughout.</div>
-        <div class="log-area" id="log-db-flat-press"></div>
-      </div>
-    </div>
-    <div class="exercise" data-exid="incline-db-press" data-day="push" data-muscle="Chest" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left">
-          <div class="ex-name">Incline Dumbbell Press</div>
-          <div class="ex-tags"><span class="tag target">Pec major (clavicular)</span></div>
-        </div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">75s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body">
-        <div class="ex-desc">Set bench to 30–45°. Hits the upper chest that flat work misses. Keep elbows at about 70° to the torso, not flared wide.</div>
-        <div class="log-area" id="log-incline-db-press"></div>
-      </div>
-    </div>
-    <div class="exercise" data-exid="db-chest-fly" data-day="push" data-muscle="Chest" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left">
-          <div class="ex-name">Dumbbell Chest Fly</div>
-          <div class="ex-tags"><span class="tag target">Pec major (stretch)</span><span class="tag">Pec minor</span></div>
-        </div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 12–15</div><div class="rest-label">60s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body">
-        <div class="ex-desc">Flat bench. Arms slightly bent, lower wide until you feel a deep stretch, squeeze back together. Isolation move, go lighter than you think.</div>
-        <div class="log-area" id="log-db-chest-fly"></div>
-      </div>
-    </div>
-    <div class="exercise" data-exid="push-ups" data-day="push" data-muscle="Chest" data-sets="2" data-bodyweight="true">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left">
-          <div class="ex-name">Push-Ups</div>
-          <div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Pec minor · Serratus</span></div>
-        </div>
-        <div class="ex-header-right"><div class="sets-reps">2 × Fail</div><div class="rest-label">60s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body">
-        <div class="ex-desc">Finisher. Hands slightly wider than shoulder-width. Go to failure or do slow negatives (3 sec down).</div>
-        <div class="log-area" id="log-push-ups"></div>
-      </div>
+  <div class="section"><div class="section-title">Chest</div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Flat Bench Press</div><div class="ex-tags"><span class="tag target">Pec major (sternal)</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 8–10</div><div class="rest-label">90s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Primary chest mass builder. Control the descent, pause briefly at the chest, drive up. Keep your shoulder blades pinched back into the bench throughout.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Incline Dumbbell Press</div><div class="ex-tags"><span class="tag target">Pec major (clavicular)</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Set bench to 30–45°. Hits the upper chest that flat work misses. Keep elbows at about 70° to the torso, not flared wide.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Chest Fly</div><div class="ex-tags"><span class="tag target">Pec major (stretch)</span><span class="tag">Pec minor</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 12–15</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Flat bench. Arms slightly bent, lower wide until you feel a deep stretch, squeeze back together. Isolation move, go lighter than you think.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Push-Ups</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Pec minor · Serratus</span></div></div><div class="ex-header-right"><div class="sets-reps">2 × Fail</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Finisher. Hands slightly wider than shoulder-width. Go to failure or do slow negatives (3 sec down). Great for serratus anterior and pec minor activation.</div></div></div>
+  </div>
+  <div class="section"><div class="section-title">Shoulders</div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Seated DB Overhead Press</div><div class="ex-tags"><span class="tag target">Anterior delt</span><span class="tag">Medial delt</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 8–10</div><div class="rest-label">90s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Bench fully upright. Shoulder mass builder. Press to full extension, lower to ear level. Core tight throughout.</div></div></div>
+    <div class="superset-group"><span class="superset-label">Superset</span>
+      <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Lateral Raise</div><div class="ex-tags"><span class="tag target">Medial delt</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 12–15</div><div class="rest-label">no rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Lead with the elbow, slight forward tilt, raise to shoulder height. Avoid shrugging. Slow and controlled, not swung.</div></div></div>
+      <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Front Raise</div><div class="ex-tags"><span class="tag target">Anterior delt</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Alternating or both arms. Raise to shoulder height, no higher. Slight bend in elbow. Rounds out the front delt that pressing alone doesn't fully isolate.</div></div></div>
     </div>
   </div>
-
-  <div class="section">
-    <div class="section-title">Shoulders</div>
-    <div class="exercise" data-exid="seated-ohp" data-day="push" data-muscle="Shoulders" data-sets="4">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left">
-          <div class="ex-name">Seated DB Overhead Press</div>
-          <div class="ex-tags"><span class="tag target">Anterior delt</span><span class="tag">Medial delt</span></div>
-        </div>
-        <div class="ex-header-right"><div class="sets-reps">4 × 8–10</div><div class="rest-label">90s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body">
-        <div class="ex-desc">Bench fully upright. Press to full extension, lower to ear level. Core tight throughout.</div>
-        <div class="log-area" id="log-seated-ohp"></div>
-      </div>
-    </div>
-    <div class="superset-group">
-      <span class="superset-label">Superset</span>
-      <div class="exercise" data-exid="lateral-raise" data-day="push" data-muscle="Shoulders" data-sets="4">
-        <div class="ex-header" onclick="toggle(this)">
-          <div class="ex-header-left">
-            <div class="ex-name">Dumbbell Lateral Raise</div>
-            <div class="ex-tags"><span class="tag target">Medial delt</span></div>
-          </div>
-          <div class="ex-header-right"><div class="sets-reps">4 × 12–15</div><div class="rest-label">no rest</div></div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="ex-body">
-          <div class="ex-desc">Lead with the elbow, slight forward tilt, raise to shoulder height. Avoid shrugging. Slow and controlled.</div>
-          <div class="log-area" id="log-lateral-raise"></div>
-        </div>
-      </div>
-      <div class="exercise" data-exid="front-raise" data-day="push" data-muscle="Shoulders" data-sets="3">
-        <div class="ex-header" onclick="toggle(this)">
-          <div class="ex-header-left">
-            <div class="ex-name">Dumbbell Front Raise</div>
-            <div class="ex-tags"><span class="tag target">Anterior delt</span></div>
-          </div>
-          <div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">60s rest</div></div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="ex-body">
-          <div class="ex-desc">Alternating or both arms. Raise to shoulder height, no higher. Slight bend in elbow.</div>
-          <div class="log-area" id="log-front-raise"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-title">Triceps</div>
-    <div class="exercise" data-exid="skull-crushers" data-day="push" data-muscle="Triceps" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left">
-          <div class="ex-name">Dumbbell Skull Crushers</div>
-          <div class="ex-tags"><span class="tag target">Long head</span><span class="tag">Medial head</span></div>
-        </div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">75s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body">
-        <div class="ex-desc">Flat bench. Lower dumbbells to the sides of your head, elbows pointing up. Key for overall tricep size.</div>
-        <div class="log-area" id="log-skull-crushers"></div>
-      </div>
-    </div>
-    <div class="exercise" data-exid="overhead-ext" data-day="push" data-muscle="Triceps" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left">
-          <div class="ex-name">Overhead DB Extension</div>
-          <div class="ex-tags"><span class="tag target">Long head (stretch)</span></div>
-        </div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">60s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body">
-        <div class="ex-desc">One dumbbell held with both hands overhead. Lower behind your head, elbows in tight.</div>
-        <div class="log-area" id="log-overhead-ext"></div>
-      </div>
-    </div>
-    <div class="exercise" data-exid="diamond-pushups" data-day="push" data-muscle="Triceps" data-sets="2" data-bodyweight="true">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left">
-          <div class="ex-name">Diamond / Close-Grip Push-Ups</div>
-          <div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Lateral head</span></div>
-        </div>
-        <div class="ex-header-right"><div class="sets-reps">2 × Fail</div><div class="rest-label">60s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body">
-        <div class="ex-desc">Hands form a diamond or stay close. Elbows track back along your torso, not flared.</div>
-        <div class="log-area" id="log-diamond-pushups"></div>
-      </div>
-    </div>
+  <div class="section"><div class="section-title">Triceps</div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Skull Crushers</div><div class="ex-tags"><span class="tag target">Long head</span><span class="tag">Medial head</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Flat bench. Lower dumbbells to the sides of your head, elbows pointing up. The long head gets the best stretch in this position. Key for overall tricep size.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Overhead DB Extension</div><div class="ex-tags"><span class="tag target">Long head (stretch)</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">One dumbbell held with both hands overhead. Lower behind your head, elbows in tight. The stretch-loaded position on the long head is unmatched for growth.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Diamond / Close-Grip Push-Ups</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Lateral head</span><span class="tag">Medial head</span></div></div><div class="ex-header-right"><div class="sets-reps">2 × Fail</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Hands form a diamond or stay close. Elbows track back along your torso, not flared. Great finisher that hits the lateral head differently than DB work.</div></div></div>
   </div>
 </div>
 
-<!-- ===== PULL ===== -->
+<!-- PULL -->
 <div id="panel-pull" class="day-panel pull">
-  <div class="day-header">
-    <div class="day-label">Pull</div>
-    <div class="day-meta">
-      <div class="focus">Focus</div>
-      <div class="muscles">Back · Biceps · Forearms · Rear Delts</div>
-      <div class="duration">~55 min</div>
-    </div>
-  </div>
-  <div class="start-btn">
-    <button class="btn-start-workout" onclick="startWorkout('pull')">Start Session</button>
-    <button class="btn-rest-day" onclick="logRestDay('pull')">Log Rest</button>
-  </div>
-  <div class="notes-box"><strong>Tips</strong>You don't need all the bicep variations every session. Rotate: one session do curls + incline curls, another do Zottmans + concentration curls. Always superset the two wrist curl variations back to back.</div>
+  <div class="day-header"><div class="day-label">Pull</div><div class="day-meta"><div class="focus">Focus</div><div class="muscles">Back · Biceps · Forearms · Rear Delts</div><div class="duration">~55 min</div></div></div>
+  <div class="log-day-row"><button class="btn-log-day" onclick="logDay('pull')">Log Today's Pull</button><button class="btn-log-rest" onclick="logRest()">Rest Day</button></div>
+  <div class="day-logged-badge" id="badge-pull"><span class="badge-dot" style="background:var(--pull)"></span><span>Logged today</span></div>
+  <div class="notes-box"><strong>Tips</strong>You don't need all the bicep variations every session. Rotate: one session do curls + incline curls, another do Zottmans + concentration curls. Always superset the two wrist curl variations back to back. Reverse curls can replace hammer curls on alternating weeks.</div>
   <div style="height:4px"></div>
-
-  <div class="section">
-    <div class="section-title">Back</div>
-    <div class="exercise" data-exid="db-row" data-day="pull" data-muscle="Back" data-sets="4">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left">
-          <div class="ex-name">Dumbbell Row</div>
-          <div class="ex-tags"><span class="tag target">Latissimus dorsi</span><span class="tag">Mid traps</span></div>
-        </div>
-        <div class="ex-header-right"><div class="sets-reps">4 × 8–10</div><div class="rest-label">90s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body">
-        <div class="ex-desc">Brace a knee and hand on the bench. Row to your hip, leading with the elbow. Full stretch at the bottom, full squeeze at the top.</div>
-        <div class="log-area" id="log-db-row"></div>
-      </div>
-    </div>
-    <div class="exercise" data-exid="pullups" data-day="pull" data-muscle="Back" data-sets="3" data-bodyweight="true">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left">
-          <div class="ex-name">Pull-Ups / Chin-Ups</div>
-          <div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Lats (width)</span><span class="tag">Biceps</span></div>
-        </div>
-        <div class="ex-header-right"><div class="sets-reps">3 × Fail</div><div class="rest-label">90s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body">
-        <div class="ex-desc">Pull-ups (overhand) bias lats more; chin-ups (underhand) bring in more biceps. Go to failure every set.</div>
-        <div class="log-area" id="log-pullups"></div>
-      </div>
-    </div>
-    <div class="exercise" data-exid="incline-prone-row" data-day="pull" data-muscle="Back" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left">
-          <div class="ex-name">Incline Prone DB Row</div>
-          <div class="ex-tags"><span class="tag target">Mid / lower traps</span><span class="tag">Rhomboids</span></div>
-        </div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">75s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body">
-        <div class="ex-desc">Set bench to 45°, lie chest-down, dumbbells hanging. Row both up, elbows flared to 90°.</div>
-        <div class="log-area" id="log-incline-prone-row"></div>
-      </div>
-    </div>
-    <div class="exercise" data-exid="db-deadlift" data-day="pull" data-muscle="Back" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left">
-          <div class="ex-name">Dumbbell Deadlift</div>
-          <div class="ex-tags"><span class="tag target">Erector spinae</span><span class="tag">Lower back</span></div>
-        </div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 10</div><div class="rest-label">90s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body">
-        <div class="ex-desc">Dumbbells at your sides, hip hinge (not a squat), flat back throughout. Push the floor away on the way up.</div>
-        <div class="log-area" id="log-db-deadlift"></div>
-      </div>
+  <div class="section"><div class="section-title">Back</div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Row</div><div class="ex-tags"><span class="tag target">Latissimus dorsi</span><span class="tag">Mid traps</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 8–10</div><div class="rest-label">90s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Brace a knee and hand on the bench. Row the dumbbell to your hip, leading with the elbow. Full stretch at the bottom, full squeeze at the top. Primary lat builder.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Pull-Ups / Chin-Ups</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Lats (width)</span><span class="tag">Biceps</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × Fail</div><div class="rest-label">90s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Pull-ups (overhand) bias lats more; chin-ups (underhand) bring in more biceps. Go to failure every set. Even 3–5 reps per set adds up.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Incline Prone DB Row</div><div class="ex-tags"><span class="tag target">Mid / lower traps</span><span class="tag">Rhomboids</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Set bench to 45°, lie chest-down, dumbbells hanging. Row both up, elbows flared to 90°. Excellent for postural muscles and upper back thickness standard rows miss.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Deadlift</div><div class="ex-tags"><span class="tag target">Erector spinae</span><span class="tag">Lower back</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10</div><div class="rest-label">90s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Dumbbells at your sides, hip hinge (not a squat), flat back throughout. Push the floor away on the way up. Builds spinal erectors and teaches the hinge pattern.</div></div></div>
+  </div>
+  <div class="section"><div class="section-title">Biceps</div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Curl</div><div class="ex-tags"><span class="tag target">Biceps brachii (short head)</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Standing, alternating. Supinate (rotate) the wrist as you curl up. Full range of motion, no swinging. Primary bicep builder targeting the short head and outer peak.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Incline Dumbbell Curl</div><div class="ex-tags"><span class="tag target">Biceps brachii (long head)</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Bench at 45–60°, lean back, arms hang fully behind you. Puts the long head in a deep stretch standing curls can't replicate. Slower and more controlled.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Hammer Curl</div><div class="ex-tags"><span class="tag target">Brachialis</span><span class="tag">Brachioradialis</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Neutral (thumbs-up) grip throughout. The brachialis sits beneath the bicep and, when developed, pushes the bicep up making arms look thicker.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Concentration Curl</div><div class="ex-tags"><span class="tag target">Biceps (short head)</span><span class="tag">Peak isolation</span></div></div><div class="ex-header-right"><div class="sets-reps">2 × 12 /side</div><div class="rest-label">45s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Seated, elbow braced against the inside of your thigh, curl up. Eliminates all momentum. Best used as a finisher after heavier curl work.</div></div></div>
+  </div>
+  <div class="section"><div class="section-title">Forearms</div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Zottman Curl</div><div class="ex-tags"><span class="tag target">Brachioradialis</span><span class="tag">Biceps brachii</span><span class="tag">Brachialis</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Curl up supinated (palms up), rotate to pronated (palms down) at the top, lower slowly. Trains all three elbow flexors through their strongest positions in one movement.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Reverse Curl</div><div class="ex-tags"><span class="tag target">Brachioradialis</span><span class="tag">Extensor carpi</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Overhand (pronated) grip, curl up the same as a normal curl. Brachioradialis does most of the work. Also hits the wrist extensors, important for elbow health.</div></div></div>
+    <div class="superset-group"><span class="superset-label">Superset</span>
+      <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Wrist Curl (Supinated)</div><div class="ex-tags"><span class="tag target">Flexor carpi radialis</span><span class="tag">Flexor carpi ulnaris</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 15–20</div><div class="rest-label">no rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Forearms on thighs or bench edge, palms up. Curl the wrist up and lower slowly. Builds the inner forearm belly. Go light, this is pure isolation.</div></div></div>
+      <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Wrist Curl (Pronated)</div><div class="ex-tags"><span class="tag target">Extensor carpi radialis</span><span class="tag">Extensor carpi ulnaris</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 15–20</div><div class="rest-label">30s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Same setup but palms down. Extend the wrist up against gravity. The most neglected forearm muscles, and a common source of lateral elbow pain when weak.</div></div></div>
     </div>
   </div>
-
-  <div class="section">
-    <div class="section-title">Biceps</div>
-    <div class="exercise" data-exid="db-curl" data-day="pull" data-muscle="Biceps" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Dumbbell Curl</div><div class="ex-tags"><span class="tag target">Biceps brachii (short head)</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">60s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Standing, alternating. Supinate the wrist as you curl up. Full range of motion, no swinging.</div><div class="log-area" id="log-db-curl"></div></div>
-    </div>
-    <div class="exercise" data-exid="incline-curl" data-day="pull" data-muscle="Biceps" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Incline Dumbbell Curl</div><div class="ex-tags"><span class="tag target">Biceps brachii (long head)</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">60s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Bench at 45–60°, lean back, arms hang fully behind you. The long head gets a deep stretch standing curls can't replicate.</div><div class="log-area" id="log-incline-curl"></div></div>
-    </div>
-    <div class="exercise" data-exid="hammer-curl" data-day="pull" data-muscle="Biceps" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Hammer Curl</div><div class="ex-tags"><span class="tag target">Brachialis</span><span class="tag">Brachioradialis</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">60s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Neutral (thumbs-up) grip throughout. Builds brachialis, which pushes the bicep up making arms look thicker.</div><div class="log-area" id="log-hammer-curl"></div></div>
-    </div>
-    <div class="exercise" data-exid="concentration-curl" data-day="pull" data-muscle="Biceps" data-sets="2">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Concentration Curl</div><div class="ex-tags"><span class="tag target">Biceps (short head)</span><span class="tag">Peak isolation</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">2 × 12 /side</div><div class="rest-label">45s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Seated, elbow braced against inside of thigh. Eliminates momentum. Best as a finisher after heavier curl work.</div><div class="log-area" id="log-concentration-curl"></div></div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-title">Forearms</div>
-    <div class="exercise" data-exid="zottman-curl" data-day="pull" data-muscle="Forearms" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Zottman Curl</div><div class="ex-tags"><span class="tag target">Brachioradialis</span><span class="tag">Biceps brachii</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 10</div><div class="rest-label">60s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Curl up supinated, rotate to pronated at the top, lower slowly. Trains all three elbow flexors in one movement.</div><div class="log-area" id="log-zottman-curl"></div></div>
-    </div>
-    <div class="exercise" data-exid="reverse-curl" data-day="pull" data-muscle="Forearms" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Reverse Curl</div><div class="ex-tags"><span class="tag target">Brachioradialis</span><span class="tag">Extensor carpi</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">60s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Overhand grip, curl up the same as a normal curl. Important for elbow health.</div><div class="log-area" id="log-reverse-curl"></div></div>
-    </div>
-    <div class="superset-group">
-      <span class="superset-label">Superset</span>
-      <div class="exercise" data-exid="wrist-curl-sup" data-day="pull" data-muscle="Forearms" data-sets="3">
-        <div class="ex-header" onclick="toggle(this)">
-          <div class="ex-header-left"><div class="ex-name">Wrist Curl (Supinated)</div><div class="ex-tags"><span class="tag target">Flexor carpi radialis</span></div></div>
-          <div class="ex-header-right"><div class="sets-reps">3 × 15–20</div><div class="rest-label">no rest</div></div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="ex-body"><div class="ex-desc">Forearms on thighs or bench edge, palms up. Curl the wrist up and lower slowly.</div><div class="log-area" id="log-wrist-curl-sup"></div></div>
-      </div>
-      <div class="exercise" data-exid="wrist-curl-pro" data-day="pull" data-muscle="Forearms" data-sets="3">
-        <div class="ex-header" onclick="toggle(this)">
-          <div class="ex-header-left"><div class="ex-name">Wrist Curl (Pronated)</div><div class="ex-tags"><span class="tag target">Extensor carpi radialis</span></div></div>
-          <div class="ex-header-right"><div class="sets-reps">3 × 15–20</div><div class="rest-label">30s rest</div></div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="ex-body"><div class="ex-desc">Same setup but palms down. Extend the wrist up against gravity. Superset directly with the supinated version.</div><div class="log-area" id="log-wrist-curl-pro"></div></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section">
-    <div class="section-title">Rear Delts</div>
-    <div class="exercise" data-exid="reverse-fly" data-day="pull" data-muscle="Shoulders" data-sets="4">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Bent-Over Reverse Fly</div><div class="ex-tags"><span class="tag target">Posterior delt</span><span class="tag">Lower traps</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">4 × 12–15</div><div class="rest-label">60s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Hinge forward to ~45°, raise arms out to sides, pinch shoulder blades. Rear delts matter a lot for shoulder health and posture.</div><div class="log-area" id="log-reverse-fly"></div></div>
-    </div>
-    <div class="exercise" data-exid="face-pull" data-day="pull" data-muscle="Shoulders" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Face Pull (floor variation)</div><div class="ex-tags"><span class="tag target">Posterior delt</span><span class="tag">Rotator cuff</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 15</div><div class="rest-label">60s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Lie face-down on bench with light dumbbells, row up and back, externally rotating at the top. Crucial for rotator cuff longevity.</div><div class="log-area" id="log-face-pull"></div></div>
-    </div>
+  <div class="section"><div class="section-title">Rear Delts</div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Bent-Over Reverse Fly</div><div class="ex-tags"><span class="tag target">Posterior delt</span><span class="tag">Lower traps</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 12–15</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Hinge forward to ~45°, arms hanging. Raise arms out to the sides with a slight bend at the elbow, pinch the shoulder blades. Rear delts are almost always undertrained and matter a lot for shoulder health and posture.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Face Pull (floor variation)</div><div class="ex-tags"><span class="tag target">Posterior delt</span><span class="tag">Rotator cuff</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 15</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Lie face-down on the bench with light dumbbells, arms hanging. Row the weights up and back, externally rotating at the top. Crucial for shoulder health and rotator cuff longevity.</div></div></div>
   </div>
 </div>
 
-<!-- ===== LEGS ===== -->
+<!-- LEGS -->
 <div id="panel-legs" class="day-panel legs">
-  <div class="day-header">
-    <div class="day-label">Legs</div>
-    <div class="day-meta">
-      <div class="focus">Focus</div>
-      <div class="muscles">Quads · Hamstrings · Glutes · Calves</div>
-      <div class="duration">~55 min</div>
-    </div>
-  </div>
-  <div class="start-btn">
-    <button class="btn-start-workout" onclick="startWorkout('legs')">Start Session</button>
-    <button class="btn-rest-day" onclick="logRestDay('legs')">Log Rest</button>
-  </div>
-  <div class="notes-box"><strong>Tips</strong>Do the full warmup first (~8 min). Keep the heaviest compounds first: goblet squat, then RDL. Superset standing and seated calf raises back to back, then tibialis raises.</div>
+  <div class="day-header"><div class="day-label">Legs</div><div class="day-meta"><div class="focus">Focus</div><div class="muscles">Quads · Hamstrings · Glutes · Calves</div><div class="duration">~55 min</div></div></div>
+  <div class="log-day-row"><button class="btn-log-day" onclick="logDay('legs')">Log Today's Legs</button><button class="btn-log-rest" onclick="logRest()">Rest Day</button></div>
+  <div class="day-logged-badge" id="badge-legs"><span class="badge-dot" style="background:var(--legs)"></span><span>Logged today</span></div>
+  <div class="notes-box"><strong>Tips</strong>Do the full warmup before touching a weight; it takes about 8 minutes and makes a real difference in squat depth and knee tracking. Keep the heaviest compounds first: goblet squat, then RDL. Superset standing and seated calf raises back to back, then do tibialis raises after.</div>
   <div style="height:4px"></div>
-
-  <div class="section">
-    <div class="section-title">Dynamic Warmup (do before lifting)</div>
-    <div class="exercise" data-exid="heel-hip-switch" data-day="legs" data-muscle="Warmup" data-sets="1" data-bodyweight="true">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Seated Heel-to-Hip Switch</div><div class="ex-tags"><span class="tag">Hip rotation</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">10 /side</div><div class="rest-label">flow</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Sit on the floor, alternate bending one knee and dropping the foot to the side of the hip (Z-sit). Switch sides.</div></div>
-    </div>
-    <div class="exercise" data-exid="9090-stretch" data-day="legs" data-muscle="Warmup" data-sets="1" data-bodyweight="true">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">90/90 Hip Stretch</div><div class="ex-tags"><span class="tag">Hip external rotation</span><span class="tag">Piriformis</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">60s /side</div><div class="rest-label">flow</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Both knees bent at 90°, one in front, one to the side. Sit tall and breathe into the stretch.</div></div>
-    </div>
-    <div class="exercise" data-exid="aslr" data-day="legs" data-muscle="Warmup" data-sets="1" data-bodyweight="true">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Active Straight Leg Raise (ASLR)</div><div class="ex-tags"><span class="tag">Hamstring flexibility</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">10 /side</div><div class="rest-label">flow</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Lie on your back. Actively raise one leg as high as you can with a straight knee, keeping the other pressed to the floor.</div></div>
-    </div>
-    <div class="exercise" data-exid="9090-hip-lift" data-day="legs" data-muscle="Warmup" data-sets="1" data-bodyweight="true">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">90/90 to Hip Lift</div><div class="ex-tags"><span class="tag">Glute activation</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">8 /side</div><div class="rest-label">flow</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Start in 90/90. Press through the front foot and drive hips up into full extension. Lower back down.</div></div>
-    </div>
-    <div class="exercise" data-exid="hip-flexor-lunge" data-day="legs" data-muscle="Warmup" data-sets="1" data-bodyweight="true">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Kneeling Hip Flexor Lunge</div><div class="ex-tags"><span class="tag">Iliopsoas</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">60s /side</div><div class="rest-label">flow</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Half-kneeling, drive hips forward gently. Squeeze the glute of the back leg to deepen the stretch.</div></div>
-    </div>
-    <div class="exercise" data-exid="deep-squat-hold" data-day="legs" data-muscle="Warmup" data-sets="1" data-bodyweight="true">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Deep Squat Hold (Asian Squat)</div><div class="ex-tags"><span class="tag">Ankle mobility</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">2 × 30–60s</div><div class="rest-label">flow</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Squat all the way down and hold, heels flat if possible. Use a doorframe or light dumbbell as counterbalance if needed.</div></div>
-    </div>
-    <div class="exercise" data-exid="lateral-lunge" data-day="legs" data-muscle="Warmup" data-sets="1" data-bodyweight="true">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Deep Lateral Lunge</div><div class="ex-tags"><span class="tag">Adductors</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">8 /side</div><div class="rest-label">flow</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Wide stance, shift weight to one side into a deep side lunge, other leg straight. Alternate sides.</div></div>
-    </div>
+  <div class="section"><div class="section-title">Dynamic Warmup (do before lifting)</div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Seated Heel-to-Hip Switch</div><div class="ex-tags"><span class="tag">Hip internal rotation</span><span class="tag">Hip external rotation</span></div></div><div class="ex-header-right"><div class="sets-reps">10 /side</div><div class="rest-label">flow</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Sit on the floor, alternate bending one knee and dropping the foot to the side of the hip (Z-sit). Switch sides. Wakes up hip rotation, often the root cause of knee tracking issues in squats.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">90/90 Hip Stretch</div><div class="ex-tags"><span class="tag">Hip external rotation</span><span class="tag">Piriformis</span></div></div><div class="ex-header-right"><div class="sets-reps">60s /side</div><div class="rest-label">flow</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Sit with both knees bent at 90°, one in front and one to the side. Sit tall and breathe into the stretch. Opens the hip capsule in a way standing stretches don't reach.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Active Straight Leg Raise (ASLR)</div><div class="ex-tags"><span class="tag">Hamstring flexibility</span><span class="tag">Hip flexor activation</span></div></div><div class="ex-header-right"><div class="sets-reps">10 /side</div><div class="rest-label">flow</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Lie on your back, legs extended. Actively raise one leg as high as you can with a straight knee, keeping the other leg pressed to the floor.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">90/90 to Hip Lift</div><div class="ex-tags"><span class="tag">Glute activation</span><span class="tag">Hip extension</span></div></div><div class="ex-header-right"><div class="sets-reps">8 /side</div><div class="rest-label">flow</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Start in 90/90. Press through the front foot and drive your hips up into full extension. Lower back down. Primes the glutes before loading them with squats and RDLs.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Kneeling Hip Flexor Lunge</div><div class="ex-tags"><span class="tag">Iliopsoas</span><span class="tag">Rectus femoris</span></div></div><div class="ex-header-right"><div class="sets-reps">60s /side</div><div class="rest-label">flow</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Half-kneeling, back knee on the floor, front foot forward. Drive hips forward gently. Squeeze the glute of the back leg to deepen it. Tight hip flexors are the biggest limiter of squat depth.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Deep Squat Hold (Asian Squat)</div><div class="ex-tags"><span class="tag">Ankle mobility</span><span class="tag">Hip flexion</span></div></div><div class="ex-header-right"><div class="sets-reps">2 × 30–60s</div><div class="rest-label">flow</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Feet shoulder-width, toes slightly out. Squat all the way down and hold, heels flat if possible. Grab a doorframe or hold a light dumbbell as a counterbalance if needed.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Deep Lateral Lunge</div><div class="ex-tags"><span class="tag">Adductors</span><span class="tag">Hip abductors</span></div></div><div class="ex-header-right"><div class="sets-reps">8 /side</div><div class="rest-label">flow</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Wide stance, shift weight to one side and sink into a deep side lunge, other leg straight. Inside of both feet stay flat. Alternate sides. Opens the groin and adductors.</div></div></div>
   </div>
-
-  <div class="section">
-    <div class="section-title">Quads</div>
-    <div class="exercise" data-exid="goblet-squat" data-day="legs" data-muscle="Quads" data-sets="4">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Goblet Squat</div><div class="ex-tags"><span class="tag target">Quad (rectus femoris)</span><span class="tag">VMO</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">4 × 10–12</div><div class="rest-label">90s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Hold one dumbbell vertically at your chest. Upright torso, wide stance, squat deep.</div><div class="log-area" id="log-goblet-squat"></div></div>
-    </div>
-    <div class="exercise" data-exid="bulgarian-split" data-day="legs" data-muscle="Quads" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Bulgarian Split Squat</div><div class="ex-tags"><span class="tag target">Quad (vastus lateralis)</span><span class="tag">Glutes</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 8–10 /side</div><div class="rest-label">90s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Rear foot elevated on the bench, dumbbells at sides. Lower the back knee toward the floor.</div><div class="log-area" id="log-bulgarian-split"></div></div>
-    </div>
-    <div class="exercise" data-exid="db-step-up" data-day="legs" data-muscle="Quads" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Dumbbell Step-Up</div><div class="ex-tags"><span class="tag target">VMO</span><span class="tag">Rectus femoris</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 10 /side</div><div class="rest-label">75s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Use the bench as the step. Drive through the heel of your lead foot. Don't push off with the back leg.</div><div class="log-area" id="log-db-step-up"></div></div>
-    </div>
-    <div class="exercise" data-exid="cossack-squat" data-day="legs" data-muscle="Quads" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Cossack Squat</div><div class="ex-tags"><span class="tag target">Vastus medialis (VMO)</span><span class="tag">Adductors</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 8 /side</div><div class="rest-label">75s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Wide stance, squat deeply to one side while the other leg stays fully extended with toes pointing up.</div><div class="log-area" id="log-cossack-squat"></div></div>
-    </div>
+  <div class="section"><div class="section-title">Quads</div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Goblet Squat</div><div class="ex-tags"><span class="tag target">Quad (rectus femoris)</span><span class="tag">VMO</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 10–12</div><div class="rest-label">90s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Hold one dumbbell vertically at your chest. Upright torso, wide stance, squat deep. The goblet position keeps your torso more vertical than a regular DB squat, maximizing quad load and knee tracking.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Bulgarian Split Squat</div><div class="ex-tags"><span class="tag target">Quad (vastus lateralis)</span><span class="tag">Glutes</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 8–10 /side</div><div class="rest-label">90s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Rear foot elevated on the bench, dumbbells at sides. Lower the back knee toward the floor. Brutal but one of the best single-leg exercises you can do.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Step-Up</div><div class="ex-tags"><span class="tag target">VMO</span><span class="tag">Rectus femoris</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10 /side</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Use the bench as the step, dumbbells at sides. Drive through the heel of your lead foot. Don't push off with the back leg. The VMO (teardrop) loves this movement.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Cossack Squat</div><div class="ex-tags"><span class="tag target">Vastus medialis (VMO)</span><span class="tag">Adductors</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 8 /side</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Wide stance, squat deeply to one side while the other leg stays fully extended with toes pointing up. Hold a dumbbell at chest for counterbalance.</div></div></div>
   </div>
-
-  <div class="section">
-    <div class="section-title">Hamstrings</div>
-    <div class="exercise" data-exid="rdl" data-day="legs" data-muscle="Hamstrings" data-sets="4">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Romanian Deadlift (RDL)</div><div class="ex-tags"><span class="tag target">Biceps femoris</span><span class="tag">Semitendinosus</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">4 × 10–12</div><div class="rest-label">90s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Dumbbells in front of thighs, slight knee bend. Hinge at the hips until you feel a deep hamstring stretch. Drive hips forward to come up.</div><div class="log-area" id="log-rdl"></div></div>
-    </div>
-    <div class="exercise" data-exid="lying-leg-curl" data-day="legs" data-muscle="Hamstrings" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Dumbbell Lying Leg Curl</div><div class="ex-tags"><span class="tag target">Semimembranosus</span><span class="tag">Biceps femoris</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">75s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Lie face down on the bench, hold a dumbbell between your feet. Curl heels toward glutes, squeeze at the top, lower slowly.</div><div class="log-area" id="log-lying-leg-curl"></div></div>
-    </div>
-    <div class="exercise" data-exid="seated-good-morning" data-day="legs" data-muscle="Hamstrings" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Seated Good Morning</div><div class="ex-tags"><span class="tag target">Erector spinae</span><span class="tag">Semimembranosus</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">75s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Sit on bench edge, hold dumbbell at chest. Hinge forward with flat back until you feel a hamstring stretch, then drive back up.</div><div class="log-area" id="log-seated-good-morning"></div></div>
-    </div>
+  <div class="section"><div class="section-title">Hamstrings</div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Romanian Deadlift (RDL)</div><div class="ex-tags"><span class="tag target">Biceps femoris</span><span class="tag">Semitendinosus</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 10–12</div><div class="rest-label">90s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Dumbbells in front of thighs, slight knee bend. Hinge at the hips, lower along your legs until you feel a deep hamstring stretch. Drive hips forward to come back up.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Lying Leg Curl</div><div class="ex-tags"><span class="tag target">Semimembranosus</span><span class="tag">Biceps femoris</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Lie face down on the bench, hold a dumbbell between your feet. Curl heels toward glutes, squeeze at the top, lower slowly. Trains the hamstring through knee flexion, which the RDL doesn't cover.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Seated Good Morning</div><div class="ex-tags"><span class="tag target">Erector spinae</span><span class="tag">Semimembranosus</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Sit on the bench edge, hold a dumbbell at chest. Hinge forward with a flat back until you feel a hamstring stretch, then drive back up.</div></div></div>
   </div>
-
-  <div class="section">
-    <div class="section-title">Glutes</div>
-    <div class="exercise" data-exid="hip-thrust" data-day="legs" data-muscle="Glutes" data-sets="4">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Dumbbell Hip Thrust</div><div class="ex-tags"><span class="tag target">Gluteus maximus</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">4 × 12–15</div><div class="rest-label">75s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Upper back on the bench, dumbbell on your hips. Drive through your heels, squeeze glutes hard at the top, hold 1 second.</div><div class="log-area" id="log-hip-thrust"></div></div>
-    </div>
-    <div class="exercise" data-exid="sumo-squat" data-day="legs" data-muscle="Glutes" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Dumbbell Sumo Squat</div><div class="ex-tags"><span class="tag target">Gluteus medius</span><span class="tag">Inner quad</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">75s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Wide stance, toes out ~45°, one dumbbell hanging between your legs. Lower deep.</div><div class="log-area" id="log-sumo-squat"></div></div>
-    </div>
+  <div class="section"><div class="section-title">Glutes</div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Hip Thrust</div><div class="ex-tags"><span class="tag target">Gluteus maximus</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 12–15</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Upper back on the bench, dumbbell on your hips. Drive through your heels, squeeze your glutes hard at the top, hold 1 second. The glute max is the largest muscle in the body and often undertrained even in people who squat regularly.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Sumo Squat</div><div class="ex-tags"><span class="tag target">Gluteus medius</span><span class="tag">Inner quad</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Wide stance, toes out ~45°, one dumbbell hanging between your legs. Lower deep. The wide stance shifts work to the glute medius (outer glute) and inner quad that standard squats miss.</div></div></div>
   </div>
-
-  <div class="section">
-    <div class="section-title">Calves &amp; Tibialis</div>
-    <div class="superset-group">
-      <span class="superset-label">Superset</span>
-      <div class="exercise" data-exid="standing-calf-raise" data-day="legs" data-muscle="Calves" data-sets="4">
-        <div class="ex-header" onclick="toggle(this)">
-          <div class="ex-header-left"><div class="ex-name">Standing Dumbbell Calf Raise</div><div class="ex-tags"><span class="tag target">Gastrocnemius</span></div></div>
-          <div class="ex-header-right"><div class="sets-reps">4 × 15–20</div><div class="rest-label">no rest</div></div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="ex-body"><div class="ex-desc">Hold dumbbells, raise on balls of your feet, squeeze at the top, lower slowly. Toes forward.</div><div class="log-area" id="log-standing-calf-raise"></div></div>
-      </div>
-      <div class="exercise" data-exid="seated-calf-raise" data-day="legs" data-muscle="Calves" data-sets="3">
-        <div class="ex-header" onclick="toggle(this)">
-          <div class="ex-header-left"><div class="ex-name">Seated Calf Raise (bench)</div><div class="ex-tags"><span class="tag target">Soleus</span></div></div>
-          <div class="ex-header-right"><div class="sets-reps">3 × 15–20</div><div class="rest-label">45s rest</div></div>
-          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="ex-body"><div class="ex-desc">Sit on the bench, dumbbell balanced on knee, raise up. Knees bent shifts load to the soleus.</div><div class="log-area" id="log-seated-calf-raise"></div></div>
-      </div>
+  <div class="section"><div class="section-title">Calves &amp; Tibialis</div>
+    <div class="superset-group"><span class="superset-label">Superset</span>
+      <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Standing Dumbbell Calf Raise</div><div class="ex-tags"><span class="tag target">Gastrocnemius</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 15–20</div><div class="rest-label">no rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Hold dumbbells, raise on the balls of your feet, squeeze at the top, lower slowly. Toes forward. The gastroc is the visible two-headed calf muscle trained best with the knee extended.</div></div></div>
+      <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Seated Calf Raise (bench)</div><div class="ex-tags"><span class="tag target">Soleus</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 15–20</div><div class="rest-label">45s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Sit on the bench, dumbbell balanced on knee, raise up. Knees bent shifts load to the soleus, the deeper calf muscle that gives the calf its overall thickness from the front.</div></div></div>
     </div>
-    <div class="exercise" data-exid="tibialis-raise" data-day="legs" data-muscle="Calves" data-sets="3" data-bodyweight="true">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Tibialis Raise</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Tibialis anterior</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 20–25</div><div class="rest-label">30s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Back against a wall, heels about 6 inches from the baseboard. Lift toes and forefoot off the ground repeatedly.</div><div class="log-area" id="log-tibialis-raise"></div></div>
-    </div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Tibialis Raise</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Tibialis anterior</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 20–25</div><div class="rest-label">30s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Back against a wall, heels about 6 inches from the baseboard. Lift toes and forefoot off the ground repeatedly. Key for ankle stability and shin splint prevention.</div></div></div>
   </div>
 </div>
 
-<!-- ===== ABS ===== -->
+<!-- ABS -->
 <div id="panel-abs" class="day-panel abs-d">
-  <div class="day-header">
-    <div class="day-label">Abs</div>
-    <div class="day-meta">
-      <div class="focus">Focus</div>
-      <div class="muscles">Rectus Abdominis · Obliques · TVA</div>
-      <div class="duration">~12 min · add to any session</div>
-    </div>
-  </div>
-  <div class="start-btn">
-    <button class="btn-start-workout" onclick="startWorkout('abs')">Start Session</button>
-    <button class="btn-rest-day" onclick="logRestDay('abs')">Log Rest</button>
-  </div>
-  <div class="notes-box"><strong>When to do Abs</strong>Tack this on at the end of any session. Run straight through all 6 exercises with minimal rest. Abs recover fast so 3–4 sessions per week is fine.</div>
+  <div class="day-header"><div class="day-label">Abs</div><div class="day-meta"><div class="focus">Focus</div><div class="muscles">Rectus Abdominis · Obliques · TVA</div><div class="duration">~12 min · add to any session</div></div></div>
+  <div class="log-day-row"><button class="btn-log-day" onclick="logDay('abs')">Log Today's Abs</button><button class="btn-log-rest" onclick="logRest()">Rest Day</button></div>
+  <div class="day-logged-badge" id="badge-abs"><span class="badge-dot" style="background:var(--abs)"></span><span>Logged today</span></div>
+  <div class="notes-box"><strong>When to do Abs</strong>Tack this on at the end of any session. Run straight through all 6 exercises with minimal rest between moves. Takes about 12 minutes. Abs recover fast so 3–4 sessions per week is fine.</div>
   <div style="height:4px"></div>
-
-  <div class="section">
-    <div class="section-title">Anti-Extension</div>
-    <div class="exercise" data-exid="plank" data-day="abs" data-muscle="Core" data-sets="3" data-bodyweight="true">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Plank</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Transverse abdominis</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 30–60s</div><div class="rest-label">45s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Forearms or hands, straight line from head to heels. Squeeze everything: glutes, abs, quads.</div><div class="log-area" id="log-plank"></div></div>
-    </div>
+  <div class="section"><div class="section-title">Anti-Extension</div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Plank</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Transverse abdominis</span><span class="tag">Deep core</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 30–60s</div><div class="rest-label">45s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Forearms or hands, straight line from head to heels. Squeeze everything: glutes, abs, quads. The TVA is your internal weight belt and the foundation of all core work.</div></div></div>
   </div>
-  <div class="section">
-    <div class="section-title">Flexion</div>
-    <div class="exercise" data-exid="weighted-crunch" data-day="abs" data-muscle="Core" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Weighted Crunch</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Rectus abdominis (upper)</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 15–20</div><div class="rest-label">45s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Hold a dumbbell at your chest. Curl shoulders off the floor, exhale hard at the top.</div><div class="log-area" id="log-weighted-crunch"></div></div>
-    </div>
-    <div class="exercise" data-exid="reverse-crunch" data-day="abs" data-muscle="Core" data-sets="3" data-bodyweight="true">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Reverse Crunch</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Rectus abdominis (lower)</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 12–15</div><div class="rest-label">45s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Lie flat, bring knees to chest and curl hips off the floor. Lower with control.</div><div class="log-area" id="log-reverse-crunch"></div></div>
-    </div>
-    <div class="exercise" data-exid="bicycle-crunch" data-day="abs" data-muscle="Core" data-sets="3" data-bodyweight="true">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Bicycle Crunch</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">External obliques</span><span class="tag">Rectus abdominis</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 20</div><div class="rest-label">45s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Hands behind head, opposite elbow to opposite knee while extending the other leg. Slow and controlled.</div><div class="log-area" id="log-bicycle-crunch"></div></div>
-    </div>
+  <div class="section"><div class="section-title">Flexion</div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Weighted Crunch</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Rectus abdominis (upper)</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 15–20</div><div class="rest-label">45s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Hold a dumbbell at your chest. Curl your shoulders off the floor, exhale hard at the top. Slow and intentional reps beat high-rep sloppy ones.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Reverse Crunch</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Rectus abdominis (lower)</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 12–15</div><div class="rest-label">45s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Lie flat, bring your knees to your chest and curl your hips off the floor. Lower with control. The lower rectus abdominis is notoriously hard to isolate and this is one of the few moves that genuinely does it.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Bicycle Crunch</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">External obliques</span><span class="tag">Rectus abdominis</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 20</div><div class="rest-label">45s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Hands behind your head. Bring the opposite elbow toward the opposite knee while extending the other leg, alternating sides. Go slow and controlled. Fast sloppy reps turn this into a hip flexor exercise.</div></div></div>
   </div>
-  <div class="section">
-    <div class="section-title">Rotation &amp; Anti-Rotation</div>
-    <div class="exercise" data-exid="russian-twist" data-day="abs" data-muscle="Core" data-sets="3">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Dumbbell Russian Twist</div><div class="ex-tags"><span class="tag target">External obliques</span><span class="tag">Internal obliques</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 16–20</div><div class="rest-label">45s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Seated, torso leaned back slightly. Hold one dumbbell and rotate side to side, touching it to the floor.</div><div class="log-area" id="log-russian-twist"></div></div>
-    </div>
-    <div class="exercise" data-exid="side-plank" data-day="abs" data-muscle="Core" data-sets="3" data-bodyweight="true">
-      <div class="ex-header" onclick="toggle(this)">
-        <div class="ex-header-left"><div class="ex-name">Side Plank</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Internal obliques</span><span class="tag">Quadratus lumborum</span></div></div>
-        <div class="ex-header-right"><div class="sets-reps">3 × 30s /side</div><div class="rest-label">30s rest</div></div>
-        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="ex-body"><div class="ex-desc">Forearm on the floor, body in a straight line, hips elevated. Add a dumbbell on the hip for extra load.</div><div class="log-area" id="log-side-plank"></div></div>
-    </div>
+  <div class="section"><div class="section-title">Rotation &amp; Anti-Rotation</div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Russian Twist</div><div class="ex-tags"><span class="tag target">External obliques</span><span class="tag">Internal obliques</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 16–20</div><div class="rest-label">45s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Seated, torso leaned back slightly, feet up or down. Hold one dumbbell and rotate side to side, touching the weight to the floor. Rotate from your torso, not just your arms.</div></div></div>
+    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Side Plank</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Internal obliques</span><span class="tag">Quadratus lumborum</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 30s /side</div><div class="rest-label">30s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Forearm on the floor, body in a straight line, hips elevated. Add a dumbbell on the hip for extra load. Trains the obliques and QL as stabilizers, which matters for spine health and lateral strength.</div></div></div>
   </div>
 </div>
 
-<!-- ===== LOG TAB ===== -->
+<!-- LOG TAB -->
 <div id="panel-log" class="log-panel">
-  <div style="padding-bottom:8px">
-    <div class="streak-row">
-      <div class="streak-card"><div class="sc-val" id="streakCurrent">0</div><div class="sc-label">Day Streak</div></div>
-      <div class="streak-card"><div class="sc-val" id="streakTotal">0</div><div class="sc-label">Total Sessions</div></div>
-      <div class="streak-card"><div class="sc-val" id="streakWeek">0</div><div class="sc-label">This Week</div></div>
-    </div>
-
-    <div class="log-section-title">Calendar</div>
-    <div class="calendar-header">
-      <button class="cal-nav" onclick="calNav(-1)">&#8592;</button>
-      <div class="cal-month" id="calMonth"></div>
-      <button class="cal-nav" onclick="calNav(1)">&#8594;</button>
-    </div>
-    <div class="cal-grid" id="calGrid"></div>
-
-    <div class="log-section-title">Progress Chart</div>
-    <div class="filter-row">
-      <select class="filter-select" id="filterExercise" onchange="updateChart()">
-        <option value="">Select exercise...</option>
-      </select>
-    </div>
-    <div class="filter-row">
-      <select class="filter-select" id="filterDay" onchange="filterExercisesByDay()">
-        <option value="">All days</option>
-        <option value="push">Push</option>
-        <option value="pull">Pull</option>
-        <option value="legs">Legs</option>
-        <option value="abs">Abs</option>
-      </select>
-      <select class="filter-select" id="filterMuscle" onchange="filterExercisesByMuscle()">
-        <option value="">All muscles</option>
-        <option value="Chest">Chest</option>
-        <option value="Shoulders">Shoulders</option>
-        <option value="Triceps">Triceps</option>
-        <option value="Back">Back</option>
-        <option value="Biceps">Biceps</option>
-        <option value="Forearms">Forearms</option>
-        <option value="Quads">Quads</option>
-        <option value="Hamstrings">Hamstrings</option>
-        <option value="Glutes">Glutes</option>
-        <option value="Calves">Calves</option>
-        <option value="Core">Core</option>
-      </select>
-    </div>
-    <div class="chart-wrap">
-      <canvas id="progressChart"></canvas>
-      <div class="chart-empty" id="chartEmpty">Select an exercise above to see progress</div>
-    </div>
-
-    <div class="log-section-title">Recent Logs</div>
-    <div id="recentLogs"></div>
+  <div class="streak-row">
+    <div class="streak-card"><div class="sc-val" id="streakCurrent">0</div><div class="sc-label">Day Streak</div></div>
+    <div class="streak-card"><div class="sc-val" id="streakTotal">0</div><div class="sc-label">Total Sessions</div></div>
+    <div class="streak-card"><div class="sc-val" id="streakWeek">0</div><div class="sc-label">This Week</div></div>
   </div>
+  <div class="log-section-title">Calendar</div>
+  <div class="calendar-header">
+    <button class="cal-nav" onclick="calNav(-1)">&#8592;</button>
+    <div class="cal-month" id="calMonth"></div>
+    <button class="cal-nav" onclick="calNav(1)">&#8594;</button>
+  </div>
+  <div class="cal-grid" id="calGrid"></div>
+  <div class="log-section-title">Muscle Volume — Last 7 Days</div>
+  <div class="muscle-summary" id="muscleSummary"></div>
+  <div class="log-section-title">History</div>
+  <div id="historyList"></div>
 </div>
 
 </div><!-- /.scroll-area -->
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-  <button class="nav-btn active-push" data-day="push" onclick="switchDay('push',this)"><div class="nav-label">Push</div><div class="nav-dot"></div></button>
-  <button class="nav-btn" data-day="pull" onclick="switchDay('pull',this)"><div class="nav-label">Pull</div><div class="nav-dot"></div></button>
-  <button class="nav-btn" data-day="legs" onclick="switchDay('legs',this)"><div class="nav-label">Legs</div><div class="nav-dot"></div></button>
-  <button class="nav-btn" data-day="abs" onclick="switchDay('abs',this)"><div class="nav-label">Abs</div><div class="nav-dot"></div></button>
-  <button class="nav-btn" data-day="log" onclick="switchDay('log',this)"><div class="nav-label">Log</div><div class="nav-dot"></div></button>
+  <button class="nav-btn active-push" onclick="switchDay('push',this)"><div class="nav-label">Push</div><div class="nav-dot"></div></button>
+  <button class="nav-btn" onclick="switchDay('pull',this)"><div class="nav-label">Pull</div><div class="nav-dot"></div></button>
+  <button class="nav-btn" onclick="switchDay('legs',this)"><div class="nav-label">Legs</div><div class="nav-dot"></div></button>
+  <button class="nav-btn" onclick="switchDay('abs',this)"><div class="nav-label">Abs</div><div class="nav-dot"></div></button>
+  <button class="nav-btn" onclick="switchDay('log',this)"><div class="nav-label">Log</div><div class="nav-dot"></div></button>
 </nav>
 
-<!-- MODAL -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
-    <h3 id="modalTitle"></h3>
-    <p id="modalBody"></p>
+    <h3 id="modalTitle"></h3><p id="modalBody"></p>
     <div class="modal-actions">
       <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
       <button class="btn-modal-confirm" id="modalConfirm">Confirm</button>
     </div>
   </div>
 </div>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ── QUOTES ──
-const QUOTES = [
-  "Discipline is choosing between what you want now and what you want most.",
-  "The pain of discipline weighs ounces. The pain of regret weighs tons.",
-  "You don't have to be extreme, just consistent.",
-  "Every rep is a vote for the person you want to become.",
-  "The body achieves what the mind believes.",
-  "Suffer the pain of discipline or suffer the pain of regret.",
-  "Make yourself proud.",
-  "Do something today that your future self will thank you for.",
-  "The only bad workout is the one that didn't happen.",
-  "Progress, not perfection.",
-  "Show up. Even when you don't feel like it. Especially when you don't feel like it.",
-  "Iron sharpens iron.",
-  "Results happen over time, not overnight.",
-  "Be stronger than your excuses.",
-  "Your future self is watching. Don't let him down.",
-  "Consistency over intensity. Every time.",
-  "Hard work beats talent when talent doesn't work hard.",
-  "Fall in love with the process and the results will come.",
-  "One more rep. Always one more.",
-  "Champions are made in the moments they want to quit."
-];
+var QUOTES=['Discipline is choosing between what you want now and what you want most.','The pain of discipline weighs ounces. The pain of regret weighs tons.','You don\'t have to be extreme, just consistent.','Every rep is a vote for the person you want to become.','Suffer the pain of discipline or suffer the pain of regret.','Make yourself proud.','Do something today that your future self will thank you for.','The only bad workout is the one that didn\'t happen.','Show up. Even when you don\'t feel like it. Especially when you don\'t feel like it.','Results happen over time, not overnight.','Be stronger than your excuses.','Your future self is watching. Don\'t let him down.','Consistency over intensity. Every time.','Hard work beats talent when talent doesn\'t work hard.','Fall in love with the process and the results will come.','Champions are made in the moments they want to quit.','Iron sharpens iron.','One more rep. Always one more.','Progress, not perfection.','It never gets easier. You just get better.'];
+(function(){var d=new Date();var i=(d.getFullYear()*365+d.getMonth()*31+d.getDate())%QUOTES.length;document.getElementById('dailyQuote').textContent='\u201c'+QUOTES[i]+'\u201d';})();
 
-function getDailyQuote() {
-  const d = new Date();
-  const idx = (d.getFullYear() * 1000 + d.getMonth() * 31 + d.getDate()) % QUOTES.length;
-  document.getElementById('dailyQuote').textContent = '"' + QUOTES[idx] + '"';
-}
+var STORE='ppl_v3';
+function getData(){try{return JSON.parse(localStorage.getItem(STORE)||'{}');}catch(e){return {};}}
+function saveData(d){try{localStorage.setItem(STORE,JSON.stringify(d));}catch(e){}}
 
-// ── STORAGE ──
-const STORAGE_KEY = 'ppl_logs_v2';
-const WORKOUT_KEY = 'ppl_workouts_v2';
+var DAY_MUSCLES={push:'Chest · Shoulders · Triceps',pull:'Back · Biceps · Forearms · Rear Delts',legs:'Quads · Hamstrings · Glutes · Calves',abs:'Core · Obliques · TVA'};
+var DAY_COLORS={push:'var(--push)',pull:'var(--pull)',legs:'var(--legs)',abs:'var(--abs)'};
+var MUSCLE_GROUPS={push:['Chest','Shoulders','Triceps'],pull:['Back','Biceps','Forearms','Rear Delts'],legs:['Quads','Hamstrings','Glutes','Calves'],abs:['Core','Obliques']};
+var MUSCLE_COLORS={Chest:'var(--push)',Shoulders:'var(--push)',Triceps:'var(--push)',Back:'var(--pull)',Biceps:'var(--pull)',Forearms:'var(--pull)','Rear Delts':'var(--pull)',Quads:'var(--legs)',Hamstrings:'var(--legs)',Glutes:'var(--legs)',Calves:'var(--legs)',Core:'var(--abs)',Obliques:'var(--abs)'};
 
-function getLogs() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) { return {}; }
-}
-function saveLogs(data) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) { showToast('Storage error'); }
-}
-function getWorkouts() {
-  try { return JSON.parse(localStorage.getItem(WORKOUT_KEY) || '{}'); } catch(e) { return {}; }
-}
-function saveWorkouts(data) {
-  try { localStorage.setItem(WORKOUT_KEY, JSON.stringify(data)); } catch(e) {}
-}
+function pad(n){return n<10?'0'+n:''+n;}
+function todayStr(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function dateStr(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function fmtDate(ds){var p=ds.split('-');var m=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return m[parseInt(p[1])-1]+' '+parseInt(p[2])+', '+p[0];}
 
-// ── EXERCISE REGISTRY ──
-const EXERCISES = {};
-document.querySelectorAll('.exercise[data-exid]').forEach(function(el) {
-  const id = el.dataset.exid;
-  EXERCISES[id] = {
-    id: id,
-    name: el.querySelector('.ex-name').textContent,
-    day: el.dataset.day,
-    muscle: el.dataset.muscle,
-    sets: parseInt(el.dataset.sets) || 3,
-    bodyweight: el.dataset.bodyweight === 'true'
-  };
-});
+function logDay(day){var data=getData();var today=todayStr();if(data[today]&&data[today].type===day){showToast('Already logged '+day+' today');return;}data[today]={type:day,rest:false};saveData(data);updateBadges();updateScheduleBar();showToast(day.charAt(0).toUpperCase()+day.slice(1)+' day logged!');}
+function logRest(){var data=getData();var today=todayStr();data[today]={type:'rest',rest:true};saveData(data);updateBadges();updateScheduleBar();showToast('Rest day logged');}
 
-// ── BUILD LOG UIs ──
-function buildLogUI(exid) {
-  const area = document.getElementById('log-' + exid);
-  if (!area) return;
-  const ex = EXERCISES[exid];
-  if (!ex) return;
-  const logs = getLogs();
-  const lastSession = getLastSession(exid, logs);
+function updateBadges(){var data=getData();var today=todayStr();var entry=data[today];['push','pull','legs','abs'].forEach(function(day){var badge=document.getElementById('badge-'+day);if(!badge)return;var btnRow=badge.previousElementSibling;if(entry&&!entry.rest&&entry.type===day){badge.classList.add('show');if(btnRow)btnRow.style.display='none';}else{badge.classList.remove('show');if(btnRow)btnRow.style.display='';}});}
 
-  let lastHtml = '';
-  if (lastSession) {
-    const parts = lastSession.sets.map(function(s, i) {
-      if (s.skipped) return 'S' + (i+1) + ': skip';
-      if (ex.bodyweight) return 'S' + (i+1) + ': ' + (s.reps || '--') + ' reps';
-      return 'S' + (i+1) + ': ' + (s.weight || '--') + 'lb × ' + (s.reps || '--');
-    }).join(' · ');
-    lastHtml = '<div class="last-session">Last: ' + parts + '</div>';
-  }
+function updateScheduleBar(){var data=getData();var today=new Date();var dow=(today.getDay()+6)%7;document.querySelectorAll('.sched-day').forEach(function(el,i){var d=new Date(today);d.setDate(today.getDate()-dow+i);var ds=dateStr(d);el.classList.remove('done','today');if(ds===todayStr())el.classList.add('today');var entry=data[ds];if(entry&&!entry.rest)el.classList.add('done');});}
 
-  let setsHtml = '';
-  for (let i = 0; i < ex.sets; i++) {
-    const prev = lastSession ? lastSession.sets[i] : null;
-    const wPh = prev && !prev.skipped && !ex.bodyweight ? prev.weight : (ex.bodyweight ? '' : 'lb');
-    const rPh = prev && !prev.skipped ? prev.reps : 'reps';
-    setsHtml += '<div class="set-row" id="setrow-' + exid + '-' + i + '">';
-    setsHtml += '<div class="set-num">S' + (i+1) + '</div>';
-    if (!ex.bodyweight) {
-      setsHtml += '<input class="set-input" type="number" inputmode="decimal" placeholder="' + wPh + '" id="w-' + exid + '-' + i + '" step="2.5">';
-    } else {
-      setsHtml += '<div></div>';
-    }
-    setsHtml += '<input class="set-input" type="number" inputmode="numeric" placeholder="' + rPh + '" id="r-' + exid + '-' + i + '">';
-    setsHtml += '<button class="set-skip" onclick="toggleSkip(\'' + exid + '\',' + i + ',this)">Skip</button>';
-    setsHtml += '</div>';
-  }
+function toggle(h){h.parentElement.classList.toggle('open');}
 
-  area.innerHTML = '<div class="log-area-header">'
-    + '<div class="log-area-title">Log Sets</div>'
-    + lastHtml
-    + '</div>'
-    + '<div class="sets-grid">' + setsHtml + '</div>'
-    + '<div class="log-actions">'
-    + '<button class="btn-log-save" onclick="saveExerciseLog(\'' + exid + '\')">Save</button>'
-    + '<button class="btn-log-skip-all" onclick="skipAllSets(\'' + exid + '\')">Skip Exercise</button>'
-    + '</div>'
-    + '<div class="logged-summary" id="summary-' + exid + '"></div>';
-}
+function switchDay(day,btn){document.querySelectorAll('.day-panel,.log-panel').forEach(function(p){p.classList.remove('active');});document.querySelectorAll('.nav-btn').forEach(function(b){b.className='nav-btn';});if(day==='log'){document.getElementById('panel-log').classList.add('active');refreshLog();}else{document.getElementById('panel-'+day).classList.add('active');}btn.classList.add('active-'+day);document.body.className='day-'+day;document.querySelector('.scroll-area').scrollTop=0;document.querySelectorAll('.exercise.open').forEach(function(e){e.classList.remove('open');});}
 
-function getLastSession(exid, logs) {
-  if (!logs[exid] || !logs[exid].length) return null;
-  return logs[exid][logs[exid].length - 1];
-}
+var calYear,calMo;
+function initCal(){var now=new Date();calYear=now.getFullYear();calMo=now.getMonth();renderCal();}
+function calNav(dir){calMo+=dir;if(calMo<0){calMo=11;calYear--;}if(calMo>11){calMo=0;calYear++;}renderCal();}
+function renderCal(){var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];document.getElementById('calMonth').textContent=MONTHS[calMo]+' '+calYear;var data=getData();var today=todayStr();var grid=document.getElementById('calGrid');var html='';['M','T','W','T','F','S','S'].forEach(function(d){html+='<div class="cal-dow">'+d+'</div>';});var first=new Date(calYear,calMo,1);var startDow=(first.getDay()+6)%7;var dim=new Date(calYear,calMo+1,0).getDate();var prev=new Date(calYear,calMo,0).getDate();for(var i=0;i<startDow;i++)html+='<div class="cal-day other-month">'+(prev-startDow+i+1)+'</div>';for(var d=1;d<=dim;d++){var ds=calYear+'-'+pad(calMo+1)+'-'+pad(d);var entry=data[ds];var cls='cal-day';var lbl='';if(ds===today)cls+=' today';if(entry){if(entry.rest){cls+=' has-rest';lbl='rest';}else{cls+=' has-'+entry.type;lbl=entry.type;}}html+='<div class="'+cls+'"><span>'+d+'</span>'+(lbl?'<span class="cal-day-type">'+lbl+'</span>':'')+'</div>';}var rem=(7-(startDow+dim)%7)%7;for(var j=1;j<=rem;j++)html+='<div class="cal-day other-month">'+j+'</div>';grid.innerHTML=html;}
 
-function toggleSkip(exid, setIdx, btn) {
-  btn.classList.toggle('skipped');
-  if (btn.classList.contains('skipped')) {
-    btn.textContent = 'Skipped';
-    const wEl = document.getElementById('w-' + exid + '-' + setIdx);
-    const rEl = document.getElementById('r-' + exid + '-' + setIdx);
-    if (wEl) wEl.disabled = true;
-    if (rEl) rEl.disabled = true;
-  } else {
-    btn.textContent = 'Skip';
-    const wEl = document.getElementById('w-' + exid + '-' + setIdx);
-    const rEl = document.getElementById('r-' + exid + '-' + setIdx);
-    if (wEl) wEl.disabled = false;
-    if (rEl) rEl.disabled = false;
-  }
-}
+function calcStreaks(){var data=getData();var today=new Date();today.setHours(0,0,0,0);var dates=Object.keys(data).filter(function(ds){return data[ds]&&!data[ds].rest;}).sort();var dateSet={};dates.forEach(function(ds){dateSet[ds]=true;});var streak=0;var check=new Date(today);while(true){var ds=dateStr(check);if(dateSet[ds]){streak++;check.setDate(check.getDate()-1);}else if(ds===dateStr(today)){check.setDate(check.getDate()-1);}else break;}var dow=(today.getDay()+6)%7;var wk=0;for(var i=0;i<=dow;i++){var d=new Date(today);d.setDate(today.getDate()-i);if(dateSet[dateStr(d)])wk++;}document.getElementById('streakCurrent').textContent=streak;document.getElementById('streakTotal').textContent=dates.length;document.getElementById('streakWeek').textContent=wk;}
 
-function saveExerciseLog(exid) {
-  const ex = EXERCISES[exid];
-  const sets = [];
-  let hasData = false;
-  for (let i = 0; i < ex.sets; i++) {
-    const skipBtn = document.querySelector('#setrow-' + exid + '-' + i + ' .set-skip');
-    const skipped = skipBtn && skipBtn.classList.contains('skipped');
-    if (skipped) { sets.push({ skipped: true }); continue; }
-    const wEl = document.getElementById('w-' + exid + '-' + i);
-    const rEl = document.getElementById('r-' + exid + '-' + i);
-    const weight = wEl ? parseFloat(wEl.value) || null : null;
-    const reps = rEl ? parseInt(rEl.value) || null : null;
-    if (weight || reps) hasData = true;
-    sets.push({ weight, reps, skipped: false });
-  }
-  if (!hasData && sets.every(function(s) { return s.skipped; })) {
-    showToast('Nothing to save'); return;
-  }
-  const logs = getLogs();
-  if (!logs[exid]) logs[exid] = [];
-  const entry = { date: todayStr(), sets };
-  logs[exid].push(entry);
-  saveLogs(logs);
+function renderMuscleSummary(){var data=getData();var today=new Date();today.setHours(0,0,0,0);var counts={};for(var i=0;i<7;i++){var d=new Date(today);d.setDate(today.getDate()-i);var ds=dateStr(d);var entry=data[ds];if(entry&&!entry.rest&&MUSCLE_GROUPS[entry.type]){MUSCLE_GROUPS[entry.type].forEach(function(m){counts[m]=(counts[m]||0)+1;});}}var muscles=Object.keys(MUSCLE_COLORS);var max=0;muscles.forEach(function(m){if((counts[m]||0)>max)max=counts[m]||0;});if(max===0)max=1;var html='';muscles.forEach(function(m){var c=counts[m]||0;var pct=Math.round(c/max*100);html+='<div class="muscle-row"><div class="muscle-name">'+m+'</div><div class="muscle-bar-wrap"><div class="muscle-bar" style="width:'+pct+'%;background:'+MUSCLE_COLORS[m]+'"></div></div><div class="muscle-count">'+c+'x</div></div>';});if(!html)html='<div class="no-history">No sessions in the last 7 days</div>';document.getElementById('muscleSummary').innerHTML=html;}
 
-  const card = document.querySelector('.exercise[data-exid="' + exid + '"]');
-  if (card) card.classList.add('logged');
+function renderHistory(){var data=getData();var sorted=Object.keys(data).sort(function(a,b){return b.localeCompare(a);});if(!sorted.length){document.getElementById('historyList').innerHTML='<div class="no-history">No sessions logged yet. Hit the button on any day tab to start.</div>';return;}var html='';sorted.slice(0,60).forEach(function(ds){var entry=data[ds];var isRest=entry.rest;var dayType=entry.type;var col=isRest?'var(--dim)':(DAY_COLORS[dayType]||'var(--muted)');var label=isRest?'Rest':dayType.charAt(0).toUpperCase()+dayType.slice(1);var muscles=isRest?'Rest day':(DAY_MUSCLES[dayType]||'');html+='<div class="history-entry"><div><div class="history-day-label" style="color:'+col+'">'+label+'</div><div class="history-date">'+fmtDate(ds)+'</div>'+(muscles?'<div class="history-muscles">'+muscles+'</div>':'')+'</div><button class="btn-del" onclick="deleteEntry(\''+ds+'\')" title="Delete">&#10005;</button></div>';});document.getElementById('historyList').innerHTML=html;}
 
-  const summaryEl = document.getElementById('summary-' + exid);
-  if (summaryEl) {
-    const parts = sets.map(function(s, i) {
-      if (s.skipped) return 'S' + (i+1) + ': skip';
-      if (ex.bodyweight) return 'S' + (i+1) + ': ' + (s.reps || '--') + ' reps';
-      return 'S' + (i+1) + ': ' + (s.weight || '--') + 'lb × ' + (s.reps || '--');
-    }).join(' · ');
-    summaryEl.textContent = '✓ Saved — ' + parts;
-    summaryEl.classList.add('show');
-  }
-  showToast('Logged ' + ex.name);
-  updateScheduleBar();
-}
+function deleteEntry(ds){openModal('Delete this entry?',fmtDate(ds)+' — this can\'t be undone.',function(){var data=getData();delete data[ds];saveData(data);refreshLog();updateScheduleBar();updateBadges();showToast('Entry deleted');});}
 
-function skipAllSets(exid) {
-  const ex = EXERCISES[exid];
-  for (let i = 0; i < ex.sets; i++) {
-    const btn = document.querySelector('#setrow-' + exid + '-' + i + ' .set-skip');
-    if (btn && !btn.classList.contains('skipped')) toggleSkip(exid, i, btn);
-  }
-  saveExerciseLog(exid);
-}
+function refreshLog(){renderCal();calcStreaks();renderMuscleSummary();renderHistory();}
 
-// ── WORKOUT SESSION ──
-function startWorkout(day) {
-  document.querySelectorAll('#panel-' + day + ' .exercise[data-exid]').forEach(function(el) {
-    const exid = el.dataset.exid;
-    const area = document.getElementById('log-' + exid);
-    if (area && area.innerHTML === '') buildLogUI(exid);
-    el.classList.add('open');
-    el.classList.remove('logged');
-  });
-  showToast('Session started — good luck!');
-  // mark today as session started
-  const workouts = getWorkouts();
-  const today = todayStr();
-  if (!workouts[today]) workouts[today] = { day, rest: false };
-  saveWorkouts(workouts);
-  updateScheduleBar();
-}
+var _mcb=null;
+function openModal(title,body,cb){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').textContent=body;_mcb=cb;document.getElementById('modal').classList.add('open');document.getElementById('modalConfirm').onclick=function(){closeModal();if(_mcb)_mcb();};}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
 
-function logRestDay(day) {
-  const workouts = getWorkouts();
-  const today = todayStr();
-  workouts[today] = { day, rest: true };
-  saveWorkouts(workouts);
-  updateScheduleBar();
-  showToast('Rest day logged');
-}
+var _tt;
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(_tt);_tt=setTimeout(function(){t.classList.remove('show');},2200);}
 
-// ── DATE HELPERS ──
-function todayStr() {
-  const d = new Date();
-  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
-}
-function pad(n) { return n < 10 ? '0'+n : ''+n; }
-function dateStr(d) {
-  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
-}
-
-// ── SCHEDULE BAR ──
-function updateScheduleBar() {
-  const workouts = getWorkouts();
-  const today = new Date();
-  // find Monday of current week
-  const dow = (today.getDay() + 6) % 7; // 0=Mon
-  document.querySelectorAll('.sched-day').forEach(function(el, i) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - dow + i);
-    const ds = dateStr(d);
-    el.classList.remove('done', 'today');
-    if (ds === todayStr()) el.classList.add('today');
-    if (workouts[ds] && !workouts[ds].rest) el.classList.add('done');
-  });
-}
-
-// ── TOGGLE CARD ──
-function toggle(header) {
-  const card = header.parentElement;
-  const exid = card.dataset.exid;
-  const wasOpen = card.classList.contains('open');
-  card.classList.toggle('open');
-  if (!wasOpen && exid) {
-    const area = document.getElementById('log-' + exid);
-    if (area && area.innerHTML === '') buildLogUI(exid);
-  }
-}
-
-// ── SWITCH DAY ──
-function switchDay(day, btn) {
-  document.querySelectorAll('.day-panel, .log-panel').forEach(function(p) { p.classList.remove('active'); });
-  document.querySelectorAll('.nav-btn').forEach(function(b) { b.className = 'nav-btn'; });
-  if (day === 'log') {
-    document.getElementById('panel-log').classList.add('active');
-    refreshLogTab();
-  } else {
-    document.getElementById('panel-' + day).classList.add('active');
-  }
-  btn.classList.add('active-' + day);
-  document.body.className = 'day-' + day;
-  document.querySelector('.scroll-area').scrollTop = 0;
-  document.querySelectorAll('.exercise.open').forEach(function(e) { e.classList.remove('open'); });
-}
-
-// ── MODAL ──
-let modalCallback = null;
-function openModal(title, body, cb) {
-  document.getElementById('modalTitle').textContent = title;
-  document.getElementById('modalBody').textContent = body;
-  modalCallback = cb;
-  document.getElementById('modal').classList.add('open');
-  document.getElementById('modalConfirm').onclick = function() { closeModal(); if (modalCallback) modalCallback(); };
-}
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-
-// ── TOAST ──
-let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2200);
-}
-
-// ── CALENDAR ──
-let calYear, calMonth2;
-function initCal() {
-  const now = new Date();
-  calYear = now.getFullYear();
-  calMonth2 = now.getMonth();
-  renderCal();
-}
-function calNav(dir) {
-  calMonth2 += dir;
-  if (calMonth2 < 0) { calMonth2 = 11; calYear--; }
-  if (calMonth2 > 11) { calMonth2 = 0; calYear++; }
-  renderCal();
-}
-function renderCal() {
-  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  document.getElementById('calMonth').textContent = months[calMonth2] + ' ' + calYear;
-  const grid = document.getElementById('calGrid');
-  const workouts = getWorkouts();
-  const logs = getLogs();
-  const today = todayStr();
-
-  let html = '';
-  ['M','T','W','T','F','S','S'].forEach(function(d) { html += '<div class="cal-dow">' + d + '</div>'; });
-
-  const first = new Date(calYear, calMonth2, 1);
-  const startDow = (first.getDay() + 6) % 7; // Mon=0
-  const daysInMonth = new Date(calYear, calMonth2+1, 0).getDate();
-  const prevDays = new Date(calYear, calMonth2, 0).getDate();
-
-  for (let i = 0; i < startDow; i++) {
-    html += '<div class="cal-day other-month">' + (prevDays - startDow + i + 1) + '</div>';
-  }
-  for (let d = 1; d <= daysInMonth; d++) {
-    const ds = calYear + '-' + pad(calMonth2+1) + '-' + pad(d);
-    const w = workouts[ds];
-    let cls = 'cal-day';
-    let typeLabel = '';
-    if (ds === today) cls += ' today';
-    if (w) {
-      if (w.rest) { cls += ' has-rest'; typeLabel = 'rest'; }
-      else { cls += ' has-' + w.day; typeLabel = w.day; }
-    } else {
-      // check if any exercises were logged that day
-      const dayTypes = {};
-      Object.keys(logs).forEach(function(exid) {
-        logs[exid].forEach(function(entry) {
-          if (entry.date === ds && EXERCISES[exid]) dayTypes[EXERCISES[exid].day] = true;
-        });
-      });
-      const keys = Object.keys(dayTypes);
-      if (keys.length > 0) {
-        cls += ' has-' + keys[0];
-        typeLabel = keys[0];
-      }
-    }
-    html += '<div class="' + cls + '"><span>' + d + '</span>' + (typeLabel ? '<span class="cal-day-type">' + typeLabel + '</span>' : '') + '</div>';
-  }
-  const remaining = (7 - (startDow + daysInMonth) % 7) % 7;
-  for (let i = 1; i <= remaining; i++) {
-    html += '<div class="cal-day other-month">' + i + '</div>';
-  }
-  grid.innerHTML = html;
-}
-
-// ── STREAKS ──
-function calcStreaks() {
-  const workouts = getWorkouts();
-  const logs = getLogs();
-  const allDates = new Set();
-  Object.keys(workouts).forEach(function(d) { if (!workouts[d].rest) allDates.add(d); });
-  Object.keys(logs).forEach(function(exid) {
-    logs[exid].forEach(function(e) {
-      const hasData = e.sets && e.sets.some(function(s) { return !s.skipped; });
-      if (hasData) allDates.add(e.date);
-    });
-  });
-  const sorted = Array.from(allDates).sort();
-  let streak = 0, total = sorted.length;
-  const today = new Date(); today.setHours(0,0,0,0);
-
-  // current streak
-  let checkDate = new Date(today);
-  while (true) {
-    const ds = dateStr(checkDate);
-    if (allDates.has(ds)) { streak++; checkDate.setDate(checkDate.getDate()-1); }
-    else if (ds === dateStr(today)) { checkDate.setDate(checkDate.getDate()-1); }
-    else break;
-  }
-
-  // this week
-  const dow = (today.getDay() + 6) % 7;
-  let weekCount = 0;
-  for (let i = 0; i <= dow; i++) {
-    const d = new Date(today); d.setDate(today.getDate()-i);
-    if (allDates.has(dateStr(d))) weekCount++;
-  }
-
-  document.getElementById('streakCurrent').textContent = streak;
-  document.getElementById('streakTotal').textContent = total;
-  document.getElementById('streakWeek').textContent = weekCount;
-}
-
-// ── EXERCISE FILTER ──
-function populateExerciseSelect(filterDay2, filterMuscle2) {
-  const sel = document.getElementById('filterExercise');
-  const current = sel.value;
-  sel.innerHTML = '<option value="">Select exercise...</option>';
-  const logs = getLogs();
-  Object.keys(EXERCISES).forEach(function(exid) {
-    const ex = EXERCISES[exid];
-    if (filterDay2 && ex.day !== filterDay2) return;
-    if (filterMuscle2 && ex.muscle !== filterMuscle2) return;
-    if (!logs[exid] || !logs[exid].length) return;
-    const opt = document.createElement('option');
-    opt.value = exid;
-    opt.textContent = ex.name + ' (' + ex.day + ')';
-    if (exid === current) opt.selected = true;
-    sel.appendChild(opt);
-  });
-  // also show unlogged exercises dimmed
-  Object.keys(EXERCISES).forEach(function(exid) {
-    const ex = EXERCISES[exid];
-    if (filterDay2 && ex.day !== filterDay2) return;
-    if (filterMuscle2 && ex.muscle !== filterMuscle2) return;
-    const logs2 = getLogs();
-    if (logs2[exid] && logs2[exid].length) return;
-    const opt = document.createElement('option');
-    opt.value = exid;
-    opt.textContent = ex.name + ' (' + ex.day + ') — no data';
-    opt.style.color = '#555';
-    sel.appendChild(opt);
-  });
-}
-function filterExercisesByDay() {
-  const day = document.getElementById('filterDay').value;
-  const muscle = document.getElementById('filterMuscle').value;
-  populateExerciseSelect(day, muscle);
-  updateChart();
-}
-function filterExercisesByMuscle() {
-  const day = document.getElementById('filterDay').value;
-  const muscle = document.getElementById('filterMuscle').value;
-  populateExerciseSelect(day, muscle);
-  updateChart();
-}
-
-// ── CHART ──
-let chartInstance = null;
-function updateChart() {
-  const exid = document.getElementById('filterExercise').value;
-  const emptyEl = document.getElementById('chartEmpty');
-  const canvas = document.getElementById('progressChart');
-
-  if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
-
-  if (!exid) { emptyEl.style.display = 'flex'; canvas.style.display = 'none'; return; }
-
-  const logs = getLogs();
-  const entries = logs[exid] || [];
-  const validEntries = entries.filter(function(e) {
-    return e.sets && e.sets.some(function(s) { return !s.skipped && (s.weight || s.reps); });
-  });
-
-  if (!validEntries.length) { emptyEl.textContent = 'No data logged for this exercise yet'; emptyEl.style.display = 'flex'; canvas.style.display = 'none'; return; }
-
-  emptyEl.style.display = 'none';
-  canvas.style.display = 'block';
-
-  const ex = EXERCISES[exid];
-  const labels = validEntries.map(function(e) {
-    const parts = e.date.split('-');
-    return parts[1] + '/' + parts[2];
-  });
-
-  let datasets = [];
-  if (!ex.bodyweight) {
-    // max weight per session
-    const maxWeights = validEntries.map(function(e) {
-      const weights = e.sets.filter(function(s) { return !s.skipped && s.weight; }).map(function(s) { return s.weight; });
-      return weights.length ? Math.max.apply(null, weights) : null;
-    });
-    const avgWeights = validEntries.map(function(e) {
-      const weights = e.sets.filter(function(s) { return !s.skipped && s.weight; }).map(function(s) { return s.weight; });
-      return weights.length ? weights.reduce(function(a,b){return a+b;},0)/weights.length : null;
-    });
-    datasets = [
-      { label: 'Max Weight (lb)', data: maxWeights, borderColor: '#e85d26', backgroundColor: 'rgba(232,93,38,0.1)', tension: 0.3, fill: true, pointRadius: 4, pointHoverRadius: 6 },
-      { label: 'Avg Weight (lb)', data: avgWeights, borderColor: '#2688e8', backgroundColor: 'rgba(38,136,232,0.05)', tension: 0.3, fill: false, borderDash: [4,3], pointRadius: 3 }
-    ];
-  } else {
-    // max reps per session
-    const maxReps = validEntries.map(function(e) {
-      const reps = e.sets.filter(function(s) { return !s.skipped && s.reps; }).map(function(s) { return s.reps; });
-      return reps.length ? Math.max.apply(null, reps) : null;
-    });
-    datasets = [
-      { label: 'Max Reps', data: maxReps, borderColor: '#26c47a', backgroundColor: 'rgba(38,196,122,0.1)', tension: 0.3, fill: true, pointRadius: 4, pointHoverRadius: 6 }
-    ];
-  }
-
-  const dayColors = { push: '#e85d26', pull: '#2688e8', legs: '#26c47a', abs: '#e8c426' };
-  const accentColor = dayColors[ex.day] || '#888';
-
-  chartInstance = new Chart(canvas, {
-    type: 'line',
-    data: { labels, datasets },
-    options: {
-      responsive: true,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { labels: { color: '#888', font: { family: 'Barlow', size: 11 }, boxWidth: 12 } },
-        tooltip: { backgroundColor: '#1f1f1f', titleColor: '#f0ede8', bodyColor: '#888', borderColor: '#272727', borderWidth: 1 }
-      },
-      scales: {
-        x: { ticks: { color: '#4a4a4a', font: { family: 'Barlow', size: 10 } }, grid: { color: '#1f1f1f' } },
-        y: { ticks: { color: '#4a4a4a', font: { family: 'Barlow', size: 10 } }, grid: { color: '#1f1f1f' }, beginAtZero: false }
-      }
-    }
-  });
-}
-
-// ── RECENT LOGS ──
-function renderRecentLogs() {
-  const logs = getLogs();
-  const container = document.getElementById('recentLogs');
-  const allEntries = [];
-  Object.keys(logs).forEach(function(exid) {
-    const ex = EXERCISES[exid];
-    if (!ex) return;
-    logs[exid].forEach(function(entry, idx) {
-      allEntries.push({ exid, ex, entry, idx });
-    });
-  });
-  allEntries.sort(function(a,b) { return b.entry.date.localeCompare(a.entry.date); });
-  const recent = allEntries.slice(0, 30);
-
-  if (!recent.length) {
-    container.innerHTML = '<div class="no-logs">No workouts logged yet. Hit Start Session on any day to begin.</div>';
-    return;
-  }
-
-  let html = '';
-  recent.forEach(function(item) {
-    const parts = item.entry.sets.map(function(s, i) {
-      if (s.skipped) return '<span style="color:var(--dim)">S' + (i+1) + ': skip</span>';
-      if (item.ex.bodyweight) return 'S' + (i+1) + ': ' + (s.reps || '--') + ' reps';
-      return 'S' + (i+1) + ': ' + (s.weight || '--') + 'lb × ' + (s.reps || '--');
-    }).join(' &nbsp;·&nbsp; ');
-    const d = item.entry.date.split('-');
-    const dateDisp = d[1] + '/' + d[2] + '/' + d[0];
-    const dayColors2 = { push:'var(--push)', pull:'var(--pull)', legs:'var(--legs)', abs:'var(--abs)' };
-    const col = dayColors2[item.ex.day] || 'var(--muted)';
-    html += '<div class="log-entry">'
-      + '<div class="log-entry-header">'
-      + '<div class="log-entry-name" style="color:' + col + '">' + item.ex.name + '</div>'
-      + '<div style="display:flex;gap:8px;align-items:center">'
-      + '<div class="log-entry-date">' + dateDisp + '</div>'
-      + '<button class="btn-delete-log" onclick="deleteLog(\'' + item.exid + '\',' + item.idx + ')" title="Delete">✕</button>'
-      + '</div></div>'
-      + '<div class="log-entry-sets">' + parts + '</div>'
-      + '</div>';
-  });
-  container.innerHTML = html;
-}
-
-function deleteLog(exid, idx) {
-  openModal('Delete entry?', 'This will permanently remove this log entry.', function() {
-    const logs = getLogs();
-    if (logs[exid]) {
-      logs[exid].splice(idx, 1);
-      if (!logs[exid].length) delete logs[exid];
-      saveLogs(logs);
-      refreshLogTab();
-      showToast('Entry deleted');
-    }
-  });
-}
-
-// ── REFRESH LOG TAB ──
-function refreshLogTab() {
-  renderCal();
-  calcStreaks();
-  populateExerciseSelect(
-    document.getElementById('filterDay').value,
-    document.getElementById('filterMuscle').value
-  );
-  updateChart();
-  renderRecentLogs();
-}
-
-// ── INIT ──
-getDailyQuote();
-updateScheduleBar();
-initCal();
+updateBadges();updateScheduleBar();initCal();
 </script>
 </body>
 </html>
