@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PPL Routine">
+<meta name="theme-color" content="#0d0d0d">
+<title>PPL Routine</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0d0d;
+  --surface: #161616;
+  --surface2: #1f1f1f;
+  --border: #272727;
+  --push: #e85d26;
+  --pull: #2688e8;
+  --legs: #26c47a;
+  --abs: #e8c426;
+  --text: #f0ede8;
+  --muted: #888;
+  --dim: #4a4a4a;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── TOP HEADER ── */
+.top-bar {
+  flex-shrink: 0;
+  padding: 16px 16px 12px;
+  padding-top: max(16px, env(safe-area-inset-top));
+  border-bottom: 1px solid var(--border);
+  background: rgba(13,13,13,0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.top-bar h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 1.7rem;
+  text-transform: uppercase;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.top-bar p {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 3px;
+  font-weight: 300;
+}
+
+/* day accent color on h1 */
+body.day-push .top-bar h1 { color: var(--push); }
+body.day-pull .top-bar h1 { color: var(--pull); }
+body.day-legs .top-bar h1 { color: var(--legs); }
+body.day-abs  .top-bar h1 { color: var(--abs); }
+
+/* ── SCHEDULE BAR ── */
+.schedule-bar {
+  flex-shrink: 0;
+  display: flex;
+  gap: 5px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.schedule-bar::-webkit-scrollbar { display: none; }
+
+.sched-day {
+  flex: 1;
+  min-width: 38px;
+  text-align: center;
+  padding: 6px 4px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+.sched-day .sd { font-family: 'Barlow Condensed', sans-serif; font-size: 0.6rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--dim); }
+.sched-day .st { font-family: 'Barlow Condensed', sans-serif; font-size: 0.85rem; font-weight: 900; text-transform: uppercase; margin-top: 1px; }
+.sched-day.t-push .st { color: var(--push); }
+.sched-day.t-pull .st { color: var(--pull); }
+.sched-day.t-legs .st { color: var(--legs); }
+.sched-day.t-rest .st { color: var(--dim); }
+
+/* ── SCROLL AREA ── */
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 14px 14px calc(80px + var(--safe-bottom));
+}
+
+/* ── DAY PANELS ── */
+.day-panel { display: none; }
+.day-panel.active { display: block; animation: fadeUp 0.2s ease; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── DAY HEADER ── */
+.day-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.day-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 3.8rem;
+  text-transform: uppercase;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+.push  .day-label { color: var(--push); }
+.pull  .day-label { color: var(--pull); }
+.legs  .day-label { color: var(--legs); }
+.abs-d .day-label { color: var(--abs); }
+.day-meta { border-left: 1px solid var(--border); padding-left: 12px; }
+.day-meta .focus { font-size: 0.68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+.day-meta .muscles { font-size: 0.85rem; color: var(--text); margin-top: 2px; line-height: 1.3; }
+.day-meta .duration { font-size: 0.7rem; color: var(--dim); margin-top: 3px; }
+
+/* ── SECTION ── */
+.section { margin-bottom: 22px; }
+.section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--dim);
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── EXERCISE CARD ── */
+.exercise {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 7px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+.exercise.open { border-color: #333; }
+
+.ex-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 14px;
+  cursor: pointer;
+  user-select: none;
+  gap: 10px;
+  min-height: 56px;
+}
+
+.ex-header-left { flex: 1; min-width: 0; }
+
+.ex-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.ex-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 5px;
+}
+
+.tag {
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--surface2);
+  color: var(--dim);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+.tag.cali { color: var(--muted); }
+.push  .tag.target { background: rgba(232,93,38,0.12);  color: var(--push); border-color: rgba(232,93,38,0.3); }
+.pull  .tag.target { background: rgba(38,136,232,0.12); color: var(--pull); border-color: rgba(38,136,232,0.3); }
+.legs  .tag.target { background: rgba(38,196,122,0.12); color: var(--legs); border-color: rgba(38,196,122,0.3); }
+.abs-d .tag.target { background: rgba(232,196,38,0.12); color: var(--abs);  border-color: rgba(232,196,38,0.3); }
+
+.ex-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+  gap: 2px;
+}
+.sets-reps {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text);
+  white-space: nowrap;
+}
+.rest-label { font-size: 0.65rem; color: var(--dim); white-space: nowrap; }
+
+.chevron {
+  width: 16px;
+  height: 16px;
+  margin-left: 6px;
+  flex-shrink: 0;
+  color: var(--dim);
+  transition: transform 0.2s;
+}
+.exercise.open .chevron { transform: rotate(180deg); }
+
+/* ── EXPAND BODY ── */
+.ex-body {
+  display: none;
+  padding: 0 14px 14px;
+  border-top: 1px solid var(--border);
+}
+.exercise.open .ex-body { display: block; }
+
+.ex-desc {
+  font-size: 0.83rem;
+  color: var(--muted);
+  line-height: 1.6;
+  font-weight: 300;
+  padding-top: 12px;
+}
+
+/* ── NOTES BOX ── */
+.notes-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left-width: 3px;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 20px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.push  .notes-box { border-left-color: var(--push); }
+.pull  .notes-box { border-left-color: var(--pull); }
+.legs  .notes-box { border-left-color: var(--legs); }
+.abs-d .notes-box { border-left-color: var(--abs); }
+.notes-box strong {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 5px;
+}
+
+/* ── BOTTOM TAB BAR ── */
+.bottom-nav {
+  flex-shrink: 0;
+  display: flex;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding-bottom: var(--safe-bottom);
+}
+
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  gap: 3px;
+  transition: opacity 0.15s;
+  min-height: 56px;
+}
+
+.nav-btn .nav-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--dim);
+  transition: color 0.15s;
+}
+
+.nav-btn .nav-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background 0.15s;
+}
+
+.nav-btn.active-push .nav-label { color: var(--push); }
+.nav-btn.active-push .nav-dot   { background: var(--push); }
+.nav-btn.active-pull .nav-label { color: var(--pull); }
+.nav-btn.active-pull .nav-dot   { background: var(--pull); }
+.nav-btn.active-legs .nav-label { color: var(--legs); }
+.nav-btn.active-legs .nav-dot   { background: var(--legs); }
+.nav-btn.active-abs  .nav-label { color: var(--abs); }
+.nav-btn.active-abs  .nav-dot   { background: var(--abs); }
+
+/* ── DESKTOP FALLBACK ── */
+@media (min-width: 700px) {
+  body { overflow: auto; flex-direction: column; height: auto; }
+  .scroll-area { overflow: visible; padding: 20px 32px 60px; max-width: 760px; margin: 0 auto; width: 100%; }
+  .top-bar { padding: 24px 32px 16px; }
+  .schedule-bar { padding: 10px 32px; max-width: 760px; margin: 0 auto; }
+  .bottom-nav { position: sticky; bottom: 0; }
+  .ex-body { display: block !important; }
+  .chevron { display: none; }
+}
+</style>
+</head>
+<body class="day-push">
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <h1>Push / Pull / Legs</h1>
+  <p>Dumbbell &middot; Bench &middot; Calisthenics &middot; ~45&ndash;60 min</p>
+</div>
+
+<!-- SCHEDULE -->
+<div class="schedule-bar">
+  <div class="sched-day t-push"><div class="sd">Mon</div><div class="st">Push</div></div>
+  <div class="sched-day t-pull"><div class="sd">Tue</div><div class="st">Pull</div></div>
+  <div class="sched-day t-legs"><div class="sd">Wed</div><div class="st">Legs</div></div>
+  <div class="sched-day t-rest"><div class="sd">Thu</div><div class="st">Rest</div></div>
+  <div class="sched-day t-push"><div class="sd">Fri</div><div class="st">Push</div></div>
+  <div class="sched-day t-pull"><div class="sd">Sat</div><div class="st">Pull</div></div>
+  <div class="sched-day t-legs"><div class="sd">Sun</div><div class="st">Legs</div></div>
+</div>
+
+<!-- SCROLL AREA -->
+<div class="scroll-area">
+
+  <!-- ===== PUSH ===== -->
+  <div id="panel-push" class="day-panel push active">
+    <div class="day-header">
+      <div class="day-label">Push</div>
+      <div class="day-meta">
+        <div class="focus">Focus</div>
+        <div class="muscles">Chest &middot; Shoulders &middot; Triceps</div>
+        <div class="duration">~50 min</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Chest</div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Dumbbell Flat Bench Press</div>
+            <div class="ex-tags"><span class="tag target">Pec major (sternal)</span></div>
+          </div>
+          <div class="ex-header-right">
+            <div class="sets-reps">4 &times; 8&ndash;10</div>
+            <div class="rest-label">90s rest</div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Primary chest mass builder. Control the descent, pause briefly at the chest, drive up. Keep your shoulder blades pinched back into the bench throughout.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Incline Dumbbell Press</div>
+            <div class="ex-tags"><span class="tag target">Pec major (clavicular)</span></div>
+          </div>
+          <div class="ex-header-right">
+            <div class="sets-reps">3 &times; 10&ndash;12</div>
+            <div class="rest-label">75s rest</div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Set bench to 30&ndash;45&deg;. Hits the upper chest that flat work misses. Keep elbows at about 70&deg; to the torso, not flared wide.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Dumbbell Chest Fly</div>
+            <div class="ex-tags"><span class="tag target">Pec major (stretch)</span><span class="tag">Pec minor</span></div>
+          </div>
+          <div class="ex-header-right">
+            <div class="sets-reps">3 &times; 12&ndash;15</div>
+            <div class="rest-label">60s rest</div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Flat bench. Arms slightly bent, lower wide until you feel a deep stretch, squeeze back together. Isolation move, go lighter than you think.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Push-Ups</div>
+            <div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Pec minor &middot; Serratus</span></div>
+          </div>
+          <div class="ex-header-right">
+            <div class="sets-reps">2 &times; Fail</div>
+            <div class="rest-label">60s rest</div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Finisher. Hands slightly wider than shoulder-width. Go to failure or do slow negatives (3 sec down). Great for serratus anterior and pec minor activation.</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Shoulders</div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Seated DB Overhead Press</div>
+            <div class="ex-tags"><span class="tag target">Anterior delt</span><span class="tag">Medial delt</span></div>
+          </div>
+          <div class="ex-header-right">
+            <div class="sets-reps">4 &times; 8&ndash;10</div>
+            <div class="rest-label">90s rest</div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Bench fully upright. Shoulder mass builder. Press to full extension, lower to ear level. Core tight throughout.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Dumbbell Lateral Raise</div>
+            <div class="ex-tags"><span class="tag target">Medial delt</span></div>
+          </div>
+          <div class="ex-header-right">
+            <div class="sets-reps">4 &times; 12&ndash;15</div>
+            <div class="rest-label">60s rest</div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">The exercise that actually builds shoulder width. Lead with the elbow, slight forward tilt, raise to shoulder height. Avoid shrugging. Slow and controlled, not swung.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Dumbbell Front Raise</div>
+            <div class="ex-tags"><span class="tag target">Anterior delt</span></div>
+          </div>
+          <div class="ex-header-right">
+            <div class="sets-reps">3 &times; 12</div>
+            <div class="rest-label">60s rest</div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Alternating or both arms. Raise to shoulder height, no higher. Slight bend in elbow. Rounds out the front delt that pressing alone doesn&apos;t fully isolate.</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Triceps</div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Dumbbell Skull Crushers</div>
+            <div class="ex-tags"><span class="tag target">Long head</span><span class="tag">Medial head</span></div>
+          </div>
+          <div class="ex-header-right">
+            <div class="sets-reps">3 &times; 10&ndash;12</div>
+            <div class="rest-label">75s rest</div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Flat bench. Lower dumbbells to the sides of your head, elbows pointing up. The long head gets the best stretch in this position. Key for overall tricep size.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Overhead DB Extension</div>
+            <div class="ex-tags"><span class="tag target">Long head (stretch)</span></div>
+          </div>
+          <div class="ex-header-right">
+            <div class="sets-reps">3 &times; 12</div>
+            <div class="rest-label">60s rest</div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">One dumbbell held with both hands overhead. Lower behind your head, elbows in tight. The stretch-loaded position on the long head is unmatched for growth.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Diamond / Close-Grip Push-Ups</div>
+            <div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Lateral head</span><span class="tag">Medial head</span></div>
+          </div>
+          <div class="ex-header-right">
+            <div class="sets-reps">2 &times; Fail</div>
+            <div class="rest-label">60s rest</div>
+          </div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Hands form a diamond or stay close. Elbows track back along your torso, not flared. Great finisher that hits the lateral head differently than DB work.</div></div>
+      </div>
+    </div>
+
+    <div class="notes-box">
+      <strong>Tips</strong>
+      Superset laterals with front raises to save time. Flat and incline press are your heaviest lifts so do those first. If you&apos;re short on time, drop one of the finisher push-up sets.
+    </div>
+  </div>
+
+  <!-- ===== PULL ===== -->
+  <div id="panel-pull" class="day-panel pull">
+    <div class="day-header">
+      <div class="day-label">Pull</div>
+      <div class="day-meta">
+        <div class="focus">Focus</div>
+        <div class="muscles">Back &middot; Biceps &middot; Forearms &middot; Rear Delts</div>
+        <div class="duration">~55 min</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Back</div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Dumbbell Row</div>
+            <div class="ex-tags"><span class="tag target">Latissimus dorsi</span><span class="tag">Mid traps</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">4 &times; 8&ndash;10</div><div class="rest-label">90s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Brace a knee and hand on the bench. Row the dumbbell to your hip, leading with the elbow. Full stretch at the bottom, full squeeze at the top. Primary lat builder.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Pull-Ups / Chin-Ups</div>
+            <div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Lats (width)</span><span class="tag">Biceps</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; Fail</div><div class="rest-label">90s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Pull-ups (overhand) bias lats more; chin-ups (underhand) bring in more biceps. Go to failure every set. Even 3&ndash;5 reps per set adds up.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Incline Prone DB Row</div>
+            <div class="ex-tags"><span class="tag target">Mid / lower traps</span><span class="tag">Rhomboids</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 12</div><div class="rest-label">75s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Set bench to 45&deg;, lie chest-down, dumbbells hanging. Row both up, elbows flared to 90&deg;. Excellent for postural muscles and upper back thickness standard rows miss.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Dumbbell Deadlift</div>
+            <div class="ex-tags"><span class="tag target">Erector spinae</span><span class="tag">Lower back</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 10</div><div class="rest-label">90s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Dumbbells at your sides, hip hinge (not a squat), flat back throughout. Push the floor away on the way up. Builds spinal erectors and teaches the hinge pattern.</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Biceps</div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Dumbbell Curl</div>
+            <div class="ex-tags"><span class="tag target">Biceps brachii (short head)</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 10&ndash;12</div><div class="rest-label">60s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Standing, alternating. Supinate (rotate) the wrist as you curl up. Full range of motion, no swinging. Primary bicep builder targeting the short head and outer peak.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Incline Dumbbell Curl</div>
+            <div class="ex-tags"><span class="tag target">Biceps brachii (long head)</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 10&ndash;12</div><div class="rest-label">60s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Bench at 45&ndash;60&deg;, lean back, arms hang fully behind you. Puts the long head in a deep stretch standing curls can&apos;t replicate. Slower and more controlled.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Hammer Curl</div>
+            <div class="ex-tags"><span class="tag target">Brachialis</span><span class="tag">Brachioradialis</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 12</div><div class="rest-label">60s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Neutral (thumbs-up) grip throughout. The brachialis sits beneath the bicep and, when developed, pushes the bicep up making arms look thicker. Also hits brachioradialis.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Concentration Curl</div>
+            <div class="ex-tags"><span class="tag target">Biceps (short head)</span><span class="tag">Peak isolation</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">2 &times; 12 /side</div><div class="rest-label">45s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Seated, elbow braced against the inside of your thigh, curl up. Eliminates all momentum. Emphasizes the short head and the peak. Best used as a finisher after heavier curl work.</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Forearms</div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Zottman Curl</div>
+            <div class="ex-tags"><span class="tag target">Brachioradialis</span><span class="tag">Biceps brachii</span><span class="tag">Brachialis</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 10</div><div class="rest-label">60s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Curl up supinated (palms up), rotate to pronated (palms down) at the top, lower slowly. Trains all three elbow flexors through their strongest positions in one movement.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Reverse Curl</div>
+            <div class="ex-tags"><span class="tag target">Brachioradialis</span><span class="tag">Extensor carpi</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 10&ndash;12</div><div class="rest-label">60s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Overhand (pronated) grip, curl up the same as a normal curl. Brachioradialis does most of the work. Also hits the wrist extensors, important for elbow health.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Wrist Curl (Supinated)</div>
+            <div class="ex-tags"><span class="tag target">Flexor carpi radialis</span><span class="tag">Flexor carpi ulnaris</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 15&ndash;20</div><div class="rest-label">30s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Forearms on thighs or bench edge, palms up. Curl the wrist up and lower slowly. Builds the inner forearm belly. Go light, this is pure isolation.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Wrist Curl (Pronated)</div>
+            <div class="ex-tags"><span class="tag target">Extensor carpi radialis</span><span class="tag">Extensor carpi ulnaris</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 15&ndash;20</div><div class="rest-label">30s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Same setup but palms down. Extend the wrist up against gravity. The most neglected forearm muscles, and a common source of lateral elbow pain when weak. Superset directly with the supinated version.</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Rear Delts</div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Bent-Over Reverse Fly</div>
+            <div class="ex-tags"><span class="tag target">Posterior delt</span><span class="tag">Lower traps</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">4 &times; 12&ndash;15</div><div class="rest-label">60s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Hinge forward to ~45&deg;, arms hanging. Raise arms out to the sides with a slight bend at the elbow, pinch the shoulder blades. Rear delts are almost always undertrained and matter a lot for shoulder health and posture.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Face Pull (floor variation)</div>
+            <div class="ex-tags"><span class="tag target">Posterior delt</span><span class="tag">Rotator cuff</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 15</div><div class="rest-label">60s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">No cable? Lie on the bench face-down with light dumbbells, arms hanging. Row the weights up and back, externally rotating at the top. Crucial for shoulder health and rotator cuff longevity.</div></div>
+      </div>
+    </div>
+
+    <div class="notes-box">
+      <strong>Tips</strong>
+      You don&apos;t need all the bicep variations every session. Rotate: one session do curls + incline curls, another do Zottmans + concentration curls. Always superset the two wrist curl variations back to back. Reverse curls can replace hammer curls on alternating weeks.
+    </div>
+  </div>
+
+  <!-- ===== LEGS ===== -->
+  <div id="panel-legs" class="day-panel legs">
+    <div class="day-header">
+      <div class="day-label">Legs</div>
+      <div class="day-meta">
+        <div class="focus">Focus</div>
+        <div class="muscles">Quads &middot; Hamstrings &middot; Glutes &middot; Calves &middot; Tibialis</div>
+        <div class="duration">~55 min</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Dynamic Warmup (do before lifting)</div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Seated Heel-to-Hip Switch</div>
+            <div class="ex-tags"><span class="tag">Hip internal rotation</span><span class="tag">Hip external rotation</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">10 /side</div><div class="rest-label">flow</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Sit on the floor, legs extended. Alternate bending one knee and dropping the foot to the side of the hip (Z-sit). Switch sides. Wakes up hip rotation, often the root cause of knee tracking issues in squats.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">90/90 Hip Stretch</div>
+            <div class="ex-tags"><span class="tag">Hip external rotation</span><span class="tag">Piriformis</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">60s /side</div><div class="rest-label">flow</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Sit with both knees bent at 90&deg;, one in front and one to the side. Sit tall and breathe into the stretch. Opens the hip capsule in a way standing stretches don&apos;t reach.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Active Straight Leg Raise (ASLR)</div>
+            <div class="ex-tags"><span class="tag">Hamstring flexibility</span><span class="tag">Hip flexor activation</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">10 /side</div><div class="rest-label">flow</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Lie on your back, legs extended. Actively raise one leg as high as you can with a straight knee, keeping the other leg pressed to the floor. Active, not passive; you&apos;re using your hip flexors to lift.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">90/90 to Hip Lift</div>
+            <div class="ex-tags"><span class="tag">Glute activation</span><span class="tag">Hip extension</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">8 /side</div><div class="rest-label">flow</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Start in 90/90. Press through the front foot and drive your hips up into full extension. Lower back down. Primes the glutes and hip extensors before you load them with squats and RDLs.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Kneeling Hip Flexor Lunge</div>
+            <div class="ex-tags"><span class="tag">Iliopsoas</span><span class="tag">Rectus femoris</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">60s /side</div><div class="rest-label">flow</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Half-kneeling, back knee on the floor, front foot forward. Drive hips forward gently until you feel the front of the back hip stretch. Squeeze the glute of the back leg to deepen it. Tight hip flexors are the biggest limiter of squat depth.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Deep Squat Hold (Asian Squat)</div>
+            <div class="ex-tags"><span class="tag">Ankle mobility</span><span class="tag">Hip flexion</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">2 &times; 30&ndash;60s</div><div class="rest-label">flow</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Feet shoulder-width, toes slightly out. Squat all the way down and hold, heels flat if possible. Grab a doorframe or hold a light dumbbell as a counterbalance if needed. Mobility test and warmup in one.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Deep Lateral Lunge</div>
+            <div class="ex-tags"><span class="tag">Adductors</span><span class="tag">Hip abductors</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">8 /side</div><div class="rest-label">flow</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Wide stance, shift weight to one side and sink into a deep side lunge, other leg straight. Inside of both feet stay flat. Alternate sides. Opens the groin and adductors, which are active in squats but rarely warmed up.</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Quads</div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Goblet Squat</div>
+            <div class="ex-tags"><span class="tag target">Quad (rectus femoris)</span><span class="tag">VMO</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">4 &times; 10&ndash;12</div><div class="rest-label">90s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Hold one dumbbell vertically at your chest. Upright torso, wide stance, squat deep. The goblet position keeps your torso more vertical than a regular DB squat, maximizing quad load and knee tracking.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Bulgarian Split Squat</div>
+            <div class="ex-tags"><span class="tag target">Quad (vastus lateralis)</span><span class="tag">Glutes</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 8&ndash;10 /side</div><div class="rest-label">90s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Rear foot elevated on the bench, dumbbells at sides. Lower the back knee toward the floor. Brutal but one of the best single-leg exercises you can do. Glute involvement depends on your forward lean.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Dumbbell Step-Up</div>
+            <div class="ex-tags"><span class="tag target">VMO</span><span class="tag">Rectus femoris</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 10 /side</div><div class="rest-label">75s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Use the bench as the step, dumbbells at sides. Drive through the heel of your lead foot. Don&apos;t push off with the back leg. The VMO (teardrop) loves this movement.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Cossack Squat</div>
+            <div class="ex-tags"><span class="tag target">Vastus medialis (VMO)</span><span class="tag">Adductors</span><span class="tag">Glutes</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 8 /side</div><div class="rest-label">75s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Wide stance, squat deeply to one side while the other leg stays fully extended with toes pointing up. Trains inner quad and adductors regular squats miss. Hold a dumbbell at chest for counterbalance.</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Hamstrings</div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Romanian Deadlift (RDL)</div>
+            <div class="ex-tags"><span class="tag target">Biceps femoris</span><span class="tag">Semitendinosus</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">4 &times; 10&ndash;12</div><div class="rest-label">90s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Dumbbells in front of thighs, slight knee bend. Hinge at the hips, lower along your legs until you feel a deep hamstring stretch. Drive hips forward to come back up. The best hamstring exercise you can do with dumbbells.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Nordic Hamstring Curl</div>
+            <div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Semimembranosus</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 4&ndash;6</div><div class="rest-label">90s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Anchor feet under the bench. Kneel tall, then lower your torso to the floor using only your hamstrings, as slowly as possible. Catch yourself with hands, push back up. One of the highest-value exercises for hamstring strength and injury prevention.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Seated Good Morning</div>
+            <div class="ex-tags"><span class="tag target">Erector spinae</span><span class="tag">Semimembranosus</span><span class="tag">Biceps femoris</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 12</div><div class="rest-label">75s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Sit on the bench edge, hold a dumbbell behind your head or hug it at your chest. Hinge forward with a flat back until you feel a hamstring stretch, then drive back up. The seated position limits hip flexor involvement in a way standing RDLs don&apos;t.</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Glutes</div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Dumbbell Hip Thrust</div>
+            <div class="ex-tags"><span class="tag target">Gluteus maximus</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">4 &times; 12&ndash;15</div><div class="rest-label">75s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Upper back on the bench, dumbbell on your hips. Drive through your heels, squeeze your glutes hard at the top, hold 1 second. The glute max is the largest muscle in the body and often undertrained even in people who squat regularly.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Dumbbell Sumo Squat</div>
+            <div class="ex-tags"><span class="tag target">Gluteus medius</span><span class="tag">Inner quad</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 12</div><div class="rest-label">75s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Wide stance, toes out ~45&deg;, one dumbbell hanging between your legs. Lower deep. The wide stance shifts work to the glute medius (outer glute) and inner quad that standard squats miss.</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Calves &amp; Tibialis</div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Standing Dumbbell Calf Raise</div>
+            <div class="ex-tags"><span class="tag target">Gastrocnemius</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">4 &times; 15&ndash;20</div><div class="rest-label">45s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Hold dumbbells, raise on the balls of your feet, squeeze at the top, lower slowly. Toes forward. The gastroc is the visible two-headed calf muscle trained best with the knee extended.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Seated Calf Raise (bench)</div>
+            <div class="ex-tags"><span class="tag target">Soleus</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 15&ndash;20</div><div class="rest-label">45s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Sit on the bench, dumbbell balanced on knee, raise up. Knees bent shifts load to the soleus, the deeper calf muscle that gives the calf its overall thickness from the front.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Tibialis Raise</div>
+            <div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Tibialis anterior</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 20&ndash;25</div><div class="rest-label">30s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Back against a wall, heels about 6 inches from the baseboard. Lift toes and forefoot off the ground repeatedly. The tibialis anterior is the direct antagonist to the calf, almost universally undertrained, and key for ankle stability and shin splint prevention.</div></div>
+      </div>
+    </div>
+
+    <div class="notes-box">
+      <strong>Tips</strong>
+      Do the full warmup before touching a weight; it takes about 8 minutes and makes a real difference in squat depth and knee tracking. Keep the heaviest compounds first: goblet squat, then RDL. Superset standing and seated calf raises back to back, then do tibialis raises. Nordic curls are hard, even 3 slow negatives per set counts.
+    </div>
+  </div>
+
+  <!-- ===== ABS ===== -->
+  <div id="panel-abs" class="day-panel abs-d">
+    <div class="day-header">
+      <div class="day-label">Abs</div>
+      <div class="day-meta">
+        <div class="focus">Focus</div>
+        <div class="muscles">Rectus Abdominis &middot; Obliques &middot; TVA</div>
+        <div class="duration">~15&ndash;20 min &middot; add to any session</div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Wall-Anchored Circuit (run as a sequence)</div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Wall Feet Hollow Body Crunch</div>
+            <div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Rectus abdominis</span><span class="tag">TVA</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 15</div><div class="rest-label">flow</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Lie on your back, feet flat on the wall, knees at 90&deg;. Slide your feet up the wall by pressing into it and crunching your torso up simultaneously. The wall locks your lower body in place so the abs do all the work, no hip flexor cheating.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Heel Taps</div>
+            <div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">External obliques</span><span class="tag">Rectus abdominis (lower)</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 20</div><div class="rest-label">flow</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Same wall-anchored position. Shoulders slightly off the floor. Reach side to side, alternating touching each heel with the same-side hand. The lateral reach fires the obliques while the lower abs hold pelvic position.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Alternating Elbow-to-Knee</div>
+            <div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">External obliques</span><span class="tag">Rectus abdominis</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 20</div><div class="rest-label">flow</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Feet off the wall. Hands behind your head, bring the opposite elbow toward the opposite knee while extending the other leg. Slow and controlled, feel the rotation. One of the highest-activation ab exercises in EMG research.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Double Crunch</div>
+            <div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Rectus abdominis (upper + lower)</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 12</div><div class="rest-label">45s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Bring both elbows and both knees together at the same time in the middle. Upper body crunches up while the knees draw in simultaneously. Hits the full length of the rectus abdominis at once.</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Anti-Extension (core stability)</div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Plank</div>
+            <div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Transverse abdominis</span><span class="tag">Deep core</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 30&ndash;60s</div><div class="rest-label">45s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Forearms or hands, straight line from head to heels. Squeeze everything: glutes, abs, quads. Breathing should stay controlled. The TVA is your internal weight belt and the foundation of all core work.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Ab Wheel / Dumbbell Rollout</div>
+            <div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Rectus abdominis</span><span class="tag">TVA</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 8&ndash;12</div><div class="rest-label">60s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Hold a dumbbell on the floor and roll it out as far as you can while keeping a neutral spine. Roll it back without letting your hips sag. Arguably the single best ab exercise for building thickness.</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Flexion</div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Weighted Crunch</div>
+            <div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Rectus abdominis (upper)</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 15&ndash;20</div><div class="rest-label">45s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Hold a dumbbell at your chest. Curl your shoulders off the floor, exhale hard at the top. Slow and intentional reps beat high-rep sloppy ones.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Reverse Crunch</div>
+            <div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Rectus abdominis (lower)</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 12&ndash;15</div><div class="rest-label">45s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Lie flat, bring your knees to your chest and curl your hips off the floor. Lower with control. The lower rectus abdominis is notoriously hard to isolate and this is one of the few moves that genuinely does it.</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Rotation &amp; Anti-Rotation (obliques)</div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Dumbbell Russian Twist</div>
+            <div class="ex-tags"><span class="tag target">External obliques</span><span class="tag">Internal obliques</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 16&ndash;20</div><div class="rest-label">45s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Seated, torso leaned back slightly, feet up or down. Hold one dumbbell and rotate side to side, touching the weight to the floor. Rotate from your torso, not just your arms.</div></div>
+      </div>
+      <div class="exercise">
+        <div class="ex-header" onclick="toggle(this)">
+          <div class="ex-header-left">
+            <div class="ex-name">Side Plank</div>
+            <div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Internal obliques</span><span class="tag">Quadratus lumborum</span></div>
+          </div>
+          <div class="ex-header-right"><div class="sets-reps">3 &times; 30s /side</div><div class="rest-label">30s rest</div></div>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="ex-body"><div class="ex-desc">Forearm on the floor, body in a straight line, hips elevated. Add a dumbbell on the hip for extra load. Trains the obliques and QL as stabilizers, which matters for spine health and lateral strength.</div></div>
+      </div>
+    </div>
+
+    <div class="notes-box">
+      <strong>When to do Abs</strong>
+      Tack this on at the end of any session. Run the wall-anchored circuit as one block with minimal rest, then pick 2&ndash;3 from the remaining sections. Takes about 15&ndash;20 minutes. Abs recover fast, 3&ndash;4 sessions per week is fine. Rotate exercises so every part of the core gets hit across the week.
+    </div>
+  </div>
+
+</div><!-- /.scroll-area -->
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active-push" data-day="push" onclick="switchDay('push',this)">
+    <div class="nav-label">Push</div>
+    <div class="nav-dot"></div>
+  </button>
+  <button class="nav-btn" data-day="pull" onclick="switchDay('pull',this)">
+    <div class="nav-label">Pull</div>
+    <div class="nav-dot"></div>
+  </button>
+  <button class="nav-btn" data-day="legs" onclick="switchDay('legs',this)">
+    <div class="nav-label">Legs</div>
+    <div class="nav-dot"></div>
+  </button>
+  <button class="nav-btn" data-day="abs" onclick="switchDay('abs',this)">
+    <div class="nav-label">Abs</div>
+    <div class="nav-dot"></div>
+  </button>
+</nav>
+
+<script>
+function toggle(header) {
+  var card = header.parentElement;
+  card.classList.toggle('open');
+}
+
+function switchDay(day, btn) {
+  // hide all panels
+  document.querySelectorAll('.day-panel').forEach(function(p){ p.classList.remove('active'); });
+  // deactivate all nav btns
+  document.querySelectorAll('.nav-btn').forEach(function(b){ b.className = 'nav-btn'; });
+  // show selected
+  document.getElementById('panel-' + day).classList.add('active');
+  btn.classList.add('active-' + day);
+  // update body class for header color
+  document.body.className = 'day-' + day;
+  // scroll back to top
+  document.querySelector('.scroll-area').scrollTop = 0;
+  // close all open cards
+  document.querySelectorAll('.exercise.open').forEach(function(e){ e.classList.remove('open'); });
+}
+</script>
+</body>
+</html>
