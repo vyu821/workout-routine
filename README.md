@@ -6,7 +6,7 @@
 
 Built for dumbbell-based training with an adjustable bench.
 
-[![Version](https://img.shields.io/badge/version-1.3.0-4a9eff?style=flat-square&labelColor=03030e)](.)
+[![Version](https://img.shields.io/badge/version-1.3.1-4a9eff?style=flat-square&labelColor=03030e)](.)
 [![PWA](https://img.shields.io/badge/PWA-ready-26c47a?style=flat-square&labelColor=03030e)](.)
 [![Storage](https://img.shields.io/badge/storage-localStorage-7744ff?style=flat-square&labelColor=03030e)](.)
 
@@ -30,14 +30,19 @@ Deploy both to the same folder. They share data through `localStorage` and link 
 ### 🏋️ Workout Panels (Push / Pull / Legs / Abs)
 - Exercise cards with sets, reps, rest, and coaching cues
 - Tap to expand full description and muscle targets
-- Auto-expand on desktop
+- Exercises are grouped by muscle section within each day:
+  - **Push:** Chest → Shoulders → Triceps
+  - **Pull:** Back → Biceps → Forearms → Rear Delts
+  - **Legs:** Warmup → Quads → Hamstrings → Glutes → Calves
+  - **Abs:** Core Stability → Rectus Abdominis → Obliques
 
 ### ✏️ Inline Routine Editor
 Tap the **pencil icon** on any panel to open the edit sheet — no code changes needed.
 
 **Left column — Your workout**
-- `↑ ↓` reorder · `✕` remove · inline **Sets / Reps / Rest** fields
-- **⚡ Superset** toggle — mark consecutive exercises; they render as a bracketed superset pair on the panel
+- `↑ ↓` reorder within the same section · `✕` remove · inline **Sets / Reps / Rest** fields
+- **⚡ Superset** toggle — pairs consecutive exercises within the same muscle section; blocked across sections
+- New exercises auto-slot into the correct section when added
 
 **Right column — Exercise bank**
 - 40+ exercises per day, searchable by name or muscle
@@ -45,12 +50,11 @@ Tap the **pencil icon** on any panel to open the edit sheet — no code changes 
 - Coaching cue preview on each card
 
 ### 📋 Live Routine Review
-The tips box shows a live analysis that updates as you edit:
-- Full exercise order with supersets labeled inline
-- Sequencing warnings (compounds before isolations)
-- Volume check
-- Muscle overlap warnings (same primary hit 3+ times)
-- Superset quality feedback
+The tips box updates as you edit and flags:
+- Sequencing issues (compounds appearing after isolation work)
+- Volume warnings (too few exercises)
+- Muscle overlap (same primary targeted 3+ times)
+- Superset quality (same-section pairs enforced — mismatched pairs are blocked at the source)
 
 ### 📅 Session Logging
 - **Log today** — multi-group days stack (Legs + Abs on the same day both register)
@@ -107,6 +111,14 @@ All data is local to your browser. Clearing browser storage resets everything.
 ---
 
 ## 📋 Patch Notes
+
+### v1.3.1 — Section Grouping + Superset Restrictions
+- Exercises on each panel are now grouped by muscle section (e.g. Chest → Shoulders → Triceps on Push)
+- Each exercise has an explicit section assignment based on primary emphasis; compound movements are grouped by the muscle they target most
+- Adding an exercise from the bank auto-slots it into the correct section rather than appending to the bottom
+- Reorder arrows are blocked from crossing section boundaries — exercises can only be shuffled within their own group
+- Superset toggle now checks that an adjacent exercise shares the same section; blocked across sections with a toast notification
+- Routine Review order summary removed — redundant given the visible exercise list
 
 ### v1.3.0 — Inline Routine Editor + Superset System + Live Review
 - Pencil icon on each panel opens a two-column edit sheet — no separate tab required

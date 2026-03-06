@@ -1068,6 +1068,15 @@ var EXERCISE_BANK = [
     desc:'Kneel with a dumbbell on each hand. Roll forward until your body is nearly parallel to the floor, then pull back. One of the hardest core exercises you can do.'},
 ];
 
+
+/* ── Canonical section order per day ── */
+var SECTION_ORDER = {
+  push: ['Chest','Shoulders','Triceps'],
+  pull: ['Back','Biceps','Forearms','Rear Delts'],
+  legs: ['Warmup','Quads','Hamstrings','Glutes','Calves'],
+  abs:  ['Core Stability','Rectus Abdominis','Obliques'],
+};
+
 /* ── Default routines (used when no customization saved) ── */
 var DEFAULT_ROUTINES = {
   push: ['db-flat-press','db-incline-press','db-fly','pushup','db-ohp','lateral-raise','front-raise','skull-crusher','overhead-ext','diamond-pushup'],
@@ -1292,8 +1301,6 @@ function renderReview(day) {
   }
 
   var html = '<span class="review-box-title">Routine Review</span>';
-  // Order
-  html += '<div class="review-line"><span class="review-icon">📋</span><span class="review-text">Order: ' + orderParts.join(' → ') + '</span></div>';
   positives.forEach(function(p) {
     html += '<div class="review-line"><span class="review-icon">✓</span><span class="review-text">' + p + '</span></div>';
   });
@@ -1400,7 +1407,7 @@ function renderEditActive() {
       +   '</div>'
       +   '<div class="edit-action-row">'
       +     '<button class="btn-ss-toggle'+(ssOn?' active':'')+'" onclick="toggleSS(\''+id+'\')">⚡ Superset</button>'
-      +     '<span style="font-size:0.6rem;color:var(--dim)">'+(ssOn?'Will pair with next exercise':'Mark consecutive exercises to superset')+'</span>'
+      +     '<span style="font-size:0.6rem;color:var(--dim)">'+(ssOn?'Pairs with adjacent same-section exercise':'Same section only')+'</span>'
       +   '</div>'
       + '</div>'
       + '</div>';
@@ -1411,7 +1418,22 @@ function renderEditActive() {
 }
 
 function toggleSS(id) {
-  _editSS[id] = !_editSS[id];
+  var turning_on = !_editSS[id];
+  if (turning_on) {
+    // Check that adjacent exercise (next or prev) shares the same section
+    var idx = _editRoutine.indexOf(id);
+    var ex = EXERCISE_BANK.find(function(e){ return e.id === id; });
+    var neighbors = [_editRoutine[idx-1], _editRoutine[idx+1]].filter(Boolean);
+    var sameSecNeighbor = neighbors.some(function(nid) {
+      var n = EXERCISE_BANK.find(function(e){ return e.id === nid; });
+      return n && ex && n.section === ex.section;
+    });
+    if (!sameSecNeighbor) {
+      showToast('Supersets must target the same muscle group');
+      return;
+    }
+  }
+  _editSS[id] = turning_on;
   renderEditActive();
 }
 
@@ -1473,10 +1495,37 @@ function renderEditBank() {
 
 function addExToRoutine(id) {
   if (_editRoutine.indexOf(id) >= 0) return;
-  _editRoutine.push(id);
+  var ex = EXERCISE_BANK.find(function(e){ return e.id === id; });
+  var newSection = ex ? ex.section : null;
+  var day = _editDay;
+  var order = SECTION_ORDER[day] || [];
+
+  if (!newSection || order.length === 0) {
+    _editRoutine.push(id);
+  } else {
+    // Find the last index of an exercise in the same or earlier section
+    var newSecIdx = order.indexOf(newSection);
+    var insertAt = -1;
+    for (var i = _editRoutine.length - 1; i >= 0; i--) {
+      var other = EXERCISE_BANK.find(function(e){ return e.id === _editRoutine[i]; });
+      if (!other) continue;
+      var otherSecIdx = order.indexOf(other.section);
+      if (otherSecIdx <= newSecIdx) { insertAt = i + 1; break; }
+    }
+    if (insertAt < 0) {
+      // All existing exercises are in later sections — prepend before them
+      // Find first exercise in a later section
+      var prependAt = _editRoutine.length;
+      for (var j = 0; j < _editRoutine.length; j++) {
+        var oth = EXERCISE_BANK.find(function(e){ return e.id === _editRoutine[j]; });
+        if (oth && order.indexOf(oth.section) > newSecIdx) { prependAt = j; break; }
+      }
+      insertAt = prependAt;
+    }
+    _editRoutine.splice(insertAt, 0, id);
+  }
   renderEditActive();
   renderEditBank();
-  // renderEditActive already calls renderEditReview
 }
 
 function removeExFromRoutine(id) {
@@ -1491,6 +1540,13 @@ function moveEx(id, dir) {
   if (idx < 0) return;
   var newIdx = idx + dir;
   if (newIdx < 0 || newIdx >= _editRoutine.length) return;
+  // Only allow swap if target is in the same section
+  var ex = EXERCISE_BANK.find(function(e){ return e.id === id; });
+  var other = EXERCISE_BANK.find(function(e){ return e.id === _editRoutine[newIdx]; });
+  if (ex && other && ex.section !== other.section) {
+    showToast('Can only reorder within the same section');
+    return;
+  }
   var tmp = _editRoutine[idx];
   _editRoutine[idx] = _editRoutine[newIdx];
   _editRoutine[newIdx] = tmp;
