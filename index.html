@@ -37,7 +37,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;
   text-transform:uppercase;letter-spacing:-0.5px;line-height:1;transition:color 0.3s;}
 body.day-push .top-bar h1{color:var(--push);}body.day-pull .top-bar h1{color:var(--pull);}
 body.day-legs .top-bar h1{color:var(--legs);}body.day-abs .top-bar h1{color:var(--abs);}
-body.day-log .top-bar h1{color:var(--log);}
+body.day-log .top-bar h1{color:var(--log);}body.day-build .top-bar h1{color:var(--log);}
 .quote-text{font-size:0.65rem;color:var(--dim);font-style:italic;font-weight:300;margin-top:3px;line-height:1.4;}
 .btn-hunter{flex-shrink:0;display:flex;align-items:center;gap:5px;
   padding:7px 11px;border-radius:7px;border:1px solid rgba(74,158,255,0.35);
@@ -79,6 +79,7 @@ body.day-log .top-bar h1{color:var(--log);}
   .sidebar-btn.active-legs{background:rgba(38,196,122,0.08);}.sidebar-btn.active-legs .sb-label{color:var(--legs);}.sidebar-btn.active-legs .sb-dot{background:var(--legs);}
   .sidebar-btn.active-abs{background:rgba(232,196,38,0.08);}.sidebar-btn.active-abs .sb-label{color:var(--abs);}.sidebar-btn.active-abs .sb-dot{background:var(--abs);}
   .sidebar-btn.active-log{background:rgba(168,85,247,0.08);}.sidebar-btn.active-log .sb-label{color:var(--log);}.sidebar-btn.active-log .sb-dot{background:var(--log);}
+  .sidebar-btn.active-build{background:rgba(168,85,247,0.08);}.sidebar-btn.active-build .sb-label{color:var(--log);}.sidebar-btn.active-build .sb-dot{background:var(--log);}
   .sidebar-divider{height:1px;background:var(--border);margin:6px 0;}
   .sidebar-hunter{
     display:flex;flex-direction:column;align-items:center;gap:4px;
@@ -241,6 +242,7 @@ body.day-log .top-bar h1{color:var(--log);}
 .nav-btn.active-legs .nav-label{color:var(--legs);}.nav-btn.active-legs .nav-dot{background:var(--legs);}
 .nav-btn.active-abs .nav-label{color:var(--abs);}.nav-btn.active-abs .nav-dot{background:var(--abs);}
 .nav-btn.active-log .nav-label{color:var(--log);}.nav-btn.active-log .nav-dot{background:var(--log);}
+.nav-btn.active-build .nav-label{color:var(--log);}.nav-btn.active-build .nav-dot{background:var(--log);}
 .nav-btn.hunter-nav .nav-label{color:var(--hunter);}
 .nav-btn.hunter-nav{border-left:1px solid var(--border);}
 /* hide bottom nav on desktop */
@@ -283,6 +285,121 @@ body.day-log .top-bar h1{color:var(--log);}
 .modal-actions{display:flex;gap:8px;}
 .btn-modal-confirm{flex:1;padding:12px;border-radius:8px;border:none;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:1px;text-transform:uppercase;background:var(--log);color:#fff;}
 .btn-modal-cancel{flex:1;padding:12px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:1px;text-transform:uppercase;}
+
+/* ═══ BUILD TAB ═══ */
+.build-panel{display:none;}.build-panel.active{display:block;animation:fadeUp 0.2s ease;}
+
+/* Sub-tabs */
+.build-tabs{display:flex;gap:3px;background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:3px;margin-bottom:14px;}
+.build-tab{flex:1;padding:7px 4px;border:none;border-radius:5px;background:transparent;
+  color:var(--muted);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;transition:all 0.15s;}
+.build-tab.active{background:rgba(168,85,247,0.15);color:var(--log);
+  box-shadow:inset 0 0 0 1px rgba(168,85,247,0.3);}
+
+/* Search + filter */
+.bank-controls{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;}
+.bank-search{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-family:'Barlow',sans-serif;font-size:0.85rem;
+  padding:9px 13px;width:100%;outline:none;color-scheme:dark;}
+.bank-search:focus{border-color:var(--log);}
+.bank-filter-row{display:flex;gap:5px;flex-wrap:wrap;}
+.bank-filter{padding:5px 10px;border-radius:6px;border:1px solid var(--border);
+  background:var(--surface2);color:var(--dim);cursor:pointer;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.68rem;
+  letter-spacing:1px;text-transform:uppercase;transition:all 0.15s;}
+.bank-filter.active-push{color:var(--push);border-color:rgba(232,93,38,0.4);background:rgba(232,93,38,0.1);}
+.bank-filter.active-pull{color:var(--pull);border-color:rgba(38,136,232,0.4);background:rgba(38,136,232,0.1);}
+.bank-filter.active-legs{color:var(--legs);border-color:rgba(38,196,122,0.4);background:rgba(38,196,122,0.1);}
+.bank-filter.active-abs{color:var(--abs);border-color:rgba(232,196,38,0.4);background:rgba(232,196,38,0.1);}
+.bank-filter.active-all{color:var(--log);border-color:rgba(168,85,247,0.4);background:rgba(168,85,247,0.1);}
+
+/* Bank exercise card */
+.bank-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  margin-bottom:6px;overflow:hidden;transition:border-color 0.15s;}
+.bank-card.in-workout{border-color:rgba(168,85,247,0.35);}
+.bank-card-header{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;}
+.bank-card-info{flex:1;min-width:0;}
+.bank-card-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.92rem;
+  text-transform:uppercase;letter-spacing:0.2px;color:var(--text);line-height:1.2;}
+.bank-card-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;}
+.bank-card-body{display:none;padding:0 12px 12px;border-top:1px solid var(--border);}
+.bank-card.open .bank-card-body{display:block;}
+.bank-card-desc{font-size:0.78rem;color:var(--muted);line-height:1.6;font-weight:300;padding-top:10px;}
+.bank-card-muscles{font-size:0.68rem;color:var(--dim);margin-top:6px;}
+.bank-card-muscles strong{color:var(--muted);}
+.btn-add-ex{flex-shrink:0;width:30px;height:30px;border-radius:7px;border:1px solid var(--border);
+  background:var(--surface2);color:var(--muted);cursor:pointer;font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;transition:all 0.15s;line-height:1;}
+.btn-add-ex.added{background:rgba(168,85,247,0.15);border-color:rgba(168,85,247,0.4);color:var(--log);}
+.bank-day-badge{font-size:0.58rem;font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border-radius:3px;flex-shrink:0;}
+.badge-push{background:rgba(232,93,38,0.12);color:var(--push);}
+.badge-pull{background:rgba(38,136,232,0.12);color:var(--pull);}
+.badge-legs{background:rgba(38,196,122,0.12);color:var(--legs);}
+.badge-abs{background:rgba(232,196,38,0.12);color:var(--abs);}
+
+/* Workout builder */
+.workout-header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;}
+.workout-title-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;
+  letter-spacing:0.5px;text-transform:uppercase;padding:8px 11px;outline:none;color-scheme:dark;}
+.workout-title-input:focus{border-color:var(--log);}
+.btn-clear-workout{padding:8px 12px;border-radius:8px;border:1px solid var(--border);
+  background:transparent;color:var(--dim);cursor:pointer;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.72rem;
+  letter-spacing:1px;text-transform:uppercase;white-space:nowrap;}
+
+/* Workout exercise row */
+.workout-ex-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  margin-bottom:6px;overflow:hidden;}
+.workout-ex-header{display:flex;align-items:center;gap:8px;padding:9px 12px;}
+.workout-ex-name{flex:1;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.88rem;
+  text-transform:uppercase;color:var(--text);}
+.sets-reps-row{display:flex;align-items:center;gap:6px;padding:0 12px 10px;flex-wrap:wrap;}
+.sr-label{font-size:0.62rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;width:30px;}
+.sr-input{width:52px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;
+  color:var(--text);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.85rem;
+  padding:5px 7px;outline:none;text-align:center;color-scheme:dark;}
+.sr-input:focus{border-color:var(--log);}
+.sr-sep{color:var(--dim);font-size:0.8rem;}
+.btn-remove-ex{flex-shrink:0;background:none;border:none;color:var(--dim);cursor:pointer;font-size:0.8rem;padding:3px 5px;}
+.btn-remove-ex:hover{color:var(--push);}
+.workout-empty{font-size:0.8rem;color:var(--dim);font-style:italic;text-align:center;
+  padding:24px 0;border:1px dashed var(--border);border-radius:10px;}
+
+/* Coverage panel */
+.coverage-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;}
+.coverage-chip{padding:7px 10px;border-radius:8px;border:1px solid var(--border);
+  background:var(--surface);font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;
+  font-weight:700;letter-spacing:0.5px;text-transform:uppercase;}
+.coverage-chip.hit{border-color:rgba(38,196,122,0.35);background:rgba(38,196,122,0.08);color:var(--legs);}
+.coverage-chip.miss{border-color:rgba(232,93,38,0.25);background:rgba(232,93,38,0.06);color:#c0604a;}
+.coverage-chip .chip-label{display:block;font-size:0.58rem;color:var(--muted);font-weight:400;margin-top:1px;}
+.suggestion-card{background:var(--surface);border:1px solid var(--border2,#2a2a3a);
+  border-left:3px solid var(--log);border-radius:8px;padding:10px 13px;margin-bottom:6px;}
+.suggestion-card.remove-sugg{border-left-color:var(--push);}
+.suggestion-title{font-family:'Barlow Condensed',sans-serif;font-size:0.65rem;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:4px;}
+.suggestion-body{font-size:0.78rem;color:var(--muted);line-height:1.5;}
+.suggestion-body strong{color:var(--text);}
+
+/* Saved workouts */
+.saved-workout-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:11px 13px;margin-bottom:6px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.sw-info{flex:1;min-width:0;}
+.sw-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.92rem;
+  text-transform:uppercase;color:var(--text);}
+.sw-meta{font-size:0.68rem;color:var(--dim);margin-top:2px;}
+.sw-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;}
+.sw-actions{display:flex;gap:5px;flex-shrink:0;}
+.btn-sw{padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);
+  color:var(--muted);cursor:pointer;font-family:'Barlow Condensed',sans-serif;
+  font-weight:700;font-size:0.65rem;letter-spacing:1px;text-transform:uppercase;}
+.btn-sw.load{color:var(--log);border-color:rgba(168,85,247,0.3);}
+.btn-sw.del{color:var(--push);border-color:rgba(232,93,38,0.3);}
+
 </style>
 </head>
 <body class="day-push">
@@ -307,6 +424,7 @@ body.day-log .top-bar h1{color:var(--log);}
   <button class="sidebar-btn" onclick="switchDay('legs',this)"><div class="sb-label">Legs</div><div class="sb-dot"></div></button>
   <button class="sidebar-btn" onclick="switchDay('abs',this)"><div class="sb-label">Abs</div><div class="sb-dot"></div></button>
   <div class="sidebar-divider"></div>
+  <button class="sidebar-btn" onclick="switchDay('build',this)"><div class="sb-label">Build</div><div class="sb-dot"></div></button>
   <button class="sidebar-btn" onclick="switchDay('log',this)"><div class="sb-label">Log</div><div class="sb-dot"></div></button>
   <a href="hunter-stats.html" class="sidebar-hunter">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a9eff" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
@@ -474,6 +592,53 @@ body.day-log .top-bar h1{color:var(--log);}
   <div id="historyList"></div>
 </div>
 
+
+<!-- BUILD TAB -->
+<div id="panel-build" class="build-panel">
+  <div class="build-tabs">
+    <button class="build-tab active" onclick="switchBuildTab('bank',this)">Exercise Bank</button>
+    <button class="build-tab" onclick="switchBuildTab('builder',this)">My Workout</button>
+    <button class="build-tab" onclick="switchBuildTab('saved',this)">Saved</button>
+  </div>
+
+  <!-- BANK -->
+  <div id="build-bank" class="build-subtab active" style="display:block">
+    <div class="bank-controls">
+      <input class="bank-search" id="bankSearch" placeholder="Search exercises..." oninput="renderBank()"/>
+      <div class="bank-filter-row">
+        <button class="bank-filter active-all" data-filter="all" onclick="setBankFilter('all',this)">All</button>
+        <button class="bank-filter" data-filter="push" onclick="setBankFilter('push',this)">Push</button>
+        <button class="bank-filter" data-filter="pull" onclick="setBankFilter('pull',this)">Pull</button>
+        <button class="bank-filter" data-filter="legs" onclick="setBankFilter('legs',this)">Legs</button>
+        <button class="bank-filter" data-filter="abs" onclick="setBankFilter('abs',this)">Abs</button>
+      </div>
+    </div>
+    <div id="bankList"></div>
+  </div>
+
+  <!-- BUILDER -->
+  <div id="build-builder" class="build-subtab" style="display:none">
+    <div class="workout-header-row">
+      <input class="workout-title-input" id="workoutTitle" placeholder="Workout Name" value="My Workout"/>
+      <button class="btn-clear-workout" onclick="clearWorkout()">Clear</button>
+    </div>
+    <div id="workoutList"><div class="workout-empty">No exercises yet. Add from the Exercise Bank.</div></div>
+    <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap;">
+      <button class="btn-backlog-save" style="flex:1" onclick="saveWorkout()">Save Workout</button>
+    </div>
+    <div style="height:16px"></div>
+    <div class="log-section-title" style="margin-top:4px">Muscle Coverage</div>
+    <div id="coverageGrid" class="coverage-grid"></div>
+    <div class="log-section-title">Suggestions</div>
+    <div id="suggestions"></div>
+  </div>
+
+  <!-- SAVED -->
+  <div id="build-saved" class="build-subtab" style="display:none">
+    <div id="savedList"><div class="workout-empty">No saved workouts yet.</div></div>
+  </div>
+</div>
+
 </div><!-- /.scroll-area -->
 </div><!-- /.app-body -->
 
@@ -483,6 +648,7 @@ body.day-log .top-bar h1{color:var(--log);}
   <button class="nav-btn" onclick="switchDay('legs',this)"><div class="nav-label">Legs</div><div class="nav-dot"></div></button>
   <button class="nav-btn" onclick="switchDay('abs',this)"><div class="nav-label">Abs</div><div class="nav-dot"></div></button>
   <button class="nav-btn" onclick="switchDay('log',this)"><div class="nav-label">Log</div><div class="nav-dot"></div></button>
+  <button class="nav-btn" onclick="switchDay('build',this)"><div class="nav-label">Build</div><div class="nav-dot"></div></button>
   <button class="nav-btn hunter-nav" onclick="window.location='hunter-stats.html'"><div class="nav-label">⚡ Stats</div><div class="nav-dot"></div></button>
 </nav>
 
@@ -596,7 +762,10 @@ function switchDay(day,btn){
   // handle both sidebar and bottom nav buttons
   document.querySelectorAll('.nav-btn').forEach(function(b){b.className=b.classList.contains('hunter-nav')?'nav-btn hunter-nav':'nav-btn';});
   document.querySelectorAll('.sidebar-btn').forEach(function(b){b.className='sidebar-btn';});
-  if(day==='log'){
+  if(day==='build'){
+    document.getElementById('panel-build').classList.add('active');
+    renderBank();renderCoverage();renderSaved();
+  }else if(day==='log'){
     document.getElementById('panel-log').classList.add('active');
     var bd=document.getElementById('backlogDate');if(bd&&!bd.value)bd.value=todayStr();
     refreshLog();
@@ -771,6 +940,558 @@ updateMultiBadges();
 initCal();
 // set backlog date default to today
 (function(){var el=document.getElementById('backlogDate');if(el)el.value=todayStr();})();
+
+/* ════════════════════════════════════════
+   EXERCISE BANK DATA
+════════════════════════════════════════ */
+var EXERCISE_BANK = [
+  // ── PUSH ──
+  {id:'db-flat-press',day:'push',name:'DB Flat Bench Press',
+    primary:['Pec major (sternal)'],secondary:['Anterior delt','Triceps'],
+    sets:'4',reps:'8-10',
+    desc:'Primary chest mass builder. Control the descent, pause briefly at the chest, drive up. Keep shoulder blades pinched into the bench throughout.'},
+  {id:'db-incline-press',day:'push',name:'Incline DB Press',
+    primary:['Pec major (clavicular)'],secondary:['Anterior delt','Triceps'],
+    sets:'3',reps:'10-12',
+    desc:'Set bench to 30–45°. Hits the upper chest that flat work misses. Keep elbows at about 70° to the torso, not flared wide.'},
+  {id:'db-fly',day:'push',name:'DB Chest Fly',
+    primary:['Pec major (stretch)'],secondary:['Pec minor'],
+    sets:'3',reps:'12-15',
+    desc:'Flat bench. Arms slightly bent, lower wide until you feel a deep stretch, squeeze back together. Isolation move — go lighter than you think.'},
+  {id:'pushup',day:'push',name:'Push-Ups',
+    primary:['Pec minor','Serratus anterior'],secondary:['Triceps','Anterior delt'],
+    sets:'2',reps:'Fail',
+    desc:'Hands slightly wider than shoulder-width. Go to failure or slow negatives (3 sec down). Great for serratus anterior and pec minor activation.'},
+  {id:'db-ohp',day:'push',name:'Seated DB Overhead Press',
+    primary:['Anterior delt','Medial delt'],secondary:['Triceps','Upper traps'],
+    sets:'4',reps:'8-10',
+    desc:'Bench fully upright. Press to full extension, lower to ear level. Core tight throughout. Primary shoulder mass builder.'},
+  {id:'lateral-raise',day:'push',name:'DB Lateral Raise',
+    primary:['Medial delt'],secondary:[],
+    sets:'4',reps:'12-15',
+    desc:'Lead with the elbow, slight forward tilt, raise to shoulder height. Avoid shrugging. Slow and controlled, not swung. Bread and butter for shoulder width.'},
+  {id:'front-raise',day:'push',name:'DB Front Raise',
+    primary:['Anterior delt'],secondary:[],
+    sets:'3',reps:'12',
+    desc:'Alternating or both arms. Raise to shoulder height, no higher. Slight bend in elbow. Rounds out the front delt pressing alone doesn\'t fully isolate.'},
+  {id:'skull-crusher',day:'push',name:'DB Skull Crushers',
+    primary:['Triceps (long head)','Triceps (medial head)'],secondary:[],
+    sets:'3',reps:'10-12',
+    desc:'Flat bench. Lower dumbbells to the sides of your head, elbows pointing up. The long head gets the best stretch here. Key for overall tricep size.'},
+  {id:'overhead-ext',day:'push',name:'Overhead DB Extension',
+    primary:['Triceps (long head — stretch)'],secondary:[],
+    sets:'3',reps:'12',
+    desc:'One dumbbell held with both hands overhead. Lower behind your head, elbows in tight. The stretch-loaded position on the long head is unmatched for growth.'},
+  {id:'diamond-pushup',day:'push',name:'Diamond Push-Ups',
+    primary:['Triceps (lateral head)','Triceps (medial head)'],secondary:['Chest'],
+    sets:'2',reps:'Fail',
+    desc:'Hands form a diamond or stay close. Elbows track back along your torso, not flared. Great finisher hitting the lateral head differently than DB work.'},
+  {id:'cable-fly',day:'push',name:'Cable / Band Chest Fly',
+    primary:['Pec major (squeeze)'],secondary:['Pec minor'],
+    sets:'3',reps:'15',
+    desc:'If you have a cable machine or resistance band. Constant tension through the full ROM, especially at peak contraction. Pairs well as a finisher after heavy pressing.'},
+  {id:'arnold-press',day:'push',name:'Arnold Press',
+    primary:['Anterior delt','Medial delt'],secondary:['Posterior delt','Triceps'],
+    sets:'3',reps:'10-12',
+    desc:'Start with palms facing you, rotate to forward-facing as you press up. Hits all three delt heads through the rotation. Named after the man himself.'},
+
+  // ── PULL ──
+  {id:'db-row',day:'pull',name:'DB Row',
+    primary:['Latissimus dorsi','Mid traps'],secondary:['Biceps','Rear delt'],
+    sets:'4',reps:'8-10',
+    desc:'Brace a knee and hand on the bench. Row the dumbbell to your hip, leading with the elbow. Full stretch at the bottom, full squeeze at the top.'},
+  {id:'pullup',day:'pull',name:'Pull-Ups / Chin-Ups',
+    primary:['Lats (width)'],secondary:['Biceps','Rear delt'],
+    sets:'3',reps:'Fail',
+    desc:'Pull-ups (overhand) bias lats more; chin-ups (underhand) bring in more biceps. Go to failure every set. Even 3–5 reps per set adds up over time.'},
+  {id:'prone-row',day:'pull',name:'Incline Prone DB Row',
+    primary:['Mid traps','Lower traps','Rhomboids'],secondary:['Rear delt'],
+    sets:'3',reps:'12',
+    desc:'Set bench to 45°, lie chest-down, dumbbells hanging. Row both up, elbows flared to 90°. Excellent for postural muscles and upper back thickness.'},
+  {id:'db-deadlift',day:'pull',name:'DB Deadlift',
+    primary:['Erector spinae','Lower back'],secondary:['Hamstrings','Glutes'],
+    sets:'3',reps:'10',
+    desc:'Dumbbells at your sides, hip hinge (not a squat), flat back throughout. Push the floor away on the way up. Builds spinal erectors and teaches the hinge.'},
+  {id:'db-curl',day:'pull',name:'DB Curl',
+    primary:['Biceps brachii (short head)'],secondary:['Brachialis'],
+    sets:'3',reps:'10-12',
+    desc:'Standing, alternating. Supinate the wrist as you curl up. Full range of motion, no swinging. Primary bicep builder.'},
+  {id:'incline-curl',day:'pull',name:'Incline DB Curl',
+    primary:['Biceps brachii (long head)'],secondary:[],
+    sets:'3',reps:'10-12',
+    desc:'Bench at 45–60°, lean back, arms hang fully behind you. Puts the long head in a deep stretch standing curls can\'t replicate. Slower and more controlled.'},
+  {id:'hammer-curl',day:'pull',name:'Hammer Curl',
+    primary:['Brachialis','Brachioradialis'],secondary:[],
+    sets:'3',reps:'12',
+    desc:'Neutral (thumbs-up) grip throughout. The brachialis sits beneath the bicep and when developed pushes the bicep up making arms look thicker.'},
+  {id:'conc-curl',day:'pull',name:'Concentration Curl',
+    primary:['Biceps (short head — peak isolation)'],secondary:[],
+    sets:'2',reps:'12/side',
+    desc:'Seated, elbow braced against the inside of your thigh, curl up. Eliminates all momentum. Best as a finisher after heavier curl work.'},
+  {id:'zottman',day:'pull',name:'Zottman Curl',
+    primary:['Brachioradialis','Biceps brachii','Brachialis'],secondary:[],
+    sets:'3',reps:'10',
+    desc:'Curl up supinated (palms up), rotate to pronated (palms down) at the top, lower slowly. Trains all three elbow flexors through their strongest positions.'},
+  {id:'reverse-curl',day:'pull',name:'Reverse Curl',
+    primary:['Brachioradialis','Extensor carpi'],secondary:[],
+    sets:'3',reps:'10-12',
+    desc:'Overhand (pronated) grip, curl up. Brachioradialis does most work. Also hits wrist extensors — important for elbow health.'},
+  {id:'wrist-curl-sup',day:'pull',name:'Wrist Curl (Supinated)',
+    primary:['Flexor carpi radialis','Flexor carpi ulnaris'],secondary:[],
+    sets:'3',reps:'15-20',
+    desc:'Forearms on thighs or bench edge, palms up. Curl the wrist up and lower slowly. Builds the inner forearm belly. Go light — pure isolation.'},
+  {id:'wrist-curl-pro',day:'pull',name:'Wrist Curl (Pronated)',
+    primary:['Extensor carpi radialis','Extensor carpi ulnaris'],secondary:[],
+    sets:'3',reps:'15-20',
+    desc:'Same setup but palms down. Extend the wrist up against gravity. Most neglected forearm muscles — common source of lateral elbow pain when weak.'},
+  {id:'rev-fly',day:'pull',name:'Bent-Over Reverse Fly',
+    primary:['Posterior delt','Lower traps'],secondary:['Rhomboids'],
+    sets:'4',reps:'12-15',
+    desc:'Hinge forward to ~45°, arms hanging. Raise arms out to the sides with a slight bend at the elbow, pinch the shoulder blades. Rear delts matter a lot for shoulder health.'},
+  {id:'face-pull',day:'pull',name:'Face Pull (floor variation)',
+    primary:['Posterior delt','Rotator cuff'],secondary:['Mid traps'],
+    sets:'3',reps:'15',
+    desc:'Lie face-down on the bench with light dumbbells, arms hanging. Row the weights up and back, externally rotating at the top. Crucial for shoulder health.'},
+  {id:'chest-supported-row',day:'pull',name:'Chest-Supported DB Row',
+    primary:['Mid traps','Rhomboids'],secondary:['Rear delt','Biceps'],
+    sets:'3',reps:'12',
+    desc:'Set bench to a low incline, lie face down. Row both dumbbells up simultaneously. Takes the lower back out of the equation — great for strict back work.'},
+
+  // ── LEGS ──
+  {id:'goblet-squat',day:'legs',name:'Goblet Squat',
+    primary:['Quad (rectus femoris)','VMO'],secondary:['Glutes','Core'],
+    sets:'4',reps:'10-12',
+    desc:'Hold one dumbbell vertically at your chest. Upright torso, wide stance, squat deep. The goblet position keeps your torso more vertical, maximizing quad load.'},
+  {id:'bss',day:'legs',name:'Bulgarian Split Squat',
+    primary:['Quad (vastus lateralis)','Glutes'],secondary:['Hamstrings','Hip flexors'],
+    sets:'3',reps:'8-10/side',
+    desc:'Rear foot elevated on the bench, dumbbells at sides. Lower the back knee toward the floor. Brutal but one of the best single-leg exercises you can do.'},
+  {id:'step-up',day:'legs',name:'DB Step-Up',
+    primary:['VMO','Rectus femoris'],secondary:['Glutes'],
+    sets:'3',reps:'10/side',
+    desc:'Use the bench as the step, dumbbells at sides. Drive through the heel of your lead foot. Don\'t push off with the back leg. The VMO loves this movement.'},
+  {id:'cossack',day:'legs',name:'Cossack Squat',
+    primary:['Vastus medialis (VMO)','Adductors'],secondary:['Hip abductors','Glutes'],
+    sets:'3',reps:'8/side',
+    desc:'Wide stance, squat deeply to one side while the other leg stays fully extended with toes pointing up. Hold a dumbbell at chest for counterbalance.'},
+  {id:'rdl',day:'legs',name:'Romanian Deadlift (RDL)',
+    primary:['Biceps femoris','Semitendinosus'],secondary:['Glutes','Erectors'],
+    sets:'4',reps:'10-12',
+    desc:'Dumbbells in front of thighs, slight knee bend. Hinge at the hips, lower along your legs until you feel a deep hamstring stretch. Drive hips forward to come back up.'},
+  {id:'lying-leg-curl',day:'legs',name:'DB Lying Leg Curl',
+    primary:['Semimembranosus','Biceps femoris'],secondary:[],
+    sets:'3',reps:'10-12',
+    desc:'Lie face down on the bench, hold a dumbbell between your feet. Curl heels toward glutes, squeeze at the top, lower slowly. Trains hamstring through knee flexion.'},
+  {id:'seated-good-morning',day:'legs',name:'Seated Good Morning',
+    primary:['Erector spinae','Semimembranosus'],secondary:['Lower back'],
+    sets:'3',reps:'12',
+    desc:'Sit on the bench edge, hold a dumbbell at chest. Hinge forward with a flat back until you feel a hamstring stretch, then drive back up.'},
+  {id:'hip-thrust',day:'legs',name:'DB Hip Thrust',
+    primary:['Gluteus maximus'],secondary:['Hamstrings'],
+    sets:'4',reps:'12-15',
+    desc:'Upper back on the bench, dumbbell on your hips. Drive through your heels, squeeze your glutes hard at the top, hold 1 second. The glute max is the largest muscle in the body.'},
+  {id:'sumo-squat',day:'legs',name:'DB Sumo Squat',
+    primary:['Gluteus medius','Inner quad'],secondary:['Adductors'],
+    sets:'3',reps:'12',
+    desc:'Wide stance, toes out ~45°, one dumbbell hanging between your legs. Lower deep. The wide stance shifts work to the glute medius and inner quad.'},
+  {id:'standing-calf',day:'legs',name:'Standing DB Calf Raise',
+    primary:['Gastrocnemius'],secondary:[],
+    sets:'4',reps:'15-20',
+    desc:'Hold dumbbells, raise on the balls of your feet, squeeze at the top, lower slowly. Toes forward. Trains the gastroc best with knee extended.'},
+  {id:'seated-calf',day:'legs',name:'Seated Calf Raise',
+    primary:['Soleus'],secondary:[],
+    sets:'3',reps:'15-20',
+    desc:'Sit on the bench, dumbbell balanced on knee, raise up. Knees bent shifts load to the soleus — the deeper calf muscle giving overall calf thickness.'},
+  {id:'tib-raise',day:'legs',name:'Tibialis Raise',
+    primary:['Tibialis anterior'],secondary:[],
+    sets:'3',reps:'20-25',
+    desc:'Back against a wall, heels about 6 inches from the baseboard. Lift toes and forefoot off the ground repeatedly. Key for ankle stability and shin splint prevention.'},
+  {id:'lunge',day:'legs',name:'DB Walking Lunge',
+    primary:['Quads','Glutes'],secondary:['Hamstrings','Core'],
+    sets:'3',reps:'10/side',
+    desc:'Step forward into a deep lunge, back knee nearly touching the floor, then bring the rear foot forward to meet the front. Builds single-leg strength and stability.'},
+  {id:'nordic-curl',day:'legs',name:'Nordic Curl',
+    primary:['Biceps femoris (eccentric)','Semitendinosus'],secondary:[],
+    sets:'3',reps:'6-8',
+    desc:'Secure your ankles, kneel upright, then slowly lower your torso toward the floor resisting with your hamstrings. One of the best injury-prevention movements you can do.'},
+
+  // ── ABS ──
+  {id:'plank',day:'abs',name:'Plank',
+    primary:['Transverse abdominis','Deep core'],secondary:['Glutes','Quads'],
+    sets:'3',reps:'30-60s',
+    desc:'Forearms or hands, straight line from head to heels. Squeeze everything: glutes, abs, quads. The TVA is your internal weight belt — foundation of all core work.'},
+  {id:'weighted-crunch',day:'abs',name:'Weighted Crunch',
+    primary:['Rectus abdominis (upper)'],secondary:[],
+    sets:'3',reps:'15-20',
+    desc:'Hold a dumbbell at your chest. Curl your shoulders off the floor, exhale hard at the top. Slow and intentional reps beat high-rep sloppy ones.'},
+  {id:'reverse-crunch',day:'abs',name:'Reverse Crunch',
+    primary:['Rectus abdominis (lower)'],secondary:['Hip flexors'],
+    sets:'3',reps:'12-15',
+    desc:'Lie flat, bring your knees to your chest and curl your hips off the floor. Lower with control. One of the few moves that genuinely isolates the lower rectus abdominis.'},
+  {id:'bicycle-crunch',day:'abs',name:'Bicycle Crunch',
+    primary:['External obliques','Rectus abdominis'],secondary:['Hip flexors'],
+    sets:'3',reps:'20',
+    desc:'Hands behind your head. Bring the opposite elbow toward the opposite knee while extending the other leg, alternating sides. Go slow — fast sloppy reps become a hip flexor exercise.'},
+  {id:'russian-twist',day:'abs',name:'DB Russian Twist',
+    primary:['External obliques','Internal obliques'],secondary:[],
+    sets:'3',reps:'16-20',
+    desc:'Seated, torso leaned back slightly, feet up or down. Hold one dumbbell and rotate side to side, touching the weight to the floor. Rotate from your torso, not just your arms.'},
+  {id:'side-plank',day:'abs',name:'Side Plank',
+    primary:['Internal obliques','Quadratus lumborum'],secondary:['Glute medius'],
+    sets:'3',reps:'30s/side',
+    desc:'Forearm on the floor, body in a straight line, hips elevated. Add a dumbbell on the hip for extra load. Trains the obliques and QL as stabilizers.'},
+  {id:'dead-bug',day:'abs',name:'Dead Bug',
+    primary:['Transverse abdominis','Deep core'],secondary:['Hip flexors'],
+    sets:'3',reps:'10/side',
+    desc:'Lie on back, arms up, knees at 90°. Slowly lower one arm and the opposite leg toward the floor while keeping your lower back pressed down. The anti-extension king.'},
+  {id:'leg-raise',day:'abs',name:'Hanging / Lying Leg Raise',
+    primary:['Rectus abdominis (lower)','Hip flexors'],secondary:['Obliques'],
+    sets:'3',reps:'12-15',
+    desc:'Lie flat or hang from a bar. Keeping legs straight or slightly bent, raise them to 90° and lower slowly. The lower abs fire hardest when hips come off the floor at the top.'},
+  {id:'ab-rollout',day:'abs',name:'DB Ab Rollout',
+    primary:['Transverse abdominis','Rectus abdominis'],secondary:['Lats','Shoulders'],
+    sets:'3',reps:'8-10',
+    desc:'Kneel with a dumbbell on each hand (or use a wheel). Roll forward until your body is nearly parallel to the floor, then pull back. One of the hardest core exercises you can do.'},
+];
+
+// Per-day muscle groups for coverage analysis
+var BANK_MUSCLE_MAP = {
+  push: {
+    'Chest (lower/mid)':   ['db-flat-press','db-fly','pushup','cable-fly'],
+    'Chest (upper)':       ['db-incline-press'],
+    'Anterior Delt':       ['db-ohp','front-raise','arnold-press'],
+    'Medial Delt':         ['lateral-raise','db-ohp','arnold-press'],
+    'Triceps (long head)': ['skull-crusher','overhead-ext'],
+    'Triceps (lateral)':   ['diamond-pushup','skull-crusher'],
+    'Serratus / Pec minor':['pushup','cable-fly'],
+  },
+  pull: {
+    'Lats':                ['db-row','pullup','chest-supported-row'],
+    'Mid / Upper Traps':   ['prone-row','rev-fly','chest-supported-row'],
+    'Rhomboids':           ['prone-row','rev-fly','chest-supported-row'],
+    'Biceps (long head)':  ['incline-curl','pullup','db-curl'],
+    'Biceps (short head)': ['db-curl','conc-curl','hammer-curl'],
+    'Brachialis':          ['hammer-curl','zottman','incline-curl'],
+    'Forearms':            ['zottman','reverse-curl','wrist-curl-sup','wrist-curl-pro'],
+    'Posterior Delt':      ['rev-fly','face-pull'],
+    'Rotator Cuff':        ['face-pull'],
+    'Lower Back':          ['db-deadlift'],
+  },
+  legs: {
+    'Quads (rectus femoris)':['goblet-squat','step-up','lunge'],
+    'VMO':                   ['goblet-squat','step-up','cossack'],
+    'Hamstrings (hip-hinge)':['rdl','seated-good-morning','nordic-curl'],
+    'Hamstrings (knee-flex)':['lying-leg-curl','nordic-curl'],
+    'Gluteus Maximus':       ['hip-thrust','bss','rdl','lunge'],
+    'Gluteus Medius':        ['sumo-squat','cossack'],
+    'Adductors':             ['sumo-squat','cossack'],
+    'Gastrocnemius':         ['standing-calf'],
+    'Soleus':                ['seated-calf'],
+    'Tibialis Anterior':     ['tib-raise'],
+  },
+  abs: {
+    'Transverse Abdominis':  ['plank','dead-bug','ab-rollout'],
+    'Rectus Abdominis (upper)':['weighted-crunch','bicycle-crunch'],
+    'Rectus Abdominis (lower)':['reverse-crunch','leg-raise','ab-rollout'],
+    'External Obliques':     ['bicycle-crunch','russian-twist','side-plank'],
+    'Internal Obliques':     ['russian-twist','side-plank'],
+    'Quadratus Lumborum':    ['side-plank'],
+  }
+};
+
+/* ════════ STATE ════════ */
+var _bankFilter = 'all';
+var _currentWorkout = []; // [{id, name, sets, reps, day}]
+var _savedWorkouts  = [];
+var WORKOUT_STORE   = 'ppl_workouts_v1';
+
+function loadSavedWorkouts(){
+  try{_savedWorkouts=JSON.parse(localStorage.getItem(WORKOUT_STORE)||'[]');}catch(e){_savedWorkouts=[];}
+}
+function saveSavedWorkouts(){
+  try{localStorage.setItem(WORKOUT_STORE,JSON.stringify(_savedWorkouts));}catch(e){}
+}
+loadSavedWorkouts();
+
+/* ════════ BUILD SUB-TABS ════════ */
+function switchBuildTab(tab, btn){
+  document.querySelectorAll('.build-subtab').forEach(function(el){el.style.display='none';});
+  document.querySelectorAll('.build-tab').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('build-'+tab).style.display='block';
+  btn.classList.add('active');
+  if(tab==='builder'){renderWorkoutList();renderCoverage();}
+  if(tab==='saved'){renderSaved();}
+}
+
+/* ════════ BANK ════════ */
+function setBankFilter(f, btn){
+  _bankFilter = f;
+  document.querySelectorAll('.bank-filter').forEach(function(b){
+    b.className = 'bank-filter';
+  });
+  btn.className = 'bank-filter active-' + f;
+  renderBank();
+}
+
+function renderBank(){
+  var q = (document.getElementById('bankSearch').value||'').toLowerCase().trim();
+  var inWorkoutIds = _currentWorkout.map(function(e){return e.id;});
+  var filtered = EXERCISE_BANK.filter(function(ex){
+    if(_bankFilter !== 'all' && ex.day !== _bankFilter) return false;
+    if(q){
+      var haystack = ex.name.toLowerCase() + ' ' + ex.primary.join(' ').toLowerCase() + ' ' + ex.secondary.join(' ').toLowerCase();
+      if(haystack.indexOf(q) < 0) return false;
+    }
+    return true;
+  });
+  if(!filtered.length){
+    document.getElementById('bankList').innerHTML = '<div class="workout-empty">No exercises match your search.</div>';
+    return;
+  }
+  var html = '';
+  filtered.forEach(function(ex){
+    var inW = inWorkoutIds.indexOf(ex.id) >= 0;
+    var allMuscles = ex.primary.concat(ex.secondary);
+    var tagHtml = ex.primary.map(function(m){return '<span class="tag target">'+m+'</span>';}).join('')
+                + ex.secondary.map(function(m){return '<span class="tag">'+m+'</span>';}).join('');
+    html += '<div class="bank-card'+(inW?' in-workout':'')+'" id="bcard-'+ex.id+'">'
+      + '<div class="bank-card-header" onclick="toggleBankCard(\''+ex.id+'\')">'
+      +   '<div class="bank-card-info">'
+      +     '<div class="bank-card-name">'+ex.name+'</div>'
+      +     '<div class="bank-card-tags">'+tagHtml+'<span class="bank-day-badge badge-'+ex.day+'">'+ex.day+'</span></div>'
+      +   '</div>'
+      +   '<button class="btn-add-ex'+(inW?' added':'')+'" onclick="event.stopPropagation();toggleWorkoutEx(\''+ex.id+'\')">'
+      +     (inW ? '✓' : '+')
+      +   '</button>'
+      + '</div>'
+      + '<div class="bank-card-body">'
+      +   '<div class="bank-card-desc">'+ex.desc+'</div>'
+      +   '<div class="bank-card-muscles"><strong>Primary:</strong> '+ex.primary.join(', ')
+      +     (ex.secondary.length ? ' &nbsp;·&nbsp; <strong>Secondary:</strong> '+ex.secondary.join(', ') : '')+'</div>'
+      + '</div>'
+      + '</div>';
+  });
+  document.getElementById('bankList').innerHTML = html;
+}
+
+function toggleBankCard(id){
+  var card = document.getElementById('bcard-'+id);
+  if(card) card.classList.toggle('open');
+}
+
+/* ════════ WORKOUT BUILDER ════════ */
+function toggleWorkoutEx(exId){
+  var ex = EXERCISE_BANK.find(function(e){return e.id===exId;});
+  if(!ex) return;
+  var idx = _currentWorkout.findIndex(function(e){return e.id===exId;});
+  if(idx >= 0){
+    _currentWorkout.splice(idx, 1);
+    showToast(ex.name+' removed');
+  } else {
+    _currentWorkout.push({id:ex.id, name:ex.name, sets:ex.sets, reps:ex.reps, day:ex.day});
+    showToast(ex.name+' added');
+  }
+  renderBank();
+  renderWorkoutList();
+  renderCoverage();
+}
+
+function renderWorkoutList(){
+  var list = document.getElementById('workoutList');
+  if(!_currentWorkout.length){
+    list.innerHTML = '<div class="workout-empty">No exercises yet. Add from the Exercise Bank.</div>';
+    renderCoverage();
+    return;
+  }
+  var html = '';
+  _currentWorkout.forEach(function(ex, idx){
+    html += '<div class="workout-ex-item" id="wex-'+ex.id+'">'
+      + '<div class="workout-ex-header">'
+      +   '<span class="bank-day-badge badge-'+ex.day+'">'+ex.day+'</span>'
+      +   '<div class="workout-ex-name">'+ex.name+'</div>'
+      +   '<button class="btn-remove-ex" onclick="removeWorkoutEx(\''+ex.id+'\')">✕</button>'
+      + '</div>'
+      + '<div class="sets-reps-row">'
+      +   '<span class="sr-label">Sets</span>'
+      +   '<input class="sr-input" type="text" value="'+ex.sets+'" onchange="updateSR(\''+ex.id+'\',\'sets\',this.value)" placeholder="4"/>'
+      +   '<span class="sr-sep">×</span>'
+      +   '<span class="sr-label">Reps</span>'
+      +   '<input class="sr-input" type="text" value="'+ex.reps+'" onchange="updateSR(\''+ex.id+'\',\'reps\',this.value)" placeholder="10"/>'
+      + '</div>'
+      + '</div>';
+  });
+  list.innerHTML = html;
+}
+
+function removeWorkoutEx(exId){
+  _currentWorkout = _currentWorkout.filter(function(e){return e.id!==exId;});
+  renderBank();renderWorkoutList();renderCoverage();
+}
+
+function updateSR(exId, field, val){
+  var ex = _currentWorkout.find(function(e){return e.id===exId;});
+  if(ex) ex[field] = val;
+}
+
+function clearWorkout(){
+  if(!_currentWorkout.length){return;}
+  openModal('Clear workout?','This will remove all exercises from the current workout.',function(){
+    _currentWorkout = [];
+    renderBank();renderWorkoutList();renderCoverage();
+    showToast('Workout cleared');
+  });
+}
+
+function saveWorkout(){
+  var name = (document.getElementById('workoutTitle').value||'').trim() || 'My Workout';
+  if(!_currentWorkout.length){showToast('Add some exercises first');return;}
+  var workout = {
+    id: 'w_'+Date.now(),
+    name: name,
+    exercises: _currentWorkout.slice(),
+    created: todayStr()
+  };
+  _savedWorkouts.unshift(workout);
+  saveSavedWorkouts();
+  renderSaved();
+  showToast('Saved: '+name);
+}
+
+/* ════════ COVERAGE ════════ */
+function renderCoverage(){
+  var coverageEl = document.getElementById('coverageGrid');
+  var suggestEl  = document.getElementById('suggestions');
+  if(!coverageEl || !suggestEl) return;
+
+  // collect which exercise IDs are in current workout
+  var wIds = _currentWorkout.map(function(e){return e.id;});
+
+  // figure out which days are represented
+  var daysInWorkout = {};
+  _currentWorkout.forEach(function(e){daysInWorkout[e.day]=true;});
+  var days = Object.keys(daysInWorkout);
+
+  if(!days.length){
+    coverageEl.innerHTML='<div class="workout-empty" style="grid-column:1/-1;border:none">Add exercises to see muscle coverage.</div>';
+    suggestEl.innerHTML='';
+    return;
+  }
+
+  var hitMuscles = [], missMuscles = [];
+  var addSugg = [], removeSugg = [];
+
+  days.forEach(function(day){
+    var map = BANK_MUSCLE_MAP[day];
+    if(!map) return;
+    Object.keys(map).forEach(function(muscle){
+      var exIds = map[muscle];
+      var covered = exIds.some(function(id){return wIds.indexOf(id)>=0;});
+      if(covered){ hitMuscles.push({muscle:muscle,day:day}); }
+      else { missMuscles.push({muscle:muscle,day:day,exIds:exIds}); }
+    });
+  });
+
+  // Build coverage grid
+  var gridHtml = '';
+  hitMuscles.forEach(function(m){
+    gridHtml += '<div class="coverage-chip hit"><b>✓ '+m.muscle+'</b><span class="chip-label">'+m.day+'</span></div>';
+  });
+  missMuscles.forEach(function(m){
+    gridHtml += '<div class="coverage-chip miss"><b>✗ '+m.muscle+'</b><span class="chip-label">'+m.day+' — not covered</span></div>';
+  });
+  coverageEl.innerHTML = gridHtml || '<div style="grid-column:1/-1;color:var(--dim);font-size:0.78rem">All muscle groups covered!</div>';
+
+  // Suggestions — add
+  missMuscles.slice(0,4).forEach(function(m){
+    var candidates = m.exIds.map(function(id){return EXERCISE_BANK.find(function(e){return e.id===id;});}).filter(Boolean);
+    var notInWorkout = candidates.filter(function(e){return wIds.indexOf(e.id)<0;});
+    if(!notInWorkout.length) return;
+    var best = notInWorkout[0];
+    addSugg.push('<div class="suggestion-card">'
+      + '<div class="suggestion-title">Consider Adding</div>'
+      + '<div class="suggestion-body">Your <strong>'+m.muscle+'</strong> isn\'t covered. '
+      + '<strong>'+best.name+'</strong> would fix this ('+best.primary.join(', ')+').</div>'
+      + '</div>');
+  });
+
+  // Suggestions — overlap / redundancy
+  var excessMuscles = {};
+  hitMuscles.forEach(function(m){
+    excessMuscles[m.muscle] = (excessMuscles[m.muscle]||0) + 1;
+  });
+  // find exercises that cover only muscles already well-covered
+  _currentWorkout.forEach(function(wex){
+    var ex = EXERCISE_BANK.find(function(e){return e.id===wex.id;});
+    if(!ex) return;
+    var allM = ex.primary;
+    var allCoveredElsewhere = allM.every(function(muscle){
+      // count how many OTHER exercises cover this muscle
+      var others = _currentWorkout.filter(function(w){
+        if(w.id===wex.id) return false;
+        var we = EXERCISE_BANK.find(function(e){return e.id===w.id;});
+        return we && (we.primary.indexOf(muscle)>=0 || we.secondary.indexOf(muscle)>=0);
+      });
+      return others.length >= 2;
+    });
+    if(allCoveredElsewhere && missMuscles.length > 0){
+      removeSugg.push('<div class="suggestion-card remove-sugg">'
+        + '<div class="suggestion-title">Possible Overlap</div>'
+        + '<div class="suggestion-body"><strong>'+wex.name+'</strong> covers muscles already hit 2+ times. '
+        + 'Consider swapping it for an exercise targeting: <strong>'+missMuscles[0].muscle+'</strong>.</div>'
+        + '</div>');
+    }
+  });
+
+  var allSugg = addSugg.concat(removeSugg.slice(0,2));
+  suggestEl.innerHTML = allSugg.length ? allSugg.join('') : '<div class="suggestion-card"><div class="suggestion-title">Looking Good</div><div class="suggestion-body">No major gaps detected in this workout.</div></div>';
+}
+
+/* ════════ SAVED WORKOUTS ════════ */
+function renderSaved(){
+  var el = document.getElementById('savedList');
+  if(!_savedWorkouts.length){
+    el.innerHTML = '<div class="workout-empty">No saved workouts yet.</div>';
+    return;
+  }
+  var html = '';
+  _savedWorkouts.forEach(function(w){
+    var days = {};
+    w.exercises.forEach(function(e){days[e.day]=true;});
+    var tags = Object.keys(days).map(function(d){return '<span class="multi-tag t-'+d+'">'+d+'</span>';}).join('');
+    html += '<div class="saved-workout-item">'
+      + '<div class="sw-info">'
+      +   '<div class="sw-name">'+w.name+'</div>'
+      +   '<div class="sw-meta">'+w.exercises.length+' exercises · Saved '+fmtDate(w.created)+'</div>'
+      +   '<div class="sw-tags" style="margin-top:5px">'+tags+'</div>'
+      + '</div>'
+      + '<div class="sw-actions">'
+      +   '<button class="btn-sw load" onclick="loadWorkout(\''+w.id+'\')">Load</button>'
+      +   '<button class="btn-sw del" onclick="deleteSaved(\''+w.id+'\')">Del</button>'
+      + '</div>'
+      + '</div>';
+  });
+  el.innerHTML = html;
+}
+
+function loadWorkout(wid){
+  var w = _savedWorkouts.find(function(x){return x.id===wid;});
+  if(!w) return;
+  _currentWorkout = w.exercises.slice();
+  document.getElementById('workoutTitle').value = w.name;
+  // switch to builder tab
+  var builderBtn = document.querySelector('.build-tab:nth-child(2)');
+  if(builderBtn) switchBuildTab('builder', builderBtn);
+  renderBank();renderWorkoutList();renderCoverage();
+  showToast('Loaded: '+w.name);
+}
+
+function deleteSaved(wid){
+  openModal('Delete saved workout?','This can\'t be undone.',function(){
+    _savedWorkouts = _savedWorkouts.filter(function(w){return w.id!==wid;});
+    saveSavedWorkouts();renderSaved();showToast('Deleted');
+  });
+}
+
 </script>
 </body>
 </html>
