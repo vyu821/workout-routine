@@ -106,7 +106,6 @@ All data is local to your browser. Clearing browser storage resets everything.
 - Removed the entire inline routine editor (edit sheet, exercise bank, EXERCISE_BANK data, routines/SR/SS localStorage)
 - Exercises are now rendered as static HTML — no JavaScript required to display them
 - Removed live Routine Review; restored the original static tips box on each panel
-- Exercises unchanged: 57 total across Push, Pull, Legs, Abs with all section groupings and supersets preserved
 - Routine changes going forward will be made directly to the source file
 
 ### v1.3.4 — Larger Small Text
@@ -121,16 +120,39 @@ All data is local to your browser. Clearing browser storage resets everything.
 
 ### v1.3.1 — Section Grouping + Superset Restrictions
 - Exercises grouped by muscle section within each panel
-- Reorder and superset restricted within sections
+- Reorder and superset restricted within sections only
 
-### v1.3.0 — Inline Routine Editor
-- Two-column edit sheet, superset toggle, live routine review
+### v1.3.0 — Inline Routine Editor + Superset System + Live Review
+- Pencil icon on each panel opens a two-column edit sheet — no separate tab required
+- Add, remove, reorder exercises and edit sets/reps/rest inline
+- **⚡ Superset toggle** — mark consecutive exercises to render as a superset pair on the panel
+- **Live Routine Review** — replaces static tips with sequencing, overlap, and superset analysis updated in real time
+- Sequencing warnings (compounds before isolations), volume check, muscle overlap warnings (same primary hit 3+ times), superset quality feedback
+- All changes persist independently in separate localStorage keys (`ppl_routines_v1`, `ppl_sr_v1`, `ppl_ss_v1`)
+- Edit sheet matches main panel aesthetic (dark cards, colored muscle tags, day-accent border)
+- Orphaned Build tab UI fully removed
 
 ### v1.2.0 — Previous Day Logging
-- Backfill any past date from the Log tab
+- Log a Previous Day widget added to the Log tab
+- Date picker defaults to today; merges with existing entries for the same date
 
-### v1.1.x — Hunter Stats + Desktop
-- XP system, rank E→S, anime body diagram, desktop sidebar, multi-type logging
+### v1.1.2 — Desktop Fix + Body Visibility
+- Desktop scrolling fixed — natural page scroll at 768px+
+- Hunter Stats body visible at low levels (tint applied from level 0)
+- Abs grid lines visible from the start
+
+### v1.1.1 — Anime Body Diagram
+- V-taper anatomy, segmented abs, diamond calves
+- Solo Leveling aesthetic: navy background, blue ambient glow, scan-line animation
+- Eye glow scales with total sessions
+
+### v1.1.0 — Hunter Stats Launch
+- XP system with quadratic leveling, rank E → S (Shadow Sovereign at 150 sessions)
+- 11 muscle attributes with SVG body diagram; visual progression from dark tint → color fill → glow → max glow
+- Quests tab (daily/weekly/milestones) and Feats tab (14 achievements)
+- Multi-type logging, color-coded calendar, desktop sidebar
 
 ### v1.0.0 — Initial Release
-- Push / Pull / Legs / Abs panels, day logging, streak counter, calendar, daily quote, mobile PWA
+- Push / Pull / Legs / Abs panels with 50 exercises
+- Day logging, streak counter, calendar, daily motivational quote
+- Mobile PWA via Add to Home Screen
