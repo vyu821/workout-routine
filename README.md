@@ -6,7 +6,7 @@
 
 Built for dumbbell-based training with an adjustable bench.
 
-[![Version](https://img.shields.io/badge/version-1.3.1-4a9eff?style=flat-square&labelColor=03030e)](.)
+[![Version](https://img.shields.io/badge/version-1.3.3-4a9eff?style=flat-square&labelColor=03030e)](.)
 [![PWA](https://img.shields.io/badge/PWA-ready-26c47a?style=flat-square&labelColor=03030e)](.)
 [![Storage](https://img.shields.io/badge/storage-localStorage-7744ff?style=flat-square&labelColor=03030e)](.)
 
@@ -29,8 +29,8 @@ Deploy both to the same folder. They share data through `localStorage` and link 
 
 ### 🏋️ Workout Panels (Push / Pull / Legs / Abs)
 - Exercise cards with sets, reps, rest, and coaching cues
-- Tap to expand full description and muscle targets
-- Exercises are grouped by muscle section within each day:
+- Tap to expand full description; colored muscle tags in the header show targets at a glance
+- Exercises grouped by muscle section within each day:
   - **Push:** Chest → Shoulders → Triceps
   - **Pull:** Back → Biceps → Forearms → Rear Delts
   - **Legs:** Warmup → Quads → Hamstrings → Glutes → Calves
@@ -41,29 +41,27 @@ Tap the **pencil icon** on any panel to open the edit sheet — no code changes 
 
 **Left column — Your workout**
 - `↑ ↓` reorder within the same section · `✕` remove · inline **Sets / Reps / Rest** fields
-- **⚡ Superset** toggle — pairs consecutive exercises within the same muscle section; blocked across sections
+- **⚡ Superset** toggle — pairs consecutive exercises within the same section; blocked across sections
 - New exercises auto-slot into the correct section when added
 
 **Right column — Exercise bank**
-- 40+ exercises per day, searchable by name or muscle
-- Same highlighted muscle tags as the main panels
-- Coaching cue preview on each card
+- 40+ exercises per day (including 7 individual warmup exercises for Legs), searchable by name or muscle
+- Colored muscle tags and coaching cue preview on each card
 
 ### 📋 Live Routine Review
 The tips box updates as you edit and flags:
-- Sequencing issues (compounds appearing after isolation work)
+- Sequencing issues (compounds before isolations)
 - Volume warnings (too few exercises)
 - Muscle overlap (same primary targeted 3+ times)
-- Superset quality (same-section pairs enforced — mismatched pairs are blocked at the source)
+- Superset quality (same-section pairing enforced)
 
 ### 📅 Session Logging
 - **Log today** — multi-group days stack (Legs + Abs on the same day both register)
 - **Log a previous day** — backfill any date from the Log tab
 - **Rest day** tracking
-- **Delete** any history entry
 
 ### 📊 Log Tab
-Streak counter · color-coded monthly calendar · 7-day muscle volume bars · 60-entry history
+Streak counter · color-coded monthly calendar
 
 ---
 
@@ -112,44 +110,57 @@ All data is local to your browser. Clearing browser storage resets everything.
 
 ## 📋 Patch Notes
 
+### v1.3.3 — Legs Warmup as Individual Exercises + Gap Fix
+- The single "Dynamic Warmup (8 min)" summary card replaced with 7 individual warmup exercises under their own **Warmup** section header, consistent with how Quads, Hamstrings, etc. are displayed:
+  1. Seated Heel-to-Hip Switch
+  2. 90/90 Hip Stretch
+  3. Active Straight Leg Raise (ASLR)
+  4. 90/90 to Hip Lift
+  5. Kneeling Hip Flexor Lunge
+  6. Deep Squat Hold
+  7. Deep Lateral Lunge
+- All 7 are available individually in the exercise bank and can be added/removed from the edit sheet like any other exercise
+- Routine review compound/isolation checks now correctly exclude warmup exercises from sequencing analysis
+- Migration runs automatically on first load — existing saved routines get the 7 warmup exercises prepended to Legs without losing any other customizations
+- Fixed a rendering bug (extra closing tag in exercise cards) that caused a visual gap between the first and second exercise in every section
+
+### v1.3.2 — UI Cleanup
+- Removed redundant Primary/Secondary muscle text from inside expanded exercise cards
+- Legs warmup restored as a standalone block (later replaced by v1.3.3 with individual exercises)
+- Muscle Volume chart and session History removed from the Log tab
+
 ### v1.3.1 — Section Grouping + Superset Restrictions
-- Exercises on each panel are now grouped by muscle section (e.g. Chest → Shoulders → Triceps on Push)
-- Each exercise has an explicit section assignment based on primary emphasis; compound movements are grouped by the muscle they target most
-- Adding an exercise from the bank auto-slots it into the correct section rather than appending to the bottom
-- Reorder arrows are blocked from crossing section boundaries — exercises can only be shuffled within their own group
-- Superset toggle now checks that an adjacent exercise shares the same section; blocked across sections with a toast notification
-- Routine Review order summary removed — redundant given the visible exercise list
+- Exercises grouped by muscle section within each panel
+- Adding from bank auto-slots into the correct section
+- Reorder arrows blocked from crossing section boundaries
+- Superset toggle blocked across sections
+- Routine Review order summary removed
 
 ### v1.3.0 — Inline Routine Editor + Superset System + Live Review
-- Pencil icon on each panel opens a two-column edit sheet — no separate tab required
+- Pencil icon on each panel opens a two-column edit sheet
 - Add, remove, reorder exercises and edit sets/reps/rest inline
 - **⚡ Superset toggle** — mark consecutive exercises to render as a superset pair
-- **Live Routine Review** — replaces static tips with sequencing, overlap, and superset analysis
+- **Live Routine Review** — sequencing, overlap, and superset analysis
 - All changes persist independently in separate localStorage keys
-- Edit sheet matches main panel aesthetic (dark cards, colored muscle tags, day-accent border)
-- Orphaned Build tab UI fully removed
 
 ### v1.2.0 — Previous Day Logging
 - Log a Previous Day widget in the Log tab
-- Date picker defaults to today; merges with existing entries
 
 ### v1.1.2 — Desktop Fix + Body Visibility
-- Desktop scrolling fixed — natural page scroll at 768px+
-- Hunter Stats body visible at low levels (tint from level 0)
-- Abs grid lines visible from the start
+- Desktop scrolling fixed; Hunter Stats body visible at low levels
 
 ### v1.1.1 — Anime Body Diagram
-- V-taper anatomy, segmented abs, diamond calves
-- Solo Leveling aesthetic: navy background, blue ambient glow, scan-line animation
-- Eye glow scales with total sessions
+- V-taper anatomy, Solo Leveling aesthetic, progressive muscle glow
 
 ### v1.1.0 — Hunter Stats Launch
-- XP system, quadratic leveling, rank E→S
-- 11 muscle attributes with SVG body diagram
-- Quests + Feats tabs
-- Multi-type logging, color-coded calendar, desktop sidebar
+- XP system, rank E→S, 11 muscle attributes, Quests + Feats tabs
 
 ### v1.0.0 — Initial Release
-- Push / Pull / Legs / Abs panels with 50 exercises
-- Day logging, streak counter, calendar, session history
-- Daily motivational quote, mobile PWA
+- Push / Pull / Legs / Abs panels, day logging, streak counter, calendar, daily quote, mobile PWA
+
+### v1.3.4 — Larger Small Text
+- Section titles (Chest, Shoulders, Quads, etc.) bumped from 0.62rem to 0.75rem
+- Muscle tags on exercise cards bumped from 0.58rem to 0.68rem
+- Exercise descriptions bumped from 0.80rem to 0.88rem with slightly more line height
+- Rest labels, duration, focus label, superset label all bumped proportionally
+- Routine Review text and edit sheet labels (column headers, sets/reps labels, bank preview text, superset hint) all increased to match
