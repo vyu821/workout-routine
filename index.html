@@ -856,213 +856,213 @@ initCal();
 
 var EXERCISE_BANK = [
   // ── PUSH ──
-  {id:'db-flat-press',day:'push',name:'DB Flat Bench Press',
+  {id:'db-flat-press',day:'push',section:'Chest',name:'DB Flat Bench Press',
     primary:['Pec major (sternal)'],secondary:['Anterior delt','Triceps'],
     sets:'4',reps:'8-10',rest:'90s',
     desc:'Primary chest mass builder. Control the descent, pause briefly at the chest, drive up. Keep shoulder blades pinched into the bench throughout.'},
-  {id:'db-incline-press',day:'push',name:'Incline DB Press',
+  {id:'db-incline-press',day:'push',section:'Chest',name:'Incline DB Press',
     primary:['Pec major (clavicular)'],secondary:['Anterior delt','Triceps'],
     sets:'3',reps:'10-12',rest:'75s',
     desc:'Set bench to 30–45°. Hits the upper chest that flat work misses. Keep elbows at about 70° to the torso, not flared wide.'},
-  {id:'db-fly',day:'push',name:'DB Chest Fly',
+  {id:'db-fly',day:'push',section:'Chest',name:'DB Chest Fly',
     primary:['Pec major (stretch)'],secondary:['Pec minor'],
     sets:'3',reps:'12-15',rest:'60s',
     desc:'Flat bench. Arms slightly bent, lower wide until you feel a deep stretch, squeeze back together. Isolation — go lighter than you think.'},
-  {id:'pushup',day:'push',name:'Push-Ups',
+  {id:'pushup',day:'push',section:'Chest',name:'Push-Ups',
     primary:['Pec minor','Serratus anterior'],secondary:['Triceps','Anterior delt'],
     sets:'2',reps:'Fail',rest:'60s',
     desc:'Hands slightly wider than shoulder-width. Go to failure or do slow negatives (3 sec down). Great for serratus anterior and pec minor activation.'},
-  {id:'db-ohp',day:'push',name:'Seated DB Overhead Press',
+  {id:'db-ohp',day:'push',section:'Shoulders',name:'Seated DB Overhead Press',
     primary:['Anterior delt','Medial delt'],secondary:['Triceps','Upper traps'],
     sets:'4',reps:'8-10',rest:'90s',
     desc:'Bench fully upright. Press to full extension, lower to ear level. Core tight throughout.'},
-  {id:'lateral-raise',day:'push',name:'DB Lateral Raise',
+  {id:'lateral-raise',day:'push',section:'Shoulders',name:'DB Lateral Raise',
     primary:['Medial delt'],secondary:[],
     sets:'4',reps:'12-15',rest:'60s',
     desc:'Lead with the elbow, slight forward tilt, raise to shoulder height. Avoid shrugging. Slow and controlled.'},
-  {id:'front-raise',day:'push',name:'DB Front Raise',
+  {id:'front-raise',day:'push',section:'Shoulders',name:'DB Front Raise',
     primary:['Anterior delt'],secondary:[],
     sets:'3',reps:'12',rest:'60s',
     desc:'Alternating or both arms. Raise to shoulder height, no higher. Slight bend in elbow.'},
-  {id:'skull-crusher',day:'push',name:'DB Skull Crushers',
+  {id:'skull-crusher',day:'push',section:'Triceps',name:'DB Skull Crushers',
     primary:['Triceps (long head)','Triceps (medial head)'],secondary:[],
     sets:'3',reps:'10-12',rest:'75s',
     desc:'Flat bench. Lower dumbbells to the sides of your head, elbows pointing up. The long head gets the best stretch here.'},
-  {id:'overhead-ext',day:'push',name:'Overhead DB Extension',
+  {id:'overhead-ext',day:'push',section:'Triceps',name:'Overhead DB Extension',
     primary:['Triceps (long head)'],secondary:[],
     sets:'3',reps:'12',rest:'60s',
     desc:'One dumbbell held with both hands overhead. Lower behind your head, elbows in tight.'},
-  {id:'diamond-pushup',day:'push',name:'Diamond Push-Ups',
+  {id:'diamond-pushup',day:'push',section:'Triceps',name:'Diamond Push-Ups',
     primary:['Triceps (lateral head)','Triceps (medial head)'],secondary:['Chest'],
     sets:'2',reps:'Fail',rest:'60s',
     desc:'Hands form a diamond or stay close. Elbows track back along your torso, not flared.'},
-  {id:'arnold-press',day:'push',name:'Arnold Press',
+  {id:'arnold-press',day:'push',section:'Shoulders',name:'Arnold Press',
     primary:['Anterior delt','Medial delt'],secondary:['Posterior delt','Triceps'],
     sets:'3',reps:'10-12',rest:'75s',
     desc:'Start with palms facing you, rotate to forward-facing as you press up. Hits all three delt heads.'},
-  {id:'cable-fly',day:'push',name:'Band / Cable Chest Fly',
+  {id:'cable-fly',day:'push',section:'Chest',name:'Band / Cable Chest Fly',
     primary:['Pec major (squeeze)'],secondary:['Pec minor'],
     sets:'3',reps:'15',rest:'60s',
     desc:'Constant tension through the full ROM, especially at peak contraction. Great as a finisher after heavy pressing.'},
 
   // ── PULL ──
-  {id:'db-row',day:'pull',name:'DB Row',
+  {id:'db-row',day:'pull',section:'Back',name:'DB Row',
     primary:['Latissimus dorsi','Mid traps'],secondary:['Biceps','Rear delt'],
     sets:'4',reps:'8-10',rest:'90s',
     desc:'Brace a knee and hand on the bench. Row to your hip, leading with the elbow. Full stretch at the bottom, full squeeze at the top.'},
-  {id:'pullup',day:'pull',name:'Pull-Ups / Chin-Ups',
+  {id:'pullup',day:'pull',section:'Back',name:'Pull-Ups / Chin-Ups',
     primary:['Lats (width)'],secondary:['Biceps','Rear delt'],
     sets:'3',reps:'Fail',rest:'90s',
     desc:'Pull-ups (overhand) bias lats; chin-ups (underhand) bring in more biceps. Go to failure every set.'},
-  {id:'prone-row',day:'pull',name:'Incline Prone DB Row',
+  {id:'prone-row',day:'pull',section:'Back',name:'Incline Prone DB Row',
     primary:['Mid traps','Lower traps','Rhomboids'],secondary:['Rear delt'],
     sets:'3',reps:'12',rest:'75s',
     desc:'Set bench to 45°, lie chest-down, dumbbells hanging. Row both up, elbows flared to 90°.'},
-  {id:'db-deadlift',day:'pull',name:'DB Deadlift',
+  {id:'db-deadlift',day:'pull',section:'Back',name:'DB Deadlift',
     primary:['Erector spinae','Lower back'],secondary:['Hamstrings','Glutes'],
     sets:'3',reps:'10',rest:'90s',
     desc:'Dumbbells at your sides, hip hinge, flat back throughout. Push the floor away on the way up.'},
-  {id:'chest-supported-row',day:'pull',name:'Chest-Supported DB Row',
+  {id:'chest-supported-row',day:'pull',section:'Back',name:'Chest-Supported DB Row',
     primary:['Mid traps','Rhomboids'],secondary:['Rear delt','Biceps'],
     sets:'3',reps:'12',rest:'75s',
     desc:'Set bench to a low incline, lie face down. Row both dumbbells up simultaneously. Takes the lower back out of it.'},
-  {id:'db-curl',day:'pull',name:'DB Curl',
+  {id:'db-curl',day:'pull',section:'Biceps',name:'DB Curl',
     primary:['Biceps brachii (short head)'],secondary:['Brachialis'],
     sets:'3',reps:'10-12',rest:'60s',
     desc:'Standing, alternating. Supinate the wrist as you curl up. Full range of motion, no swinging.'},
-  {id:'incline-curl',day:'pull',name:'Incline DB Curl',
+  {id:'incline-curl',day:'pull',section:'Biceps',name:'Incline DB Curl',
     primary:['Biceps brachii (long head)'],secondary:[],
     sets:'3',reps:'10-12',rest:'60s',
     desc:'Bench at 45–60°, lean back, arms hang fully behind you. Puts the long head in a deep stretch.'},
-  {id:'hammer-curl',day:'pull',name:'Hammer Curl',
+  {id:'hammer-curl',day:'pull',section:'Biceps',name:'Hammer Curl',
     primary:['Brachialis','Brachioradialis'],secondary:[],
     sets:'3',reps:'12',rest:'60s',
     desc:'Neutral (thumbs-up) grip throughout. Brachialis development pushes the bicep up, making arms look thicker.'},
-  {id:'conc-curl',day:'pull',name:'Concentration Curl',
+  {id:'conc-curl',day:'pull',section:'Biceps',name:'Concentration Curl',
     primary:['Biceps (peak isolation)'],secondary:[],
     sets:'2',reps:'12/side',rest:'45s',
     desc:'Seated, elbow braced against the inside of your thigh, curl up. Eliminates all momentum.'},
-  {id:'zottman',day:'pull',name:'Zottman Curl',
+  {id:'zottman',day:'pull',section:'Biceps',name:'Zottman Curl',
     primary:['Brachioradialis','Biceps brachii','Brachialis'],secondary:[],
     sets:'3',reps:'10',rest:'60s',
     desc:'Curl up supinated (palms up), rotate to pronated (palms down) at the top, lower slowly.'},
-  {id:'reverse-curl',day:'pull',name:'Reverse Curl',
+  {id:'reverse-curl',day:'pull',section:'Forearms',name:'Reverse Curl',
     primary:['Brachioradialis','Extensor carpi'],secondary:[],
     sets:'3',reps:'10-12',rest:'60s',
     desc:'Overhand (pronated) grip, curl up. Also hits wrist extensors — important for elbow health.'},
-  {id:'wrist-curl-sup',day:'pull',name:'Wrist Curl (Supinated)',
+  {id:'wrist-curl-sup',day:'pull',section:'Forearms',name:'Wrist Curl (Supinated)',
     primary:['Flexor carpi radialis','Flexor carpi ulnaris'],secondary:[],
     sets:'3',reps:'15-20',rest:'no rest',
     desc:'Forearms on thighs, palms up. Curl the wrist up and lower slowly. Go light — pure isolation.'},
-  {id:'wrist-curl-pro',day:'pull',name:'Wrist Curl (Pronated)',
+  {id:'wrist-curl-pro',day:'pull',section:'Forearms',name:'Wrist Curl (Pronated)',
     primary:['Extensor carpi radialis','Extensor carpi ulnaris'],secondary:[],
     sets:'3',reps:'15-20',rest:'30s',
     desc:'Same setup but palms down. Extend the wrist up against gravity. Most neglected forearm muscles.'},
-  {id:'rev-fly',day:'pull',name:'Bent-Over Reverse Fly',
+  {id:'rev-fly',day:'pull',section:'Rear Delts',name:'Bent-Over Reverse Fly',
     primary:['Posterior delt','Lower traps'],secondary:['Rhomboids'],
     sets:'4',reps:'12-15',rest:'60s',
     desc:'Hinge forward to ~45°, arms hanging. Raise arms out to the sides with a slight bend at the elbow.'},
-  {id:'face-pull',day:'pull',name:'Face Pull (floor variation)',
+  {id:'face-pull',day:'pull',section:'Rear Delts',name:'Face Pull (floor variation)',
     primary:['Posterior delt','Rotator cuff'],secondary:['Mid traps'],
     sets:'3',reps:'15',rest:'60s',
     desc:'Lie face-down on the bench with light dumbbells. Row up and back, externally rotating at the top.'},
 
   // ── LEGS ──
-  {id:'legs-warmup-note',day:'legs',name:'Dynamic Warmup (8 min)',
+  {id:'legs-warmup-note',day:'legs',section:'Warmup',name:'Dynamic Warmup (8 min)',
     primary:['Hip mobility','Ankle mobility'],secondary:['Glutes','Hip flexors'],
     sets:'1',reps:'Full circuit',rest:'flow',
     desc:'Seated heel-to-hip switch, 90/90 hip stretch, ASLR, 90/90 to hip lift, kneeling hip flexor lunge, deep squat hold, deep lateral lunge. Do this every legs session before loading any weight.'},
-  {id:'goblet-squat',day:'legs',name:'Goblet Squat',
+  {id:'goblet-squat',day:'legs',section:'Quads',name:'Goblet Squat',
     primary:['Quad (rectus femoris)','VMO'],secondary:['Glutes','Core'],
     sets:'4',reps:'10-12',rest:'90s',
     desc:'Hold one dumbbell vertically at your chest. Upright torso, wide stance, squat deep.'},
-  {id:'bss',day:'legs',name:'Bulgarian Split Squat',
+  {id:'bss',day:'legs',section:'Quads',name:'Bulgarian Split Squat',
     primary:['Quad (vastus lateralis)','Glutes'],secondary:['Hamstrings'],
     sets:'3',reps:'8-10/side',rest:'90s',
     desc:'Rear foot elevated on the bench, dumbbells at sides. Lower the back knee toward the floor. Brutal but one of the best single-leg exercises you can do.'},
-  {id:'step-up',day:'legs',name:'DB Step-Up',
+  {id:'step-up',day:'legs',section:'Quads',name:'DB Step-Up',
     primary:['VMO','Rectus femoris'],secondary:['Glutes'],
     sets:'3',reps:'10/side',rest:'75s',
     desc:'Use the bench as the step. Drive through the heel of your lead foot. Don\'t push off with the back leg.'},
-  {id:'cossack',day:'legs',name:'Cossack Squat',
+  {id:'cossack',day:'legs',section:'Quads',name:'Cossack Squat',
     primary:['VMO','Adductors'],secondary:['Hip abductors','Glutes'],
     sets:'3',reps:'8/side',rest:'75s',
     desc:'Wide stance, squat deeply to one side while the other leg stays fully extended. Hold a dumbbell at chest for counterbalance.'},
-  {id:'rdl',day:'legs',name:'Romanian Deadlift (RDL)',
+  {id:'rdl',day:'legs',section:'Hamstrings',name:'Romanian Deadlift (RDL)',
     primary:['Biceps femoris','Semitendinosus'],secondary:['Glutes','Erectors'],
     sets:'4',reps:'10-12',rest:'90s',
     desc:'Dumbbells in front of thighs, slight knee bend. Hinge at the hips, lower until you feel a deep hamstring stretch. Drive hips forward to come back up.'},
-  {id:'lying-leg-curl',day:'legs',name:'DB Lying Leg Curl',
+  {id:'lying-leg-curl',day:'legs',section:'Hamstrings',name:'DB Lying Leg Curl',
     primary:['Semimembranosus','Biceps femoris'],secondary:[],
     sets:'3',reps:'10-12',rest:'75s',
     desc:'Lie face down on the bench, hold a dumbbell between your feet. Curl heels toward glutes, squeeze at the top, lower slowly.'},
-  {id:'seated-good-morning',day:'legs',name:'Seated Good Morning',
+  {id:'seated-good-morning',day:'legs',section:'Hamstrings',name:'Seated Good Morning',
     primary:['Erector spinae','Semimembranosus'],secondary:['Lower back'],
     sets:'3',reps:'12',rest:'75s',
     desc:'Sit on the bench edge, hold a dumbbell at chest. Hinge forward with a flat back until you feel a hamstring stretch.'},
-  {id:'hip-thrust',day:'legs',name:'DB Hip Thrust',
+  {id:'hip-thrust',day:'legs',section:'Glutes',name:'DB Hip Thrust',
     primary:['Gluteus maximus'],secondary:['Hamstrings'],
     sets:'4',reps:'12-15',rest:'75s',
     desc:'Upper back on the bench, dumbbell on your hips. Drive through your heels, squeeze glutes hard at the top, hold 1 second.'},
-  {id:'sumo-squat',day:'legs',name:'DB Sumo Squat',
+  {id:'sumo-squat',day:'legs',section:'Glutes',name:'DB Sumo Squat',
     primary:['Gluteus medius','Inner quad'],secondary:['Adductors'],
     sets:'3',reps:'12',rest:'75s',
     desc:'Wide stance, toes out ~45°, one dumbbell hanging between your legs. Lower deep.'},
-  {id:'standing-calf',day:'legs',name:'Standing DB Calf Raise',
+  {id:'standing-calf',day:'legs',section:'Calves',name:'Standing DB Calf Raise',
     primary:['Gastrocnemius'],secondary:[],
     sets:'4',reps:'15-20',rest:'no rest',
     desc:'Hold dumbbells, raise on the balls of your feet, squeeze at the top, lower slowly. Toes forward.'},
-  {id:'seated-calf',day:'legs',name:'Seated Calf Raise',
+  {id:'seated-calf',day:'legs',section:'Calves',name:'Seated Calf Raise',
     primary:['Soleus'],secondary:[],
     sets:'3',reps:'15-20',rest:'45s',
     desc:'Sit on the bench, dumbbell balanced on knee. Knees bent shifts load to the soleus — the deeper calf muscle.'},
-  {id:'tib-raise',day:'legs',name:'Tibialis Raise',
+  {id:'tib-raise',day:'legs',section:'Calves',name:'Tibialis Raise',
     primary:['Tibialis anterior'],secondary:[],
     sets:'3',reps:'20-25',rest:'30s',
     desc:'Back against a wall, heels about 6 inches from the baseboard. Lift toes and forefoot off the ground repeatedly.'},
-  {id:'lunge',day:'legs',name:'DB Walking Lunge',
+  {id:'lunge',day:'legs',section:'Quads',name:'DB Walking Lunge',
     primary:['Quads','Glutes'],secondary:['Hamstrings','Core'],
     sets:'3',reps:'10/side',rest:'75s',
     desc:'Step forward into a deep lunge, back knee nearly touching the floor, then bring the rear foot forward.'},
-  {id:'nordic-curl',day:'legs',name:'Nordic Curl',
+  {id:'nordic-curl',day:'legs',section:'Hamstrings',name:'Nordic Curl',
     primary:['Biceps femoris (eccentric)','Semitendinosus'],secondary:[],
     sets:'3',reps:'6-8',rest:'90s',
     desc:'Secure your ankles, kneel upright, then slowly lower your torso toward the floor resisting with your hamstrings.'},
 
   // ── ABS ──
-  {id:'plank',day:'abs',name:'Plank',
+  {id:'plank',day:'abs',section:'Core Stability',name:'Plank',
     primary:['Transverse abdominis','Deep core'],secondary:['Glutes','Quads'],
     sets:'3',reps:'30-60s',rest:'45s',
     desc:'Forearms or hands, straight line from head to heels. Squeeze everything: glutes, abs, quads.'},
-  {id:'weighted-crunch',day:'abs',name:'Weighted Crunch',
+  {id:'weighted-crunch',day:'abs',section:'Rectus Abdominis',name:'Weighted Crunch',
     primary:['Rectus abdominis (upper)'],secondary:[],
     sets:'3',reps:'15-20',rest:'45s',
     desc:'Hold a dumbbell at your chest. Curl your shoulders off the floor, exhale hard at the top.'},
-  {id:'reverse-crunch',day:'abs',name:'Reverse Crunch',
+  {id:'reverse-crunch',day:'abs',section:'Rectus Abdominis',name:'Reverse Crunch',
     primary:['Rectus abdominis (lower)'],secondary:['Hip flexors'],
     sets:'3',reps:'12-15',rest:'45s',
     desc:'Lie flat, bring your knees to your chest and curl your hips off the floor. Lower with control.'},
-  {id:'bicycle-crunch',day:'abs',name:'Bicycle Crunch',
+  {id:'bicycle-crunch',day:'abs',section:'Rectus Abdominis',name:'Bicycle Crunch',
     primary:['External obliques','Rectus abdominis'],secondary:['Hip flexors'],
     sets:'3',reps:'20',rest:'45s',
     desc:'Hands behind your head. Opposite elbow to opposite knee while extending the other leg. Go slow.'},
-  {id:'russian-twist',day:'abs',name:'DB Russian Twist',
+  {id:'russian-twist',day:'abs',section:'Obliques',name:'DB Russian Twist',
     primary:['External obliques','Internal obliques'],secondary:[],
     sets:'3',reps:'16-20',rest:'45s',
     desc:'Seated, torso leaned back slightly, feet up or down. Hold one dumbbell and rotate side to side.'},
-  {id:'side-plank',day:'abs',name:'Side Plank',
+  {id:'side-plank',day:'abs',section:'Obliques',name:'Side Plank',
     primary:['Internal obliques','Quadratus lumborum'],secondary:['Glute medius'],
     sets:'3',reps:'30s/side',rest:'30s',
     desc:'Forearm on the floor, body in a straight line, hips elevated. Add a dumbbell on the hip for extra load.'},
-  {id:'dead-bug',day:'abs',name:'Dead Bug',
+  {id:'dead-bug',day:'abs',section:'Core Stability',name:'Dead Bug',
     primary:['Transverse abdominis','Deep core'],secondary:['Hip flexors'],
     sets:'3',reps:'10/side',rest:'45s',
     desc:'Lie on back, arms up, knees at 90°. Lower one arm and the opposite leg toward the floor while keeping your lower back pressed down.'},
-  {id:'leg-raise',day:'abs',name:'Lying Leg Raise',
+  {id:'leg-raise',day:'abs',section:'Rectus Abdominis',name:'Lying Leg Raise',
     primary:['Rectus abdominis (lower)','Hip flexors'],secondary:['Obliques'],
     sets:'3',reps:'12-15',rest:'45s',
     desc:'Lie flat. Keeping legs straight, raise them to 90° and lower slowly. Lower abs fire hardest when hips come off the floor at the top.'},
-  {id:'ab-rollout',day:'abs',name:'DB Ab Rollout',
+  {id:'ab-rollout',day:'abs',section:'Core Stability',name:'DB Ab Rollout',
     primary:['Transverse abdominis','Rectus abdominis'],secondary:['Lats','Shoulders'],
     sets:'3',reps:'8-10',rest:'60s',
     desc:'Kneel with a dumbbell on each hand. Roll forward until your body is nearly parallel to the floor, then pull back. One of the hardest core exercises you can do.'},
@@ -1120,6 +1120,30 @@ function saveSupersets(s) {
 var _editSS = {};
 
 /* ── Render a panel's exercises from stored routine data ── */
+function makeExCard(ex) {
+  var primaryTags = ex.primary.map(function(m){ return '<span class="tag target">'+m+'</span>'; }).join('');
+  var secTags = ex.secondary.map(function(m){ return '<span class="tag">'+m+'</span>'; }).join('');
+  return '<div class="exercise">'
+    + '<div class="ex-header" onclick="toggle(this)">'
+    +   '<div class="ex-header-left">'
+    +     '<div class="ex-name">' + ex.name + '</div>'
+    +     '<div class="ex-tags">' + primaryTags + secTags + '</div>'
+    +   '</div>'
+    +   '<div class="ex-header-right">'
+    +     '<div class="sets-reps">' + ex.sets + ' × ' + ex.reps + '</div>'
+    +     '<div class="rest-label">' + ex.rest + ' rest</div>'
+    +   '</div>'
+    +   '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>'
+    + '</div>'
+    + '<div class="ex-body"><div class="ex-desc">' + ex.desc + '</div>'
+    +   '<div style="margin-top:6px;font-size:0.65rem;color:var(--dim)">'
+    +     '<strong style="color:var(--muted)">Primary:</strong> ' + ex.primary.join(', ')
+    +     (ex.secondary.length ? '  ·  <strong style="color:var(--muted)">Secondary:</strong> ' + ex.secondary.join(', ') : '')
+    +   '</div>'
+    + '</div>'
+    + '</div>';
+}
+
 function renderPanel(day) {
   var routines = getRoutines();
   var ids = routines[day] || [];
@@ -1127,70 +1151,43 @@ function renderPanel(day) {
   var container = document.getElementById('exercises-' + day);
   if (!container) return;
 
-  var html = '';
+  // Build ordered list of {section, html} pairs, preserving exercise order
+  var items = [];
   var i = 0;
   while (i < ids.length) {
     var id = ids[i];
     var ex = getExData(id);
     if (!ex) { i++; continue; }
+    var section = ex.section || ex.primary[0].split('(')[0].trim();
 
     var nextId = ids[i+1];
     var nextEx = nextId ? getExData(nextId) : null;
-    // superset: current AND next both have ss flag
     var isSSStart = ss[id] && nextEx && ss[nextId];
 
-    var primaryTags = ex.primary.map(function(m){ return '<span class="tag target">'+m+'</span>'; }).join('');
-    var secTags = ex.secondary.map(function(m){ return '<span class="tag">'+m+'</span>'; }).join('');
-    var exCard = '<div class="exercise">'
-      + '<div class="ex-header" onclick="toggle(this)">'
-      +   '<div class="ex-header-left">'
-      +     '<div class="ex-name">' + ex.name + '</div>'
-      +     '<div class="ex-tags">' + primaryTags + secTags + '</div>'
-      +   '</div>'
-      +   '<div class="ex-header-right">'
-      +     '<div class="sets-reps">' + ex.sets + ' × ' + ex.reps + '</div>'
-      +     '<div class="rest-label">' + ex.rest + ' rest</div>'
-      +   '</div>'
-      +   '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>'
-      + '</div>'
-      + '<div class="ex-body"><div class="ex-desc">' + ex.desc + '</div>'
-      +   '<div style="margin-top:6px;font-size:0.65rem;color:var(--dim)">'
-      +     '<strong style="color:var(--muted)">Primary:</strong> ' + ex.primary.join(', ')
-      +     (ex.secondary.length ? ' &nbsp;·&nbsp; <strong style="color:var(--muted)">Secondary:</strong> ' + ex.secondary.join(', ') : '')
-      +   '</div>'
-      + '</div>'
-      + '</div>';
-
     if (isSSStart) {
-      var nextPrimaryTags = nextEx.primary.map(function(m){ return '<span class="tag target">'+m+'</span>'; }).join('');
-      var nextSecTags = nextEx.secondary.map(function(m){ return '<span class="tag">'+m+'</span>'; }).join('');
-      var nextCard = '<div class="exercise">'
-        + '<div class="ex-header" onclick="toggle(this)">'
-        +   '<div class="ex-header-left">'
-        +     '<div class="ex-name">' + nextEx.name + '</div>'
-        +     '<div class="ex-tags">' + nextPrimaryTags + nextSecTags + '</div>'
-        +   '</div>'
-        +   '<div class="ex-header-right">'
-        +     '<div class="sets-reps">' + nextEx.sets + ' × ' + nextEx.reps + '</div>'
-        +     '<div class="rest-label">' + nextEx.rest + ' rest</div>'
-        +   '</div>'
-        +   '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>'
-        + '</div>'
-        + '<div class="ex-body"><div class="ex-desc">' + nextEx.desc + '</div>'
-        +   '<div style="margin-top:6px;font-size:0.65rem;color:var(--dim)">'
-        +     '<strong style="color:var(--muted)">Primary:</strong> ' + nextEx.primary.join(', ')
-        +     (nextEx.secondary.length ? ' &nbsp;·&nbsp; <strong style="color:var(--muted)">Secondary:</strong> ' + nextEx.secondary.join(', ') : '')
-        +   '</div>'
-        + '</div>'
-        + '</div>';
-      html += '<div class="superset-group"><span class="superset-label">Superset</span>'
-        + exCard + nextCard + '</div>';
+      var ssSection = section; // superset inherits first exercise section
+      var ssHtml = '<div class="superset-group"><span class="superset-label">Superset</span>'
+        + makeExCard(ex) + makeExCard(nextEx) + '</div>';
+      items.push({section: ssSection, html: ssHtml});
       i += 2;
     } else {
-      html += exCard;
+      items.push({section: section, html: makeExCard(ex)});
       i++;
     }
   }
+
+  // Second pass: wrap in section divs, grouping consecutive same-section items
+  var html = '';
+  var curSection = null;
+  items.forEach(function(item) {
+    if (item.section !== curSection) {
+      if (curSection !== null) html += '</div>'; // close previous section
+      html += '<div class="section"><div class="section-title">' + item.section + '</div>';
+      curSection = item.section;
+    }
+    html += item.html;
+  });
+  if (curSection !== null) html += '</div>'; // close last section
 
   if (!html) html = '<div class="no-history" style="padding:20px 0">No exercises. Tap the pencil to add some.</div>';
   container.innerHTML = html;
