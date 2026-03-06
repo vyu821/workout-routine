@@ -6,7 +6,7 @@
 
 Built for dumbbell-based training with an adjustable bench.
 
-[![Version](https://img.shields.io/badge/version-1.4.0-4a9eff?style=flat-square&labelColor=03030e)](.)
+[![Version](https://img.shields.io/badge/version-1.4.2-4a9eff?style=flat-square&labelColor=03030e)](.)
 [![PWA](https://img.shields.io/badge/PWA-ready-26c47a?style=flat-square&labelColor=03030e)](.)
 [![Storage](https://img.shields.io/badge/storage-localStorage-7744ff?style=flat-square&labelColor=03030e)](.)
 
@@ -28,7 +28,7 @@ Deploy both to the same folder. They share data through `localStorage` and link 
 ## ✨ Features
 
 ### 🏋️ Workout Panels (Push / Pull / Legs / Abs)
-- 57 exercises across all four days, grouped by muscle section
+- 50 exercises across all four days, grouped by muscle section
 - Exercise cards show name, sets × reps, rest time, and colored muscle tags
 - Tap any card to expand the full coaching description
 - Static tips box on each panel with session-specific advice
@@ -37,7 +37,7 @@ Deploy both to the same folder. They share data through `localStorage` and link 
 - **Push:** Chest → Shoulders → Triceps
 - **Pull:** Back → Biceps → Forearms → Rear Delts
 - **Legs:** Warmup (7 exercises) → Quads → Hamstrings → Glutes → Calves
-- **Abs:** Core Stability → Rectus Abdominis → Obliques
+- **Abs:** Core Stability → Flexion → Rotation & Anti-Rotation
 
 ### 📅 Session Logging
 - **Log today** — multi-group days stack (Legs + Abs on the same day both register)
@@ -92,6 +92,15 @@ All data is local to your browser. Clearing browser storage resets everything.
 ---
 
 ## 📋 Patch Notes
+
+### v1.4.2 — Lateral/Front Raise Superset Restored
+- Lateral Raise and Front Raise on Push day re-grouped as a superset
+
+### v1.4.1 — Exercise List Reverted to Previous Version
+- Push: removed Arnold Press; Lateral Raise and Front Raise restored to individual cards (no superset)
+- Pull: removed Chest-Supported DB Row
+- Legs: removed Nordic Curl (replaced by DB Lying Leg Curl, already present) and DB Walking Lunge
+- Abs: removed Dead Bug, DB Ab Rollout, and Lying Leg Raise — back to 6 exercises (Plank, Weighted Crunch, Reverse Crunch, Bicycle Crunch, DB Russian Twist, Side Plank)
 
 ### v1.4.0 — Simplified to Static Exercises
 - Removed the entire inline routine editor (edit sheet, exercise bank, EXERCISE_BANK data, routines/SR/SS localStorage)
