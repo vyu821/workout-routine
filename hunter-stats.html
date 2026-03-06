@@ -226,205 +226,306 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
     </div>
     <div class="section-label">Muscle Attributes</div>
     <div class="body-svg-wrap">
-      <svg id="bodySvg" viewBox="0 0 320 560" xmlns="http://www.w3.org/2000/svg">
+      <svg id="bodySvg" viewBox="0 0 320 580" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <!-- Blue scanning line effect -->
           <linearGradient id="scanGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="rgba(74,158,255,0)" />
-            <stop offset="50%" stop-color="rgba(74,158,255,0.15)" />
-            <stop offset="100%" stop-color="rgba(74,158,255,0)" />
+            <stop offset="0%" stop-color="rgba(74,158,255,0)"/>
+            <stop offset="50%" stop-color="rgba(74,158,255,0.18)"/>
+            <stop offset="100%" stop-color="rgba(74,158,255,0)"/>
           </linearGradient>
-          <!-- Body base gradient -->
-          <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#0e1830"/>
-            <stop offset="100%" stop-color="#060c1e"/>
+          <linearGradient id="bgPanelGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#07091a"/>
+            <stop offset="100%" stop-color="#04050f"/>
           </linearGradient>
-          <!-- Glow filters -->
-          <filter id="glow-sm" x="-40%" y="-40%" width="180%" height="180%">
-            <feGaussianBlur stdDeviation="2.5" result="b"/>
+          <filter id="glow-sm" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2" result="b"/>
             <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
-          <filter id="glow-md" x="-60%" y="-60%" width="220%" height="220%">
+          <filter id="glow-md" x="-80%" y="-80%" width="260%" height="260%">
             <feGaussianBlur stdDeviation="5" result="b"/>
             <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
-          <filter id="glow-lg" x="-80%" y="-80%" width="260%" height="260%">
+          <filter id="glow-lg" x="-100%" y="-100%" width="300%" height="300%">
             <feGaussianBlur stdDeviation="9" result="b"/>
             <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
-          <!-- Edge glow for body outline -->
-          <filter id="bodyOutline" x="-20%" y="-5%" width="140%" height="110%">
-            <feGaussianBlur stdDeviation="3" result="b"/>
+          <filter id="bodyGlow" x="-30%" y="-5%" width="160%" height="110%">
+            <feGaussianBlur stdDeviation="6" result="b"/>
             <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
         </defs>
 
-        <!-- ═══════ BACKGROUND PANEL ═══════ -->
-        <rect x="2" y="2" width="316" height="556" rx="10" fill="var(--surface)" stroke="var(--border)" stroke-width="1"/>
-        <!-- subtle grid lines -->
-        <g opacity="0.06" stroke="#4a9eff" stroke-width="0.5">
-          <line x1="53" y1="2" x2="53" y2="558"/>
-          <line x1="106" y1="2" x2="106" y2="558"/>
-          <line x1="214" y1="2" x2="214" y2="558"/>
-          <line x1="267" y1="2" x2="267" y2="558"/>
-          <line x1="2" y1="93" x2="318" y2="93"/>
-          <line x1="2" y1="186" x2="318" y2="186"/>
-          <line x1="2" y1="279" x2="318" y2="279"/>
-          <line x1="2" y1="372" x2="318" y2="372"/>
-          <line x1="2" y1="465" x2="318" y2="465"/>
+        <!-- PANEL BACKGROUND -->
+        <rect x="0" y="0" width="320" height="580" rx="10" fill="url(#bgPanelGrad)" stroke="#141830" stroke-width="1"/>
+        <!-- corner accents -->
+        <path d="M0,20 L0,0 L20,0" fill="none" stroke="rgba(74,158,255,0.4)" stroke-width="1.5"/>
+        <path d="M300,0 L320,0 L320,20" fill="none" stroke="rgba(74,158,255,0.4)" stroke-width="1.5"/>
+        <path d="M0,560 L0,580 L20,580" fill="none" stroke="rgba(74,158,255,0.2)" stroke-width="1"/>
+        <path d="M300,580 L320,580 L320,560" fill="none" stroke="rgba(74,158,255,0.2)" stroke-width="1"/>
+        <!-- grid -->
+        <g opacity="0.04" stroke="#4a9eff" stroke-width="0.5">
+          <line x1="107" y1="0" x2="107" y2="580"/>
+          <line x1="213" y1="0" x2="213" y2="580"/>
+          <line x1="0" y1="145" x2="320" y2="145"/>
+          <line x1="0" y1="290" x2="320" y2="290"/>
+          <line x1="0" y1="435" x2="320" y2="435"/>
         </g>
 
-        <!-- ═══════ ANIME BODY FIGURE ═══════ -->
-        <!-- Lean at low level, gains definition and size as muscles level up -->
-        <!-- All muscle region IDs prefixed mr- for JS targeting -->
+        <!-- ══════════════════════════════════
+             ANIME BODY — proper V-taper anatomy
+             Center X=160. Wide shoulders ~220px span.
+             Narrow waist ~100px. Long torso ratio.
+        ══════════════════════════════════ -->
 
-        <!-- HEAD — angular anime style -->
-        <path d="M160,22 Q148,22 144,32 Q140,42 142,52 Q144,62 150,66 Q156,70 160,70 Q164,70 170,66 Q176,62 178,52 Q180,42 176,32 Q172,22 160,22 Z"
-          fill="#0d1628" stroke="#1e2d4a" stroke-width="1.2"/>
-        <!-- Hair -->
-        <path d="M145,30 Q148,22 160,20 Q172,22 175,30 Q178,24 174,18 Q168,12 160,12 Q152,12 146,18 Q142,24 145,30 Z"
-          fill="#0a1020" stroke="#141e35" stroke-width="1"/>
-        <!-- Face detail lines -->
-        <line x1="152" y1="48" x2="156" y2="50" stroke="#2a3a5a" stroke-width="0.8"/>
-        <line x1="168" y1="48" x2="164" y2="50" stroke="#2a3a5a" stroke-width="0.8"/>
-        <!-- Eyes glow -->
-        <ellipse cx="154" cy="46" rx="3" ry="2" fill="#0a1828" stroke="#1a3060" stroke-width="0.5"/>
-        <ellipse cx="166" cy="46" rx="3" ry="2" fill="#0a1828" stroke="#1a3060" stroke-width="0.5"/>
-        <ellipse id="eye-l" cx="154" cy="46" rx="1.5" ry="1" fill="#4a9eff" opacity="0.3"/>
-        <ellipse id="eye-r" cx="166" cy="46" rx="1.5" ry="1" fill="#4a9eff" opacity="0.3"/>
-        <!-- Neck -->
-        <path d="M153,68 L153,80 L157,82 L160,83 L163,82 L167,80 L167,68 Z"
-          fill="#0d1628" stroke="#1e2d4a" stroke-width="0.8"/>
+        <!-- ── SHADOW / AMBIENT GLOW UNDER BODY ── -->
+        <ellipse cx="160" cy="545" rx="55" ry="8" fill="rgba(74,158,255,0.08)" filter="url(#glow-md)"/>
 
-        <!-- SHOULDERS — trapezius sweep -->
+        <!-- ── NECK ── -->
+        <path d="M150,72 L152,86 Q156,90 160,91 Q164,90 168,86 L170,72 Z"
+          fill="#0c1525" stroke="#1a2840" stroke-width="1"/>
+        <!-- trapezius slope both sides -->
+        <path d="M150,72 Q140,74 128,82 L132,90 Q140,82 150,80 Z" fill="#0c1525" stroke="#1a2840" stroke-width="0.8"/>
+        <path d="M170,72 Q180,74 192,82 L188,90 Q180,82 170,80 Z" fill="#0c1525" stroke="#1a2840" stroke-width="0.8"/>
+
+        <!-- ── HEAD — sharp anime jaw, high cheekbones ── -->
+        <!-- skull -->
+        <path d="M160,10 Q143,10 138,22 Q133,34 135,46 Q137,56 142,62 Q148,68 154,70 L160,71 L166,70 Q172,68 178,62 Q183,56 185,46 Q187,34 182,22 Q177,10 160,10 Z"
+          fill="#0c1525" stroke="#1e2e48" stroke-width="1.2"/>
+        <!-- sharp jaw / chin -->
+        <path d="M148,64 Q152,72 156,75 Q158,77 160,77 Q162,77 164,75 Q168,72 172,64"
+          fill="none" stroke="#1e2e48" stroke-width="1"/>
+        <!-- cheekbone lines -->
+        <line x1="138" y1="50" x2="144" y2="54" stroke="#1e2e48" stroke-width="0.6" opacity="0.7"/>
+        <line x1="182" y1="50" x2="176" y2="54" stroke="#1e2e48" stroke-width="0.6" opacity="0.7"/>
+        <!-- HAIR — swept back, angular Solo Leveling style -->
+        <path d="M138,22 Q136,14 142,8 Q150,2 160,2 Q170,2 178,8 Q184,14 182,22
+                 Q178,12 172,9 Q166,6 160,6 Q154,6 148,9 Q142,12 138,22 Z"
+          fill="#060c1a" stroke="#0e1528" stroke-width="1"/>
+        <!-- hair spikes/flow left -->
+        <path d="M138,22 Q132,18 130,12 Q135,8 140,10 Q136,16 138,22 Z" fill="#060c1a" stroke="#0e1528" stroke-width="0.7"/>
+        <path d="M136,28 Q128,22 126,14 Q131,12 135,16 Q132,22 136,28 Z" fill="#060c1a" stroke="#0e1528" stroke-width="0.7"/>
+        <!-- hair right -->
+        <path d="M182,22 Q188,18 190,12 Q185,8 180,10 Q184,16 182,22 Z" fill="#060c1a" stroke="#0e1528" stroke-width="0.7"/>
+        <!-- EYES — glowing blue, narrow and intense -->
+        <path d="M143,42 Q148,39 154,40 Q151,44 145,44 Z" fill="#08121e" stroke="#1a2c48" stroke-width="0.6"/>
+        <path d="M177,42 Q172,39 166,40 Q169,44 175,44 Z" fill="#08121e" stroke="#1a2c48" stroke-width="0.6"/>
+        <ellipse id="eye-l" cx="149" cy="42" rx="4" ry="2.2" fill="#1a5aaa" opacity="0.5"/>
+        <ellipse id="eye-r" cx="171" cy="42" rx="4" ry="2.2" fill="#1a5aaa" opacity="0.5"/>
+        <!-- eye highlights -->
+        <ellipse cx="147" cy="41" rx="1.2" ry="0.7" fill="#8acfff" opacity="0.4"/>
+        <ellipse cx="169" cy="41" rx="1.2" ry="0.7" fill="#8acfff" opacity="0.4"/>
+        <!-- nose bridge -->
+        <path d="M160,48 L158,58 Q160,60 162,58 L160,48" fill="none" stroke="#1a2840" stroke-width="0.7"/>
+        <!-- mouth — stern line -->
+        <line x1="154" y1="64" x2="166" y2="64" stroke="#1a2840" stroke-width="0.9"/>
+
+        <!-- ══ SHOULDERS — wide, rounded deltoid caps ══ -->
+        <!-- Left delt — wider than old version, proper roundness -->
         <path id="mr-shoulders" class="mregion"
-          d="M130,78 Q118,80 112,88 Q106,96 108,106 Q112,112 118,110 Q126,106 130,96 L132,82 Z"
-          fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
+          d="M128,82 Q114,84 106,94 Q100,104 102,116 Q106,124 114,122 Q122,118 126,108 Q130,96 130,84 Z"
+          fill="#0d1628" stroke="#1a2840" stroke-width="1.2"/>
+        <!-- Right delt -->
         <path id="mr-shoulders-r" class="mregion"
-          d="M190,78 Q202,80 208,88 Q214,96 212,106 Q208,112 202,110 Q194,106 190,96 L188,82 Z"
-          fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
+          d="M192,82 Q206,84 214,94 Q220,104 218,116 Q214,124 206,122 Q198,118 194,108 Q190,96 190,84 Z"
+          fill="#0d1628" stroke="#1a2840" stroke-width="1.2"/>
 
-        <!-- CHEST — pec slabs -->
+        <!-- ══ CHEST — wide pec slabs with clear sternal line ══ -->
+        <!-- Left pec -->
         <path id="mr-chest" class="mregion"
-          d="M133,80 Q148,76 160,76 Q172,76 187,80 L188,106 Q175,114 160,116 Q145,114 132,106 Z"
-          fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
-        <!-- chest center line -->
-        <line x1="160" y1="78" x2="160" y2="114" stroke="#1a2840" stroke-width="0.7" opacity="0.5"/>
+          d="M130,86 Q144,80 160,80 L160,118 Q148,122 136,116 Q128,110 128,100 Z"
+          fill="#0d1628" stroke="#1a2840" stroke-width="1.2"/>
+        <!-- Right pec (separate path, same id for group targeting) -->
+        <path id="mr-chest-r" class="mregion"
+          d="M190,86 Q176,80 160,80 L160,118 Q172,122 184,116 Q192,110 192,100 Z"
+          fill="#0d1628" stroke="#1a2840" stroke-width="1.2"/>
+        <!-- sternal center groove -->
+        <line x1="160" y1="82" x2="160" y2="118" stroke="#0a1322" stroke-width="1.5" opacity="0.8"/>
+        <!-- pec lower curve definition -->
+        <path d="M136,116 Q148,122 160,122 Q172,122 184,116" fill="none" stroke="#1a2840" stroke-width="0.8" opacity="0.6"/>
 
-        <!-- BACK / LATS (shown as side wedges) -->
+        <!-- ══ LATS — the V-shape makers, wide flare ══ -->
         <path id="mr-back-l" class="mregion"
-          d="M131,84 Q122,90 120,110 Q120,128 124,138 Q128,144 132,140 Q134,124 134,104 Z"
-          fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
+          d="M128,88 Q118,96 116,116 Q114,136 118,150 Q122,158 128,154 Q132,138 132,116 Q132,98 130,88 Z"
+          fill="#0d1628" stroke="#1a2840" stroke-width="1.2"/>
         <path id="mr-back-r" class="mregion"
-          d="M189,84 Q198,90 200,110 Q200,128 196,138 Q192,144 188,140 Q186,124 186,104 Z"
-          fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
+          d="M192,88 Q202,96 204,116 Q206,136 202,150 Q198,158 192,154 Q188,138 188,116 Q188,98 190,88 Z"
+          fill="#0d1628" stroke="#1a2840" stroke-width="1.2"/>
 
-        <!-- UPPER ARMS — biceps/triceps split -->
-        <!-- Left upper arm outer (triceps) -->
+        <!-- ══ UPPER ARMS — clearly separated bi/tri ══ -->
+        <!-- Triceps L (outer/rear) -->
         <path id="mr-triceps-l" class="mregion"
-          d="M108,108 Q100,116 98,132 Q96,148 100,160 Q104,168 108,166 Q114,158 114,140 Q114,122 112,108 Z"
-          fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
-        <!-- Left upper arm inner (biceps) -->
+          d="M104,118 Q96,128 94,146 Q92,162 96,174 Q100,182 106,180 Q112,170 112,152 Q112,132 108,118 Z"
+          fill="#0d1628" stroke="#1a2840" stroke-width="1.2"/>
+        <!-- Biceps L (front/inner — sits on top visually) -->
         <path id="mr-biceps-l" class="mregion"
-          d="M114,108 Q118,114 120,132 Q120,150 116,162 Q112,168 108,166 Q110,152 110,134 Q110,118 112,108 Z"
-          fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
-        <!-- Right upper arm outer (triceps) -->
+          d="M112,118 Q118,126 120,146 Q120,164 114,176 Q110,182 106,180 Q110,166 110,148 Q110,130 112,118 Z"
+          fill="#0d1628" stroke="#1a2840" stroke-width="1.2"/>
+        <!-- muscle peak line -->
+        <path d="M108,132 Q113,128 116,136" fill="none" stroke="#1a2840" stroke-width="0.7" opacity="0.5"/>
+        <!-- Triceps R -->
         <path id="mr-triceps-r" class="mregion"
-          d="M212,108 Q220,116 222,132 Q224,148 220,160 Q216,168 212,166 Q206,158 206,140 Q206,122 208,108 Z"
-          fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
-        <!-- Right upper arm inner (biceps) -->
+          d="M216,118 Q224,128 226,146 Q228,162 224,174 Q220,182 214,180 Q208,170 208,152 Q208,132 212,118 Z"
+          fill="#0d1628" stroke="#1a2840" stroke-width="1.2"/>
+        <!-- Biceps R -->
         <path id="mr-biceps-r" class="mregion"
-          d="M206,108 Q202,114 200,132 Q200,150 204,162 Q208,168 212,166 Q210,152 210,134 Q210,118 208,108 Z"
-          fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
+          d="M208,118 Q202,126 200,146 Q200,164 206,176 Q210,182 214,180 Q210,166 210,148 Q210,130 208,118 Z"
+          fill="#0d1628" stroke="#1a2840" stroke-width="1.2"/>
+        <path d="M212,132 Q207,128 204,136" fill="none" stroke="#1a2840" stroke-width="0.7" opacity="0.5"/>
 
-        <!-- FOREARMS -->
+        <!-- ══ FOREARMS ══ -->
         <path id="mr-forearms-l" class="mregion"
-          d="M106,168 Q98,178 96,196 Q94,212 98,222 Q102,228 106,226 Q110,216 110,196 Q110,178 108,168 Z"
+          d="M104,182 Q96,194 94,212 Q92,228 96,238 Q100,244 106,242 Q112,232 112,212 Q112,194 108,182 Z"
           fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
         <path id="mr-forearms-r" class="mregion"
-          d="M214,168 Q222,178 224,196 Q226,212 222,222 Q218,228 214,226 Q210,216 210,196 Q210,178 212,168 Z"
+          d="M216,182 Q224,194 226,212 Q228,228 224,238 Q220,244 214,242 Q208,232 208,212 Q208,194 212,182 Z"
           fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
         <!-- Hands -->
-        <ellipse cx="102" cy="232" rx="8" ry="6" fill="#0a1422" stroke="#162030" stroke-width="0.8"/>
-        <ellipse cx="218" cy="232" rx="8" ry="6" fill="#0a1422" stroke="#162030" stroke-width="0.8"/>
+        <path d="M94,240 Q90,246 92,252 Q96,256 104,254 Q110,250 110,244 L106,240 Z"
+          fill="#0a1320" stroke="#152030" stroke-width="0.8"/>
+        <path d="M226,240 Q230,246 228,252 Q224,256 216,254 Q210,250 210,244 L214,240 Z"
+          fill="#0a1320" stroke="#152030" stroke-width="0.8"/>
 
-        <!-- CORE / ABS — segmented blocks -->
+        <!-- ══ CORE / ABS — 6-pack definition ══ -->
+        <!-- Obliques -->
+        <path d="M128,122 Q120,138 120,160 Q122,172 128,176 L134,172 Q128,158 128,138 Z"
+          fill="#0b1420" stroke="#162030" stroke-width="0.8" opacity="0.7"/>
+        <path d="M192,122 Q200,138 200,160 Q198,172 192,176 L186,172 Q192,158 192,138 Z"
+          fill="#0b1420" stroke="#162030" stroke-width="0.8" opacity="0.7"/>
+        <!-- rectus abdominis -->
         <path id="mr-core" class="mregion"
-          d="M133,116 Q148,120 160,120 Q172,120 187,116 L186,168 Q172,174 160,175 Q148,174 134,168 Z"
-          fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
-        <!-- abs block lines -->
-        <g id="abs-lines" opacity="0.2" stroke="#2a3a5a" stroke-width="0.7">
-          <line x1="148" y1="132" x2="172" y2="132"/>
-          <line x1="148" y1="148" x2="172" y2="148"/>
-          <line x1="160" y1="120" x2="160" y2="168"/>
+          d="M134,120 Q148,124 160,124 Q172,124 186,120 L186,174 Q172,180 160,181 Q148,180 134,174 Z"
+          fill="#0d1628" stroke="#1a2840" stroke-width="1.2"/>
+        <!-- ab segmentation lines — 3 rows of blocks -->
+        <g id="abs-lines" stroke="#0e1a2e" stroke-width="1" opacity="0.35">
+          <!-- horizontal dividers -->
+          <path d="M138,136 Q148,138 160,138 Q172,138 182,136" fill="none"/>
+          <path d="M138,152 Q148,154 160,154 Q172,154 182,152" fill="none"/>
+          <path d="M140,168 Q150,170 160,170 Q170,170 180,168" fill="none"/>
+          <!-- vertical center line -->
+          <line x1="160" y1="124" x2="160" y2="174"/>
+          <!-- inter-pack dividers left -->
+          <line x1="150" y1="136" x2="150" y2="154"/>
+          <line x1="150" y1="154" x2="152" y2="168"/>
+          <!-- inter-pack dividers right -->
+          <line x1="170" y1="136" x2="170" y2="154"/>
+          <line x1="170" y1="154" x2="168" y2="168"/>
+        </g>
+        <!-- serratus lines on ribs -->
+        <g stroke="#1a2840" stroke-width="0.6" opacity="0.4">
+          <path d="M128,128 Q132,126 136,130" fill="none"/>
+          <path d="M128,138 Q132,136 136,140" fill="none"/>
+          <path d="M128,148 Q132,146 136,150" fill="none"/>
+          <path d="M192,128 Q188,126 184,130" fill="none"/>
+          <path d="M192,138 Q188,136 184,140" fill="none"/>
+          <path d="M192,148 Q188,146 184,150" fill="none"/>
         </g>
 
-        <!-- HIP / PELVIS -->
-        <path d="M134,168 Q122,174 122,188 Q122,200 126,206 L160,210 L194,206 Q198,200 198,188 Q198,174 186,168 Q172,174 160,175 Q148,174 134,168 Z"
-          fill="#0c1526" stroke="#182238" stroke-width="0.8"/>
+        <!-- ══ HIPS / PELVIS ══ -->
+        <path d="M134,174 Q120,180 118,196 Q118,210 122,218 L160,222 L198,218 Q202,210 202,196 Q202,180 186,174 Q172,180 160,181 Q148,180 134,174 Z"
+          fill="#0b1422" stroke="#16223a" stroke-width="1"/>
+        <!-- iliac crest lines -->
+        <path d="M122,200 Q134,196 148,198" fill="none" stroke="#1a2840" stroke-width="0.7" opacity="0.5"/>
+        <path d="M198,200 Q186,196 172,198" fill="none" stroke="#1a2840" stroke-width="0.7" opacity="0.5"/>
 
-        <!-- GLUTES -->
+        <!-- ══ GLUTES — round, prominent ══ -->
         <path id="mr-glutes-l" class="mregion"
-          d="M126,208 Q116,216 114,230 Q114,244 120,252 L144,254 L160,256 Q154,238 148,222 Q140,210 128,208 Z"
-          fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
+          d="M122,218 Q112,228 110,244 Q110,258 116,266 L138,268 L160,270 Q154,250 148,234 Q140,220 126,218 Z"
+          fill="#0d1628" stroke="#1a2840" stroke-width="1.2"/>
         <path id="mr-glutes-r" class="mregion"
-          d="M194,208 Q204,216 206,230 Q206,244 200,252 L176,254 L160,256 Q166,238 172,222 Q180,210 192,208 Z"
-          fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
+          d="M198,218 Q208,228 210,244 Q210,258 204,266 L182,268 L160,270 Q166,250 172,234 Q180,220 194,218 Z"
+          fill="#0d1628" stroke="#1a2840" stroke-width="1.2"/>
+        <!-- glute separation -->
+        <path d="M160,222 L160,268" stroke="#0a1220" stroke-width="1.5" opacity="0.6"/>
 
-        <!-- QUADS (front thighs) -->
+        <!-- ══ QUADS — four-head definition ══ -->
+        <!-- Rectus femoris (center front) -->
+        <path d="M142,268 Q138,280 138,306 Q138,328 142,342 Q148,348 152,346 Q156,340 156,316 Q156,290 152,270 Z"
+          fill="#0b1422" stroke="#162035" stroke-width="0.8" opacity="0.7"/>
+        <path d="M178,268 Q182,280 182,306 Q182,328 178,342 Q172,348 168,346 Q164,340 164,316 Q164,290 168,270 Z"
+          fill="#0b1422" stroke="#162035" stroke-width="0.8" opacity="0.7"/>
+        <!-- VMO teardrop shapes -->
+        <ellipse cx="148" cy="340" rx="8" ry="10" fill="#0c1525" stroke="#1a2840" stroke-width="0.8" opacity="0.8"/>
+        <ellipse cx="172" cy="340" rx="8" ry="10" fill="#0c1525" stroke="#1a2840" stroke-width="0.8" opacity="0.8"/>
+        <!-- Quad main mass L -->
         <path id="mr-quads-l" class="mregion"
-          d="M122,254 Q114,266 114,294 Q114,318 118,332 Q122,340 128,338 Q134,334 136,314 Q138,290 136,264 Q134,252 126,252 Z"
-          fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
+          d="M120,268 Q112,282 110,310 Q110,332 114,348 Q118,356 126,354 Q134,348 136,326 Q138,300 136,274 Q132,266 124,266 Z"
+          fill="#0d1628" stroke="#1a2840" stroke-width="1.2"/>
+        <!-- Quad main mass R -->
         <path id="mr-quads-r" class="mregion"
-          d="M198,254 Q206,266 206,294 Q206,318 202,332 Q198,340 192,338 Q186,334 184,314 Q182,290 184,264 Q186,252 194,252 Z"
-          fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
+          d="M200,268 Q208,282 210,310 Q210,332 206,348 Q202,356 194,354 Q186,348 184,326 Q182,300 184,274 Q188,266 196,266 Z"
+          fill="#0d1628" stroke="#1a2840" stroke-width="1.2"/>
+        <!-- quad separation lines -->
+        <path d="M136,290 Q140,288 144,292" fill="none" stroke="#1a2840" stroke-width="0.7" opacity="0.5"/>
+        <path d="M184,290 Q180,288 176,292" fill="none" stroke="#1a2840" stroke-width="0.7" opacity="0.5"/>
 
-        <!-- HAMSTRINGS (inner/rear thigh) -->
+        <!-- ══ HAMSTRINGS ══ -->
         <path id="mr-hams-l" class="mregion"
-          d="M136,256 Q140,268 140,296 Q140,318 134,332 Q130,340 128,338 Q132,318 132,294 Q132,268 134,256 Z"
+          d="M136,270 Q140,284 140,312 Q140,334 136,348 Q132,356 126,354 Q130,334 130,308 Q130,282 134,270 Z"
           fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
         <path id="mr-hams-r" class="mregion"
-          d="M184,256 Q180,268 180,296 Q180,318 186,332 Q190,340 192,338 Q188,318 188,294 Q188,268 186,256 Z"
+          d="M184,270 Q180,284 180,312 Q180,334 184,348 Q188,356 194,354 Q190,334 190,308 Q190,282 186,270 Z"
           fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
 
-        <!-- KNEE caps -->
-        <ellipse cx="128" cy="342" rx="12" ry="9" fill="#0c1525" stroke="#182238" stroke-width="0.7"/>
-        <ellipse cx="192" cy="342" rx="12" ry="9" fill="#0c1525" stroke="#182238" stroke-width="0.7"/>
+        <!-- ══ KNEES ══ -->
+        <path d="M112,350 Q110,358 112,366 Q116,374 126,374 Q136,372 138,362 Q138,352 134,348 Q128,356 122,354 Q116,352 112,350 Z"
+          fill="#0b1422" stroke="#16223a" stroke-width="0.8"/>
+        <path d="M208,350 Q210,358 208,366 Q204,374 194,374 Q184,372 182,362 Q182,352 186,348 Q192,356 198,354 Q204,352 208,350 Z"
+          fill="#0b1422" stroke="#16223a" stroke-width="0.8"/>
+        <!-- kneecap -->
+        <ellipse cx="125" cy="362" rx="11" ry="9" fill="#0c1525" stroke="#182035" stroke-width="0.8"/>
+        <ellipse cx="195" cy="362" rx="11" ry="9" fill="#0c1525" stroke="#182035" stroke-width="0.8"/>
 
-        <!-- CALVES -->
+        <!-- ══ CALVES — diamond shape ══ -->
         <path id="mr-calves-l" class="mregion"
-          d="M118,352 Q110,366 110,390 Q110,412 114,428 Q118,438 124,438 Q130,436 132,422 Q134,404 132,378 Q130,360 122,352 Z"
-          fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
+          d="M114,374 Q106,390 106,414 Q106,434 110,446 Q114,454 122,454 Q130,452 132,438 Q134,420 132,396 Q128,378 120,374 Z"
+          fill="#0d1628" stroke="#1a2840" stroke-width="1.2"/>
         <path id="mr-calves-r" class="mregion"
-          d="M202,352 Q210,366 210,390 Q210,412 206,428 Q202,438 196,438 Q190,436 188,422 Q186,404 188,378 Q190,360 198,352 Z"
-          fill="#0d1628" stroke="#1a2840" stroke-width="1"/>
+          d="M206,374 Q214,390 214,414 Q214,434 210,446 Q206,454 198,454 Q190,452 188,438 Q186,420 188,396 Q192,378 200,374 Z"
+          fill="#0d1628" stroke="#1a2840" stroke-width="1.2"/>
+        <!-- calf head separation -->
+        <path d="M113,396 Q118,392 124,396" fill="none" stroke="#1a2840" stroke-width="0.7" opacity="0.5"/>
+        <path d="M207,396 Q202,392 196,396" fill="none" stroke="#1a2840" stroke-width="0.7" opacity="0.5"/>
+        <!-- shin / tibialis -->
+        <path d="M124,374 Q128,382 128,408 Q126,432 122,452" fill="none" stroke="#162030" stroke-width="0.7" opacity="0.5"/>
+        <path d="M196,374 Q192,382 192,408 Q194,432 198,452" fill="none" stroke="#162030" stroke-width="0.7" opacity="0.5"/>
 
+        <!-- ══ ANKLES & FEET ══ -->
+        <path d="M108,452 Q104,458 104,464 Q106,470 114,472 Q122,472 126,466 Q128,460 124,454 Z"
+          fill="#09131f" stroke="#142030" stroke-width="0.8"/>
+        <path d="M212,452 Q216,458 216,464 Q214,470 206,472 Q198,472 194,466 Q192,460 196,454 Z"
+          fill="#09131f" stroke="#142030" stroke-width="0.8"/>
         <!-- Feet -->
-        <path d="M108,436 Q104,440 102,446 Q100,452 106,456 Q112,458 122,456 Q128,452 128,446 L124,436 Z"
-          fill="#0a1422" stroke="#162030" stroke-width="0.8"/>
-        <path d="M212,436 Q216,440 218,446 Q220,452 214,456 Q208,458 198,456 Q192,452 192,446 L196,436 Z"
-          fill="#0a1422" stroke="#162030" stroke-width="0.8"/>
+        <path d="M104,464 Q100,468 100,474 Q102,480 112,482 Q122,482 128,476 Q128,470 124,466 Z"
+          fill="#09131f" stroke="#142030" stroke-width="0.8"/>
+        <path d="M216,464 Q220,468 220,474 Q218,480 208,482 Q198,482 192,476 Q192,470 196,466 Z"
+          fill="#09131f" stroke="#142030" stroke-width="0.8"/>
 
-        <!-- ═══ BODY OUTLINE EDGE GLOW (subtle blue edge) ═══ -->
-        <path id="bodyOutlinePath"
-          d="M160,12 Q176,12 178,28 Q184,32 210,80 Q222,90 226,110 Q228,130 224,160 Q222,172 220,226 Q218,232 220,240
-             L206,254 Q206,296 200,334 Q196,342 192,342 L192,352 Q202,368 210,392 Q210,420 202,440 L214,456 Q220,454 222,448
-             Q224,440 220,434 L210,426 Q208,410 208,390 Q208,366 200,350 L198,340 Q202,330 204,314 Q206,290 204,262
-             L200,250 Q206,240 206,228 Q206,214 196,206 Q200,198 200,186 Q200,172 188,166 L188,138 Q200,126 200,108
-             Q200,90 208,84 Q216,80 212,100 Q208,116 212,140 Q216,158 212,168 L224,200 Q226,214 218,224
-             Q222,210 220,192 Q218,174 214,166 Q220,152 220,132 Q220,110 210,100 Q206,90 208,80
-             M160,12 Q144,12 142,28 Q136,32 110,80 Q98,90 94,110 Q92,130 96,160 Q98,172 100,226
-             Q102,232 100,240 L114,254 Q114,296 120,334 Q124,342 128,342 L128,352 Q118,368 110,392
-             Q110,420 118,440 L106,456 Q100,454 98,448 Q96,440 100,434 L110,426 Q112,410 112,390
-             Q112,366 120,350 L122,340 Q118,330 116,314 Q114,290 116,262 L120,250 Q114,240 114,228
-             Q114,214 124,206 Q120,198 120,186 Q120,172 132,166 L132,138 Q120,126 120,108
-             Q120,90 112,84 Q104,80 108,100 Q112,116 108,140 Q104,158 108,168 L96,200 Q94,214 102,224"
-          fill="none" stroke="rgba(40,80,160,0.15)" stroke-width="2"/>
+        <!-- ══ OUTER BODY SILHOUETTE GLOW LINE ══ -->
+        <!-- This gives the iconic Solo Leveling blue-edged dark aura look -->
+        <path id="bodyGlowPath"
+          d="M152,72 Q138,76 128,84 Q112,86 102,96 Q96,106 96,118 Q96,130 94,146 Q92,162 92,180
+             Q90,196 90,214 Q90,232 96,242 L110,268 Q108,286 108,314 Q108,336 112,352 Q106,362 106,376
+             Q104,394 106,416 Q108,436 112,450 Q100,462 100,474 Q102,484 114,486 Q128,486 130,476
+             L132,456 Q134,448 132,440 Q136,358 136,348 Q136,326 136,308 Q136,284 138,270
+             L160,272 L182,270 Q184,284 184,308 Q184,326 184,348 Q184,358 188,440 Q186,448 188,456
+             L190,476 Q192,486 206,486 Q218,484 220,474 Q220,462 208,450 Q212,436 214,416
+             Q216,394 214,376 Q214,362 208,352 Q212,336 212,314 Q212,286 210,268 L224,242
+             Q230,232 230,214 Q230,196 230,180 Q228,162 226,146 Q224,130 224,118 Q224,106 218,96
+             Q208,86 192,84 Q182,76 168,72"
+          fill="none" stroke="rgba(30,60,150,0.25)" stroke-width="3" filter="url(#bodyGlow)"/>
+        <!-- inner sharp edge -->
+        <path d="M152,72 Q138,76 128,84 Q114,86 104,96 Q98,106 98,118 Q98,130 96,146 Q94,162 94,180
+             Q92,198 92,216 Q94,234 100,244 L114,270 Q112,288 112,316 Q112,338 116,354
+             Q110,364 110,378 Q108,396 110,418 Q112,438 116,452 Q104,464 104,476 Q106,484 116,486
+             Q128,486 130,476 L132,456 Q136,358 136,348 L138,270 L182,270 L184,348 Q184,358 188,456
+             L190,476 Q192,486 204,486 Q214,484 216,476 Q216,464 204,452 Q208,438 210,418
+             Q212,396 210,378 Q210,364 204,354 Q208,338 208,316 Q208,288 206,270 L220,244
+             Q226,234 228,216 Q228,198 228,180 Q226,162 224,146 Q222,130 222,118 Q222,106 216,96
+             Q206,86 192,84 Q182,76 168,72"
+          fill="none" stroke="rgba(50,100,200,0.15)" stroke-width="1"/>
 
-        <!-- ═══ CONNECTOR LINES (drawn by JS) ═══ -->
+        <!-- ══ CONNECTORS & LABELS (JS) ══ -->
         <g id="connectors"></g>
-
-        <!-- ═══ LABEL GROUPS (built by JS) ═══ -->
         <g id="label-chest"></g>
         <g id="label-back"></g>
         <g id="label-biceps"></g>
@@ -437,10 +538,11 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
         <g id="label-glutes"></g>
         <g id="label-hamstrings"></g>
 
-        <!-- scanning line animation -->
-        <rect id="scanLine" x="2" y="2" width="316" height="40" rx="0" fill="url(#scanGrad)" opacity="0">
-          <animate attributeName="y" from="-40" to="560" dur="4s" repeatCount="indefinite"/>
-          <animate attributeName="opacity" values="0;0.5;0.5;0" keyTimes="0;0.05;0.95;1" dur="4s" repeatCount="indefinite"/>
+        <!-- scan sweep -->
+        <rect x="0" y="0" width="320" height="50" fill="url(#scanGrad)" opacity="0" rx="10">
+          <animate attributeName="y" from="-50" to="580" dur="5s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0;0.6;0.6;0" keyTimes="0;0.04;0.96;1" dur="5s" repeatCount="indefinite"/>
+          <animate attributeName="rx" values="10;0;0;10" keyTimes="0;0.04;0.96;1" dur="5s" repeatCount="indefinite"/>
         </rect>
       </svg>
     </div>
@@ -664,28 +766,31 @@ function buildConnector(m,lvl,ly,lx,isL){
 
 // ─── REGION FILL ── muscles grow and glow as you level ───
 function applyRegion(m,lvl){
-  var t=Math.min(lvl/28,1);
-  // body shape gets slightly wider paths at high level via stroke-width expansion
-  var strokeW=(1+t*1.5).toFixed(1);
-  var fillColor=blend('#0d1628',m.color,t*0.62);
-  var baseOpacity=(0.5+t*0.5).toFixed(2);
+  var t=Math.min(lvl/25,1);
+  // even at level 0 the body should look defined — use a visible dark tint from the muscle color
+  var baseFill=blend('#0e1830',m.color,0.08+t*0.55);
+  var baseStroke=rgba(m.color,0.22+t*0.42);
+  var strokeW=(1.2+t*1.8).toFixed(1);
+  var baseOpacity=(0.82+t*0.18).toFixed(2);
   var filterAttr=lvl>=20?'url(#glow-lg)':lvl>=10?'url(#glow-md)':lvl>=5?'url(#glow-sm)':'none';
   m.regions.forEach(function(rid){
     var el=document.getElementById(rid);if(!el)return;
-    el.setAttribute('fill',fillColor);
+    el.setAttribute('fill',baseFill);
     el.setAttribute('opacity',baseOpacity);
-    el.setAttribute('stroke',rgba(m.color,0.15+t*0.35));
+    el.setAttribute('stroke',baseStroke);
     el.setAttribute('stroke-width',strokeW);
     if(lvl>=5)el.setAttribute('filter',filterAttr);
     else el.removeAttribute('filter');
   });
 
-  // abs lines glow when core leveled
-  if(m.id==='core'&&lvl>=5){
+  // abs lines always visible, brighten as core levels
+  if(m.id==='core'){
     var al=document.getElementById('abs-lines');
-    if(al){al.setAttribute('opacity',0.2+t*0.5);al.setAttribute('stroke',m.color);}
+    if(al){
+      al.setAttribute('opacity',(0.28+t*0.55).toFixed(2));
+      al.setAttribute('stroke',lvl>=5?m.color:'#2a3a5a');
+    }
   }
-  // eyes glow at higher overall power
 }
 
 // ─── RENDER STATS ───
