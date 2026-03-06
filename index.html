@@ -37,7 +37,7 @@ body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;
   text-transform:uppercase;letter-spacing:-0.5px;line-height:1;transition:color 0.3s;}
 body.day-push .top-bar h1{color:var(--push);}body.day-pull .top-bar h1{color:var(--pull);}
 body.day-legs .top-bar h1{color:var(--legs);}body.day-abs .top-bar h1{color:var(--abs);}
-body.day-log .top-bar h1{color:var(--log);}body.day-build .top-bar h1{color:var(--log);}
+body.day-log .top-bar h1{color:var(--log);}
 .quote-text{font-size:0.65rem;color:var(--dim);font-style:italic;font-weight:300;margin-top:3px;line-height:1.4;}
 .btn-hunter{flex-shrink:0;display:flex;align-items:center;gap:5px;
   padding:7px 11px;border-radius:7px;border:1px solid rgba(74,158,255,0.35);
@@ -79,7 +79,6 @@ body.day-log .top-bar h1{color:var(--log);}body.day-build .top-bar h1{color:var(
   .sidebar-btn.active-legs{background:rgba(38,196,122,0.08);}.sidebar-btn.active-legs .sb-label{color:var(--legs);}.sidebar-btn.active-legs .sb-dot{background:var(--legs);}
   .sidebar-btn.active-abs{background:rgba(232,196,38,0.08);}.sidebar-btn.active-abs .sb-label{color:var(--abs);}.sidebar-btn.active-abs .sb-dot{background:var(--abs);}
   .sidebar-btn.active-log{background:rgba(168,85,247,0.08);}.sidebar-btn.active-log .sb-label{color:var(--log);}.sidebar-btn.active-log .sb-dot{background:var(--log);}
-  .sidebar-btn.active-build{background:rgba(168,85,247,0.08);}.sidebar-btn.active-build .sb-label{color:var(--log);}.sidebar-btn.active-build .sb-dot{background:var(--log);}
   .sidebar-divider{height:1px;background:var(--border);margin:6px 0;}
   .sidebar-hunter{
     display:flex;flex-direction:column;align-items:center;gap:4px;
@@ -242,7 +241,6 @@ body.day-log .top-bar h1{color:var(--log);}body.day-build .top-bar h1{color:var(
 .nav-btn.active-legs .nav-label{color:var(--legs);}.nav-btn.active-legs .nav-dot{background:var(--legs);}
 .nav-btn.active-abs .nav-label{color:var(--abs);}.nav-btn.active-abs .nav-dot{background:var(--abs);}
 .nav-btn.active-log .nav-label{color:var(--log);}.nav-btn.active-log .nav-dot{background:var(--log);}
-.nav-btn.active-build .nav-label{color:var(--log);}.nav-btn.active-build .nav-dot{background:var(--log);}
 .nav-btn.hunter-nav .nav-label{color:var(--hunter);}
 .nav-btn.hunter-nav{border-left:1px solid var(--border);}
 /* hide bottom nav on desktop */
@@ -286,119 +284,132 @@ body.day-log .top-bar h1{color:var(--log);}body.day-build .top-bar h1{color:var(
 .btn-modal-confirm{flex:1;padding:12px;border-radius:8px;border:none;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:1px;text-transform:uppercase;background:var(--log);color:#fff;}
 .btn-modal-cancel{flex:1;padding:12px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.9rem;letter-spacing:1px;text-transform:uppercase;}
 
-/* ═══ BUILD TAB ═══ */
-.build-panel{display:none;}.build-panel.active{display:block;animation:fadeUp 0.2s ease;}
 
-/* Sub-tabs */
-.build-tabs{display:flex;gap:3px;background:var(--surface);border:1px solid var(--border);
-  border-radius:8px;padding:3px;margin-bottom:14px;}
-.build-tab{flex:1;padding:7px 4px;border:none;border-radius:5px;background:transparent;
-  color:var(--muted);cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:700;
-  font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;transition:all 0.15s;}
-.build-tab.active{background:rgba(168,85,247,0.15);color:var(--log);
-  box-shadow:inset 0 0 0 1px rgba(168,85,247,0.3);}
 
-/* Search + filter */
-.bank-controls{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;}
-.bank-search{background:var(--surface);border:1px solid var(--border);border-radius:8px;
-  color:var(--text);font-family:'Barlow',sans-serif;font-size:0.85rem;
-  padding:9px 13px;width:100%;outline:none;color-scheme:dark;}
-.bank-search:focus{border-color:var(--log);}
-.bank-filter-row{display:flex;gap:5px;flex-wrap:wrap;}
-.bank-filter{padding:5px 10px;border-radius:6px;border:1px solid var(--border);
-  background:var(--surface2);color:var(--dim);cursor:pointer;
-  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.68rem;
-  letter-spacing:1px;text-transform:uppercase;transition:all 0.15s;}
-.bank-filter.active-push{color:var(--push);border-color:rgba(232,93,38,0.4);background:rgba(232,93,38,0.1);}
-.bank-filter.active-pull{color:var(--pull);border-color:rgba(38,136,232,0.4);background:rgba(38,136,232,0.1);}
-.bank-filter.active-legs{color:var(--legs);border-color:rgba(38,196,122,0.4);background:rgba(38,196,122,0.1);}
-.bank-filter.active-abs{color:var(--abs);border-color:rgba(232,196,38,0.4);background:rgba(232,196,38,0.1);}
-.bank-filter.active-all{color:var(--log);border-color:rgba(168,85,247,0.4);background:rgba(168,85,247,0.1);}
+/* ── EDIT PANEL BUTTON ── */
+.day-header{position:relative;}
+.btn-edit-panel{position:absolute;top:50%;right:0;transform:translateY(-50%);
+  background:none;border:1px solid var(--border);border-radius:7px;
+  padding:6px;cursor:pointer;color:var(--dim);transition:all 0.15s;display:flex;}
+.btn-edit-panel:hover{color:var(--muted);border-color:var(--muted);}
+.btn-edit-panel svg{width:14px;height:14px;display:block;}
 
-/* Bank exercise card */
-.bank-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;
-  margin-bottom:6px;overflow:hidden;transition:border-color 0.15s;}
-.bank-card.in-workout{border-color:rgba(168,85,247,0.35);}
-.bank-card-header{display:flex;align-items:center;gap:8px;padding:10px 12px;cursor:pointer;}
-.bank-card-info{flex:1;min-width:0;}
-.bank-card-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.92rem;
-  text-transform:uppercase;letter-spacing:0.2px;color:var(--text);line-height:1.2;}
-.bank-card-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;}
-.bank-card-body{display:none;padding:0 12px 12px;border-top:1px solid var(--border);}
-.bank-card.open .bank-card-body{display:block;}
-.bank-card-desc{font-size:0.78rem;color:var(--muted);line-height:1.6;font-weight:300;padding-top:10px;}
-.bank-card-muscles{font-size:0.68rem;color:var(--dim);margin-top:6px;}
-.bank-card-muscles strong{color:var(--muted);}
-.btn-add-ex{flex-shrink:0;width:30px;height:30px;border-radius:7px;border:1px solid var(--border);
-  background:var(--surface2);color:var(--muted);cursor:pointer;font-size:1.1rem;
-  display:flex;align-items:center;justify-content:center;transition:all 0.15s;line-height:1;}
-.btn-add-ex.added{background:rgba(168,85,247,0.15);border-color:rgba(168,85,247,0.4);color:var(--log);}
-.bank-day-badge{font-size:0.58rem;font-family:'Barlow Condensed',sans-serif;font-weight:700;
-  letter-spacing:1px;text-transform:uppercase;padding:2px 6px;border-radius:3px;flex-shrink:0;}
-.badge-push{background:rgba(232,93,38,0.12);color:var(--push);}
-.badge-pull{background:rgba(38,136,232,0.12);color:var(--pull);}
-.badge-legs{background:rgba(38,196,122,0.12);color:var(--legs);}
-.badge-abs{background:rgba(232,196,38,0.12);color:var(--abs);}
+/* ── EDIT SHEET ── */
+.edit-sheet-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);
+  z-index:300;align-items:flex-end;backdrop-filter:blur(4px);}
+.edit-sheet-overlay.open{display:flex;}
+.edit-sheet{background:var(--bg);border-radius:14px 14px 0 0;
+  border-top:2px solid var(--day-color, var(--muted));
+  width:100%;max-height:90vh;display:flex;flex-direction:column;
+  padding-bottom:var(--safe-bottom);}
+.edit-sheet-handle{width:36px;height:4px;background:var(--surface2);border-radius:2px;
+  margin:10px auto 0;flex-shrink:0;}
+.edit-sheet-header{display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px 10px;flex-shrink:0;border-bottom:1px solid var(--border);}
+.edit-sheet-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.1rem;
+  text-transform:uppercase;letter-spacing:1px;color:var(--day-color,var(--text));}
+.btn-edit-close{background:none;border:1px solid var(--border);border-radius:7px;
+  color:var(--muted);cursor:pointer;font-size:0.8rem;padding:5px 10px;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;}
+.btn-edit-close:hover{border-color:var(--muted);}
 
-/* Workout builder */
-.workout-header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;}
-.workout-title-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:8px;
-  color:var(--text);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1rem;
-  letter-spacing:0.5px;text-transform:uppercase;padding:8px 11px;outline:none;color-scheme:dark;}
-.workout-title-input:focus{border-color:var(--log);}
-.btn-clear-workout{padding:8px 12px;border-radius:8px;border:1px solid var(--border);
-  background:transparent;color:var(--dim);cursor:pointer;
-  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.72rem;
-  letter-spacing:1px;text-transform:uppercase;white-space:nowrap;}
+/* two-col layout */
+.edit-sheet-body{flex:1;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;min-height:0;
+  border-top:1px solid var(--border);}
+@media(max-width:560px){
+  .edit-sheet-body{grid-template-columns:1fr;grid-template-rows:1fr 1fr;}
+}
+.edit-col{display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+.edit-col+.edit-col{border-left:1px solid var(--border);}
+.edit-col-header{font-family:'Barlow Condensed',sans-serif;font-size:0.6rem;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;color:var(--dim);
+  padding:7px 12px 6px;flex-shrink:0;border-bottom:1px solid var(--border);
+  background:var(--surface);}
+.edit-col-scroll{flex:1;overflow-y:auto;padding:8px 10px;}
 
-/* Workout exercise row */
-.workout-ex-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;
-  margin-bottom:6px;overflow:hidden;}
-.workout-ex-header{display:flex;align-items:center;gap:8px;padding:9px 12px;}
-.workout-ex-name{flex:1;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.88rem;
-  text-transform:uppercase;color:var(--text);}
-.sets-reps-row{display:flex;align-items:center;gap:6px;padding:0 12px 10px;flex-wrap:wrap;}
-.sr-label{font-size:0.62rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;width:30px;}
-.sr-input{width:52px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;
+/* active exercise card — matches main exercise card style */
+.edit-active-item{background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;margin-bottom:6px;overflow:hidden;transition:border-color 0.15s;}
+.edit-active-item.is-superset{border-left:3px solid var(--day-color,var(--muted));}
+.edit-active-header{display:flex;align-items:center;gap:8px;padding:9px 11px 7px;}
+.edit-active-name{flex:1;font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:0.9rem;text-transform:uppercase;letter-spacing:0.2px;color:var(--text);}
+.edit-active-primary{display:flex;flex-wrap:wrap;gap:3px;padding:0 11px 5px;}
+.edit-active-body{padding:0 11px 10px;border-top:1px solid var(--border);margin-top:4px;}
+.edit-sr-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding-top:7px;}
+.edit-sr-label{font-size:0.58rem;color:var(--dim);text-transform:uppercase;letter-spacing:1px;}
+.edit-sr-input{width:46px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;
   color:var(--text);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.85rem;
-  padding:5px 7px;outline:none;text-align:center;color-scheme:dark;}
-.sr-input:focus{border-color:var(--log);}
-.sr-sep{color:var(--dim);font-size:0.8rem;}
-.btn-remove-ex{flex-shrink:0;background:none;border:none;color:var(--dim);cursor:pointer;font-size:0.8rem;padding:3px 5px;}
-.btn-remove-ex:hover{color:var(--push);}
-.workout-empty{font-size:0.8rem;color:var(--dim);font-style:italic;text-align:center;
-  padding:24px 0;border:1px dashed var(--border);border-radius:10px;}
+  padding:4px 6px;outline:none;text-align:center;color-scheme:dark;}
+.edit-sr-input:focus{border-color:var(--day-color,var(--log));}
+.edit-sr-sep{color:var(--dim);font-size:0.8rem;}
+.edit-action-row{display:flex;align-items:center;gap:5px;padding-top:7px;flex-wrap:wrap;}
+.btn-ss-toggle{padding:4px 9px;border-radius:6px;border:1px solid var(--border);
+  background:var(--surface2);color:var(--dim);cursor:pointer;
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.6rem;
+  letter-spacing:1px;text-transform:uppercase;transition:all 0.15s;}
+.btn-ss-toggle.active{background:rgba(0,0,0,0.2);color:var(--day-color,var(--log));
+  border-color:var(--day-color,var(--log));}
+.btn-move{background:none;border:1px solid var(--border);border-radius:5px;
+  color:var(--dim);cursor:pointer;font-size:0.65rem;padding:3px 6px;line-height:1;
+  transition:all 0.15s;}
+.btn-move:hover{color:var(--text);border-color:var(--muted);}
+.btn-remove-active{background:none;border:none;color:var(--dim);cursor:pointer;
+  font-size:0.8rem;padding:3px 6px;transition:color 0.15s;margin-left:auto;}
+.btn-remove-active:hover{color:var(--push);}
 
-/* Coverage panel */
-.coverage-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px;}
-.coverage-chip{padding:7px 10px;border-radius:8px;border:1px solid var(--border);
-  background:var(--surface);font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;
-  font-weight:700;letter-spacing:0.5px;text-transform:uppercase;}
-.coverage-chip.hit{border-color:rgba(38,196,122,0.35);background:rgba(38,196,122,0.08);color:var(--legs);}
-.coverage-chip.miss{border-color:rgba(232,93,38,0.25);background:rgba(232,93,38,0.06);color:#c0604a;}
-.coverage-chip .chip-label{display:block;font-size:0.58rem;color:var(--muted);font-weight:400;margin-top:1px;}
-.suggestion-card{background:var(--surface);border:1px solid var(--border2,#2a2a3a);
-  border-left:3px solid var(--log);border-radius:8px;padding:10px 13px;margin-bottom:6px;}
-.suggestion-card.remove-sugg{border-left-color:var(--push);}
-.suggestion-title{font-family:'Barlow Condensed',sans-serif;font-size:0.65rem;font-weight:700;
-  letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:4px;}
-.suggestion-body{font-size:0.78rem;color:var(--muted);line-height:1.5;}
-.suggestion-body strong{color:var(--text);}
+/* bank item — right column */
+.edit-bank-search{background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  color:var(--text);font-family:'Barlow',sans-serif;font-size:0.82rem;
+  padding:8px 11px;width:100%;outline:none;color-scheme:dark;margin-bottom:8px;}
+.edit-bank-search:focus{border-color:var(--day-color,var(--log));}
+.edit-bank-item{display:flex;align-items:flex-start;gap:8px;
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:9px 11px;margin-bottom:6px;transition:border-color 0.15s;}
+.edit-bank-item:not(.in-list):hover{border-color:var(--muted);cursor:pointer;}
+.edit-bank-item.in-list{opacity:0.45;pointer-events:none;}
+.edit-bank-item-info{flex:1;min-width:0;}
+.edit-bank-item-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;
+  font-size:0.88rem;text-transform:uppercase;color:var(--text);line-height:1.2;}
+.edit-bank-primary{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px;}
+.edit-bank-desc{font-size:0.62rem;color:var(--dim);margin-top:4px;line-height:1.5;font-weight:300;}
+.btn-add-from-bank{flex-shrink:0;width:28px;height:28px;border-radius:7px;
+  border:1px solid var(--border);background:var(--surface2);color:var(--muted);
+  cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;line-height:1;margin-top:2px;}
+.btn-add-from-bank:hover{background:rgba(0,0,0,0.15);
+  border-color:var(--day-color,var(--log));color:var(--day-color,var(--log));}
 
-/* Saved workouts */
-.saved-workout-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;
-  padding:11px 13px;margin-bottom:6px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
-.sw-info{flex:1;min-width:0;}
-.sw-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.92rem;
-  text-transform:uppercase;color:var(--text);}
-.sw-meta{font-size:0.68rem;color:var(--dim);margin-top:2px;}
-.sw-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;}
-.sw-actions{display:flex;gap:5px;flex-shrink:0;}
-.btn-sw{padding:5px 10px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);
-  color:var(--muted);cursor:pointer;font-family:'Barlow Condensed',sans-serif;
-  font-weight:700;font-size:0.65rem;letter-spacing:1px;text-transform:uppercase;}
-.btn-sw.load{color:var(--log);border-color:rgba(168,85,247,0.3);}
-.btn-sw.del{color:var(--push);border-color:rgba(232,93,38,0.3);}
+/* day-color CSS vars per day */
+.edit-sheet[data-day=push]{--day-color:var(--push);}
+.edit-sheet[data-day=pull]{--day-color:var(--pull);}
+.edit-sheet[data-day=legs]{--day-color:var(--legs);}
+.edit-sheet[data-day=abs] {--day-color:var(--abs);}
+
+/* review box — replaces static notes-box content */
+.review-box{background:var(--surface);border:1px solid var(--border);border-left-width:3px;
+  border-radius:8px;padding:10px 13px;margin-bottom:14px;font-size:0.78rem;line-height:1.7;
+  color:var(--muted);}
+.push .review-box{border-left-color:var(--push);}
+.pull .review-box{border-left-color:var(--pull);}
+.legs .review-box{border-left-color:var(--legs);}
+.abs-d .review-box{border-left-color:var(--abs);}
+.review-box-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.72rem;
+  letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;}
+.review-line{display:flex;gap:7px;align-items:baseline;margin-bottom:3px;}
+.review-icon{flex-shrink:0;font-size:0.7rem;width:14px;}
+.review-text{font-size:0.75rem;color:var(--muted);line-height:1.5;}
+.review-text strong{color:var(--text);font-weight:600;}
+.review-ss-tag{display:inline-block;font-family:'Barlow Condensed',sans-serif;
+  font-size:0.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  padding:1px 6px;border-radius:3px;margin-left:4px;vertical-align:middle;}
+
+/* rendered exercise sections — keep from before */
+/* rendered exercise sections */
+.ex-section{margin-bottom:18px;}
+.ex-section-label{font-family:'Barlow Condensed',sans-serif;font-size:0.62rem;font-weight:700;
+  letter-spacing:3px;text-transform:uppercase;color:var(--dim);
+  padding-bottom:7px;margin-bottom:7px;border-bottom:1px solid var(--border);}
 
 </style>
 </head>
@@ -424,7 +435,6 @@ body.day-log .top-bar h1{color:var(--log);}body.day-build .top-bar h1{color:var(
   <button class="sidebar-btn" onclick="switchDay('legs',this)"><div class="sb-label">Legs</div><div class="sb-dot"></div></button>
   <button class="sidebar-btn" onclick="switchDay('abs',this)"><div class="sb-label">Abs</div><div class="sb-dot"></div></button>
   <div class="sidebar-divider"></div>
-  <button class="sidebar-btn" onclick="switchDay('build',this)"><div class="sb-label">Build</div><div class="sb-dot"></div></button>
   <button class="sidebar-btn" onclick="switchDay('log',this)"><div class="sb-label">Log</div><div class="sb-dot"></div></button>
   <a href="hunter-stats.html" class="sidebar-hunter">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a9eff" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
@@ -436,123 +446,66 @@ body.day-log .top-bar h1{color:var(--log);}body.day-build .top-bar h1{color:var(
 
 <!-- PUSH -->
 <div id="panel-push" class="day-panel push active">
-  <div class="day-header"><div class="day-label">Push</div><div class="day-meta"><div class="focus">Focus</div><div class="muscles">Chest · Shoulders · Triceps</div><div class="duration">~50 min</div></div></div>
+  <div class="day-header">
+    <div class="day-label">Push</div>
+    <div class="day-meta"><div class="focus">Focus</div><div class="muscles" id="muscles-push">Chest · Shoulders · Triceps</div><div class="duration" id="dur-push">~50 min</div></div>
+    <button class="btn-edit-panel" onclick="openEditSheet('push')" title="Edit exercises">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    </button>
+  </div>
   <div id="multi-push" class="multi-logged"></div>
   <div class="log-day-row"><button class="btn-log-day" onclick="logDay('push')">Log Today's Push</button><button class="btn-log-rest" onclick="logRest()">Rest Day</button></div>
-  <div class="notes-box"><strong>Tips</strong>Superset laterals with front raises to save time. Flat and incline press are your heaviest lifts so do those first. If short on time, drop one of the finisher push-up sets.</div>
+  <div class="review-box push-review" id="review-push"><span class="review-box-title">Routine Review</span></div>
   <div style="height:4px"></div>
-  <div class="section"><div class="section-title">Chest</div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Flat Bench Press</div><div class="ex-tags"><span class="tag target">Pec major (sternal)</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 8–10</div><div class="rest-label">90s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Primary chest mass builder. Control the descent, pause briefly at the chest, drive up. Keep your shoulder blades pinched back into the bench throughout.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Incline Dumbbell Press</div><div class="ex-tags"><span class="tag target">Pec major (clavicular)</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Set bench to 30–45°. Hits the upper chest that flat work misses. Keep elbows at about 70° to the torso, not flared wide.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Chest Fly</div><div class="ex-tags"><span class="tag target">Pec major (stretch)</span><span class="tag">Pec minor</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 12–15</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Flat bench. Arms slightly bent, lower wide until you feel a deep stretch, squeeze back together. Isolation move, go lighter than you think.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Push-Ups</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Pec minor · Serratus</span></div></div><div class="ex-header-right"><div class="sets-reps">2 × Fail</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Finisher. Hands slightly wider than shoulder-width. Go to failure or do slow negatives (3 sec down). Great for serratus anterior and pec minor activation.</div></div></div>
-  </div>
-  <div class="section"><div class="section-title">Shoulders</div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Seated DB Overhead Press</div><div class="ex-tags"><span class="tag target">Anterior delt</span><span class="tag">Medial delt</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 8–10</div><div class="rest-label">90s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Bench fully upright. Shoulder mass builder. Press to full extension, lower to ear level. Core tight throughout.</div></div></div>
-    <div class="superset-group"><span class="superset-label">Superset</span>
-      <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Lateral Raise</div><div class="ex-tags"><span class="tag target">Medial delt</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 12–15</div><div class="rest-label">no rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Lead with the elbow, slight forward tilt, raise to shoulder height. Avoid shrugging. Slow and controlled, not swung.</div></div></div>
-      <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Front Raise</div><div class="ex-tags"><span class="tag target">Anterior delt</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Alternating or both arms. Raise to shoulder height, no higher. Slight bend in elbow. Rounds out the front delt that pressing alone doesn't fully isolate.</div></div></div>
-    </div>
-  </div>
-  <div class="section"><div class="section-title">Triceps</div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Skull Crushers</div><div class="ex-tags"><span class="tag target">Long head</span><span class="tag">Medial head</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Flat bench. Lower dumbbells to the sides of your head, elbows pointing up. The long head gets the best stretch in this position. Key for overall tricep size.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Overhead DB Extension</div><div class="ex-tags"><span class="tag target">Long head (stretch)</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">One dumbbell held with both hands overhead. Lower behind your head, elbows in tight. The stretch-loaded position on the long head is unmatched for growth.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Diamond / Close-Grip Push-Ups</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Lateral head</span><span class="tag">Medial head</span></div></div><div class="ex-header-right"><div class="sets-reps">2 × Fail</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Hands form a diamond or stay close. Elbows track back along your torso, not flared. Great finisher that hits the lateral head differently than DB work.</div></div></div>
-  </div>
+  <div id="exercises-push"></div>
 </div>
 
 <!-- PULL -->
 <div id="panel-pull" class="day-panel pull">
-  <div class="day-header"><div class="day-label">Pull</div><div class="day-meta"><div class="focus">Focus</div><div class="muscles">Back · Biceps · Forearms · Rear Delts</div><div class="duration">~55 min</div></div></div>
+  <div class="day-header">
+    <div class="day-label">Pull</div>
+    <div class="day-meta"><div class="focus">Focus</div><div class="muscles" id="muscles-pull">Back · Biceps · Forearms · Rear Delts</div><div class="duration" id="dur-pull">~55 min</div></div>
+    <button class="btn-edit-panel" onclick="openEditSheet('pull')" title="Edit exercises">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    </button>
+  </div>
   <div id="multi-pull" class="multi-logged"></div>
   <div class="log-day-row"><button class="btn-log-day" onclick="logDay('pull')">Log Today's Pull</button><button class="btn-log-rest" onclick="logRest()">Rest Day</button></div>
-  <div class="notes-box"><strong>Tips</strong>You don't need all the bicep variations every session. Rotate: one session do curls + incline curls, another do Zottmans + concentration curls. Always superset the two wrist curl variations back to back.</div>
+  <div class="review-box pull-review" id="review-pull"><span class="review-box-title">Routine Review</span></div>
   <div style="height:4px"></div>
-  <div class="section"><div class="section-title">Back</div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Row</div><div class="ex-tags"><span class="tag target">Latissimus dorsi</span><span class="tag">Mid traps</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 8–10</div><div class="rest-label">90s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Brace a knee and hand on the bench. Row the dumbbell to your hip, leading with the elbow. Full stretch at the bottom, full squeeze at the top.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Pull-Ups / Chin-Ups</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Lats (width)</span><span class="tag">Biceps</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × Fail</div><div class="rest-label">90s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Pull-ups (overhand) bias lats more; chin-ups (underhand) bring in more biceps. Go to failure every set. Even 3–5 reps per set adds up.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Incline Prone DB Row</div><div class="ex-tags"><span class="tag target">Mid / lower traps</span><span class="tag">Rhomboids</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Set bench to 45°, lie chest-down, dumbbells hanging. Row both up, elbows flared to 90°. Excellent for postural muscles and upper back thickness standard rows miss.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Deadlift</div><div class="ex-tags"><span class="tag target">Erector spinae</span><span class="tag">Lower back</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10</div><div class="rest-label">90s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Dumbbells at your sides, hip hinge (not a squat), flat back throughout. Push the floor away on the way up. Builds spinal erectors and teaches the hinge pattern.</div></div></div>
-  </div>
-  <div class="section"><div class="section-title">Biceps</div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Curl</div><div class="ex-tags"><span class="tag target">Biceps brachii (short head)</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Standing, alternating. Supinate (rotate) the wrist as you curl up. Full range of motion, no swinging.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Incline Dumbbell Curl</div><div class="ex-tags"><span class="tag target">Biceps brachii (long head)</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Bench at 45–60°, lean back, arms hang fully behind you. Puts the long head in a deep stretch standing curls can't replicate.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Hammer Curl</div><div class="ex-tags"><span class="tag target">Brachialis</span><span class="tag">Brachioradialis</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Neutral (thumbs-up) grip throughout. The brachialis sits beneath the bicep and, when developed, pushes the bicep up making arms look thicker.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Concentration Curl</div><div class="ex-tags"><span class="tag target">Biceps (short head)</span><span class="tag">Peak isolation</span></div></div><div class="ex-header-right"><div class="sets-reps">2 × 12 /side</div><div class="rest-label">45s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Seated, elbow braced against the inside of your thigh, curl up. Eliminates all momentum. Best used as a finisher after heavier curl work.</div></div></div>
-  </div>
-  <div class="section"><div class="section-title">Forearms</div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Zottman Curl</div><div class="ex-tags"><span class="tag target">Brachioradialis</span><span class="tag">Biceps brachii</span><span class="tag">Brachialis</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Curl up supinated (palms up), rotate to pronated (palms down) at the top, lower slowly. Trains all three elbow flexors through their strongest positions in one movement.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Reverse Curl</div><div class="ex-tags"><span class="tag target">Brachioradialis</span><span class="tag">Extensor carpi</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Overhand (pronated) grip, curl up the same as a normal curl. Brachioradialis does most of the work. Also hits the wrist extensors.</div></div></div>
-    <div class="superset-group"><span class="superset-label">Superset</span>
-      <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Wrist Curl (Supinated)</div><div class="ex-tags"><span class="tag target">Flexor carpi radialis</span><span class="tag">Flexor carpi ulnaris</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 15–20</div><div class="rest-label">no rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Forearms on thighs or bench edge, palms up. Curl the wrist up and lower slowly. Builds the inner forearm belly.</div></div></div>
-      <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Wrist Curl (Pronated)</div><div class="ex-tags"><span class="tag target">Extensor carpi radialis</span><span class="tag">Extensor carpi ulnaris</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 15–20</div><div class="rest-label">30s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Same setup but palms down. Extend the wrist up against gravity. The most neglected forearm muscles, and a common source of lateral elbow pain when weak.</div></div></div>
-    </div>
-  </div>
-  <div class="section"><div class="section-title">Rear Delts</div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Bent-Over Reverse Fly</div><div class="ex-tags"><span class="tag target">Posterior delt</span><span class="tag">Lower traps</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 12–15</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Hinge forward to ~45°, arms hanging. Raise arms out to the sides with a slight bend at the elbow, pinch the shoulder blades. Rear delts are almost always undertrained and matter for shoulder health and posture.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Face Pull (floor variation)</div><div class="ex-tags"><span class="tag target">Posterior delt</span><span class="tag">Rotator cuff</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 15</div><div class="rest-label">60s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Lie face-down on the bench with light dumbbells, arms hanging. Row the weights up and back, externally rotating at the top. Crucial for shoulder health and rotator cuff longevity.</div></div></div>
-  </div>
+  <div id="exercises-pull"></div>
 </div>
 
 <!-- LEGS -->
 <div id="panel-legs" class="day-panel legs">
-  <div class="day-header"><div class="day-label">Legs</div><div class="day-meta"><div class="focus">Focus</div><div class="muscles">Quads · Hamstrings · Glutes · Calves</div><div class="duration">~55 min</div></div></div>
+  <div class="day-header">
+    <div class="day-label">Legs</div>
+    <div class="day-meta"><div class="focus">Focus</div><div class="muscles" id="muscles-legs">Quads · Hamstrings · Glutes · Calves</div><div class="duration" id="dur-legs">~55 min</div></div>
+    <button class="btn-edit-panel" onclick="openEditSheet('legs')" title="Edit exercises">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    </button>
+  </div>
   <div id="multi-legs" class="multi-logged"></div>
   <div class="log-day-row"><button class="btn-log-day" onclick="logDay('legs')">Log Today's Legs</button><button class="btn-log-rest" onclick="logRest()">Rest Day</button></div>
-  <div class="notes-box"><strong>Tips</strong>Do the full warmup before touching a weight. Keep the heaviest compounds first: goblet squat, then RDL. Superset standing and seated calf raises back to back, then do tibialis raises after.</div>
+  <div class="review-box legs-review" id="review-legs"><span class="review-box-title">Routine Review</span></div>
   <div style="height:4px"></div>
-  <div class="section"><div class="section-title">Dynamic Warmup (do before lifting)</div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Seated Heel-to-Hip Switch</div><div class="ex-tags"><span class="tag">Hip internal rotation</span><span class="tag">Hip external rotation</span></div></div><div class="ex-header-right"><div class="sets-reps">10 /side</div><div class="rest-label">flow</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Sit on the floor, alternate bending one knee and dropping the foot to the side of the hip (Z-sit). Switch sides. Wakes up hip rotation.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">90/90 Hip Stretch</div><div class="ex-tags"><span class="tag">Hip external rotation</span><span class="tag">Piriformis</span></div></div><div class="ex-header-right"><div class="sets-reps">60s /side</div><div class="rest-label">flow</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Sit with both knees bent at 90°, one in front and one to the side. Sit tall and breathe into the stretch. Opens the hip capsule in a way standing stretches don't reach.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Active Straight Leg Raise</div><div class="ex-tags"><span class="tag">Hamstring flexibility</span><span class="tag">Hip flexor activation</span></div></div><div class="ex-header-right"><div class="sets-reps">10 /side</div><div class="rest-label">flow</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Lie on your back, legs extended. Actively raise one leg as high as you can with a straight knee, keeping the other leg pressed to the floor.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">90/90 to Hip Lift</div><div class="ex-tags"><span class="tag">Glute activation</span><span class="tag">Hip extension</span></div></div><div class="ex-header-right"><div class="sets-reps">8 /side</div><div class="rest-label">flow</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Start in 90/90. Press through the front foot and drive your hips up into full extension. Lower back down. Primes the glutes before loading them.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Kneeling Hip Flexor Lunge</div><div class="ex-tags"><span class="tag">Iliopsoas</span><span class="tag">Rectus femoris</span></div></div><div class="ex-header-right"><div class="sets-reps">60s /side</div><div class="rest-label">flow</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Half-kneeling, back knee on the floor, front foot forward. Drive hips forward gently. Squeeze the glute of the back leg to deepen it.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Deep Squat Hold</div><div class="ex-tags"><span class="tag">Ankle mobility</span><span class="tag">Hip flexion</span></div></div><div class="ex-header-right"><div class="sets-reps">2 × 30–60s</div><div class="rest-label">flow</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Feet shoulder-width, toes slightly out. Squat all the way down and hold, heels flat if possible. Grab a doorframe if needed for balance.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Deep Lateral Lunge</div><div class="ex-tags"><span class="tag">Adductors</span><span class="tag">Hip abductors</span></div></div><div class="ex-header-right"><div class="sets-reps">8 /side</div><div class="rest-label">flow</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Wide stance, shift weight to one side and sink into a deep side lunge, other leg straight. Alternate sides. Opens the groin and adductors.</div></div></div>
-  </div>
-  <div class="section"><div class="section-title">Quads</div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Goblet Squat</div><div class="ex-tags"><span class="tag target">Quad (rectus femoris)</span><span class="tag">VMO</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 10–12</div><div class="rest-label">90s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Hold one dumbbell vertically at your chest. Upright torso, wide stance, squat deep. The goblet position keeps your torso more vertical than a regular DB squat, maximizing quad load.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Bulgarian Split Squat</div><div class="ex-tags"><span class="tag target">Quad (vastus lateralis)</span><span class="tag">Glutes</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 8–10 /side</div><div class="rest-label">90s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Rear foot elevated on the bench, dumbbells at sides. Lower the back knee toward the floor. Brutal but one of the best single-leg exercises you can do.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Step-Up</div><div class="ex-tags"><span class="tag target">VMO</span><span class="tag">Rectus femoris</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10 /side</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Use the bench as the step, dumbbells at sides. Drive through the heel of your lead foot. Don't push off with the back leg.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Cossack Squat</div><div class="ex-tags"><span class="tag target">Vastus medialis (VMO)</span><span class="tag">Adductors</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 8 /side</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Wide stance, squat deeply to one side while the other leg stays fully extended with toes pointing up. Hold a dumbbell at chest for counterbalance.</div></div></div>
-  </div>
-  <div class="section"><div class="section-title">Hamstrings</div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Romanian Deadlift (RDL)</div><div class="ex-tags"><span class="tag target">Biceps femoris</span><span class="tag">Semitendinosus</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 10–12</div><div class="rest-label">90s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Dumbbells in front of thighs, slight knee bend. Hinge at the hips, lower along your legs until you feel a deep hamstring stretch. Drive hips forward to come back up.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Lying Leg Curl</div><div class="ex-tags"><span class="tag target">Semimembranosus</span><span class="tag">Biceps femoris</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 10–12</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Lie face down on the bench, hold a dumbbell between your feet. Curl heels toward glutes, squeeze at the top, lower slowly.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Seated Good Morning</div><div class="ex-tags"><span class="tag target">Erector spinae</span><span class="tag">Semimembranosus</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Sit on the bench edge, hold a dumbbell at chest. Hinge forward with a flat back until you feel a hamstring stretch, then drive back up.</div></div></div>
-  </div>
-  <div class="section"><div class="section-title">Glutes</div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Hip Thrust</div><div class="ex-tags"><span class="tag target">Gluteus maximus</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 12–15</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Upper back on the bench, dumbbell on your hips. Drive through your heels, squeeze your glutes hard at the top, hold 1 second.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Sumo Squat</div><div class="ex-tags"><span class="tag target">Gluteus medius</span><span class="tag">Inner quad</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 12</div><div class="rest-label">75s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Wide stance, toes out ~45°, one dumbbell hanging between your legs. Lower deep. The wide stance shifts work to the glute medius and inner quad.</div></div></div>
-  </div>
-  <div class="section"><div class="section-title">Calves &amp; Tibialis</div>
-    <div class="superset-group"><span class="superset-label">Superset</span>
-      <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Standing Dumbbell Calf Raise</div><div class="ex-tags"><span class="tag target">Gastrocnemius</span></div></div><div class="ex-header-right"><div class="sets-reps">4 × 15–20</div><div class="rest-label">no rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Hold dumbbells, raise on the balls of your feet, squeeze at the top, lower slowly. Toes forward. The gastroc is trained best with the knee extended.</div></div></div>
-      <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Seated Calf Raise (bench)</div><div class="ex-tags"><span class="tag target">Soleus</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 15–20</div><div class="rest-label">45s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Sit on the bench, dumbbell balanced on knee, raise up. Knees bent shifts load to the soleus, the deeper calf muscle.</div></div></div>
-    </div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Tibialis Raise</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Tibialis anterior</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 20–25</div><div class="rest-label">30s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Back against a wall, heels about 6 inches from the baseboard. Lift toes and forefoot off the ground repeatedly. Key for ankle stability and shin splint prevention.</div></div></div>
-  </div>
+  <div id="exercises-legs"></div>
 </div>
 
 <!-- ABS -->
 <div id="panel-abs" class="day-panel abs-d">
-  <div class="day-header"><div class="day-label">Abs</div><div class="day-meta"><div class="focus">Focus</div><div class="muscles">Rectus Abdominis · Obliques · TVA</div><div class="duration">~12 min · add to any session</div></div></div>
+  <div class="day-header">
+    <div class="day-label">Abs</div>
+    <div class="day-meta"><div class="focus">Focus</div><div class="muscles" id="muscles-abs">Rectus Abdominis · Obliques · TVA</div><div class="duration" id="dur-abs">~12 min</div></div>
+    <button class="btn-edit-panel" onclick="openEditSheet('abs')" title="Edit exercises">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    </button>
+  </div>
   <div id="multi-abs" class="multi-logged"></div>
   <div class="log-day-row"><button class="btn-log-day" onclick="logDay('abs')">Log Today's Abs</button><button class="btn-log-rest" onclick="logRest()">Rest Day</button></div>
-  <div class="notes-box"><strong>When to do Abs</strong>Tack this on at the end of any session. Run straight through all 6 exercises with minimal rest between moves. Takes about 12 minutes. Abs recover fast so 3–4 sessions per week is fine.</div>
+  <div class="review-box abs-review" id="review-abs"><span class="review-box-title">Routine Review</span></div>
   <div style="height:4px"></div>
-  <div class="section"><div class="section-title">Anti-Extension</div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Plank</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Transverse abdominis</span><span class="tag">Deep core</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 30–60s</div><div class="rest-label">45s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Forearms or hands, straight line from head to heels. Squeeze everything: glutes, abs, quads. The TVA is your internal weight belt and the foundation of all core work.</div></div></div>
-  </div>
-  <div class="section"><div class="section-title">Flexion</div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Weighted Crunch</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Rectus abdominis (upper)</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 15–20</div><div class="rest-label">45s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Hold a dumbbell at your chest. Curl your shoulders off the floor, exhale hard at the top. Slow and intentional reps beat high-rep sloppy ones.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Reverse Crunch</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Rectus abdominis (lower)</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 12–15</div><div class="rest-label">45s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Lie flat, bring your knees to your chest and curl your hips off the floor. Lower with control. One of the few moves that genuinely isolates the lower rectus abdominis.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Bicycle Crunch</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">External obliques</span><span class="tag">Rectus abdominis</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 20</div><div class="rest-label">45s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Hands behind your head. Bring the opposite elbow toward the opposite knee while extending the other leg, alternating sides. Go slow and controlled.</div></div></div>
-  </div>
-  <div class="section"><div class="section-title">Rotation &amp; Anti-Rotation</div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Dumbbell Russian Twist</div><div class="ex-tags"><span class="tag target">External obliques</span><span class="tag">Internal obliques</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 16–20</div><div class="rest-label">45s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Seated, torso leaned back slightly, feet up or down. Hold one dumbbell and rotate side to side, touching the weight to the floor. Rotate from your torso, not just your arms.</div></div></div>
-    <div class="exercise"><div class="ex-header" onclick="toggle(this)"><div class="ex-header-left"><div class="ex-name">Side Plank</div><div class="ex-tags"><span class="tag cali">Calisthenics</span><span class="tag target">Internal obliques</span><span class="tag">Quadratus lumborum</span></div></div><div class="ex-header-right"><div class="sets-reps">3 × 30s /side</div><div class="rest-label">30s rest</div></div><svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg></div><div class="ex-body"><div class="ex-desc">Forearm on the floor, body in a straight line, hips elevated. Add a dumbbell on the hip for extra load. Trains the obliques and QL as stabilizers.</div></div></div>
-  </div>
+  <div id="exercises-abs"></div>
 </div>
 
 <!-- LOG TAB -->
@@ -592,53 +545,6 @@ body.day-log .top-bar h1{color:var(--log);}body.day-build .top-bar h1{color:var(
   <div id="historyList"></div>
 </div>
 
-
-<!-- BUILD TAB -->
-<div id="panel-build" class="build-panel">
-  <div class="build-tabs">
-    <button class="build-tab active" onclick="switchBuildTab('bank',this)">Exercise Bank</button>
-    <button class="build-tab" onclick="switchBuildTab('builder',this)">My Workout</button>
-    <button class="build-tab" onclick="switchBuildTab('saved',this)">Saved</button>
-  </div>
-
-  <!-- BANK -->
-  <div id="build-bank" class="build-subtab active" style="display:block">
-    <div class="bank-controls">
-      <input class="bank-search" id="bankSearch" placeholder="Search exercises..." oninput="renderBank()"/>
-      <div class="bank-filter-row">
-        <button class="bank-filter active-all" data-filter="all" onclick="setBankFilter('all',this)">All</button>
-        <button class="bank-filter" data-filter="push" onclick="setBankFilter('push',this)">Push</button>
-        <button class="bank-filter" data-filter="pull" onclick="setBankFilter('pull',this)">Pull</button>
-        <button class="bank-filter" data-filter="legs" onclick="setBankFilter('legs',this)">Legs</button>
-        <button class="bank-filter" data-filter="abs" onclick="setBankFilter('abs',this)">Abs</button>
-      </div>
-    </div>
-    <div id="bankList"></div>
-  </div>
-
-  <!-- BUILDER -->
-  <div id="build-builder" class="build-subtab" style="display:none">
-    <div class="workout-header-row">
-      <input class="workout-title-input" id="workoutTitle" placeholder="Workout Name" value="My Workout"/>
-      <button class="btn-clear-workout" onclick="clearWorkout()">Clear</button>
-    </div>
-    <div id="workoutList"><div class="workout-empty">No exercises yet. Add from the Exercise Bank.</div></div>
-    <div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap;">
-      <button class="btn-backlog-save" style="flex:1" onclick="saveWorkout()">Save Workout</button>
-    </div>
-    <div style="height:16px"></div>
-    <div class="log-section-title" style="margin-top:4px">Muscle Coverage</div>
-    <div id="coverageGrid" class="coverage-grid"></div>
-    <div class="log-section-title">Suggestions</div>
-    <div id="suggestions"></div>
-  </div>
-
-  <!-- SAVED -->
-  <div id="build-saved" class="build-subtab" style="display:none">
-    <div id="savedList"><div class="workout-empty">No saved workouts yet.</div></div>
-  </div>
-</div>
-
 </div><!-- /.scroll-area -->
 </div><!-- /.app-body -->
 
@@ -648,7 +554,6 @@ body.day-log .top-bar h1{color:var(--log);}body.day-build .top-bar h1{color:var(
   <button class="nav-btn" onclick="switchDay('legs',this)"><div class="nav-label">Legs</div><div class="nav-dot"></div></button>
   <button class="nav-btn" onclick="switchDay('abs',this)"><div class="nav-label">Abs</div><div class="nav-dot"></div></button>
   <button class="nav-btn" onclick="switchDay('log',this)"><div class="nav-label">Log</div><div class="nav-dot"></div></button>
-  <button class="nav-btn" onclick="switchDay('build',this)"><div class="nav-label">Build</div><div class="nav-dot"></div></button>
   <button class="nav-btn hunter-nav" onclick="window.location='hunter-stats.html'"><div class="nav-label">⚡ Stats</div><div class="nav-dot"></div></button>
 </nav>
 
@@ -762,10 +667,7 @@ function switchDay(day,btn){
   // handle both sidebar and bottom nav buttons
   document.querySelectorAll('.nav-btn').forEach(function(b){b.className=b.classList.contains('hunter-nav')?'nav-btn hunter-nav':'nav-btn';});
   document.querySelectorAll('.sidebar-btn').forEach(function(b){b.className='sidebar-btn';});
-  if(day==='build'){
-    document.getElementById('panel-build').classList.add('active');
-    renderBank();renderCoverage();renderSaved();
-  }else if(day==='log'){
+  if(day==='log'){
     document.getElementById('panel-log').classList.add('active');
     var bd=document.getElementById('backlogDate');if(bd&&!bd.value)bd.value=todayStr();
     refreshLog();
@@ -944,554 +846,709 @@ initCal();
 /* ════════════════════════════════════════
    EXERCISE BANK DATA
 ════════════════════════════════════════ */
+
+
+
+
+/* ════════════════════════════════════════
+   EXERCISE BANK + PANEL RENDERING
+════════════════════════════════════════ */
+
 var EXERCISE_BANK = [
   // ── PUSH ──
   {id:'db-flat-press',day:'push',name:'DB Flat Bench Press',
     primary:['Pec major (sternal)'],secondary:['Anterior delt','Triceps'],
-    sets:'4',reps:'8-10',
+    sets:'4',reps:'8-10',rest:'90s',
     desc:'Primary chest mass builder. Control the descent, pause briefly at the chest, drive up. Keep shoulder blades pinched into the bench throughout.'},
   {id:'db-incline-press',day:'push',name:'Incline DB Press',
     primary:['Pec major (clavicular)'],secondary:['Anterior delt','Triceps'],
-    sets:'3',reps:'10-12',
+    sets:'3',reps:'10-12',rest:'75s',
     desc:'Set bench to 30–45°. Hits the upper chest that flat work misses. Keep elbows at about 70° to the torso, not flared wide.'},
   {id:'db-fly',day:'push',name:'DB Chest Fly',
     primary:['Pec major (stretch)'],secondary:['Pec minor'],
-    sets:'3',reps:'12-15',
-    desc:'Flat bench. Arms slightly bent, lower wide until you feel a deep stretch, squeeze back together. Isolation move — go lighter than you think.'},
+    sets:'3',reps:'12-15',rest:'60s',
+    desc:'Flat bench. Arms slightly bent, lower wide until you feel a deep stretch, squeeze back together. Isolation — go lighter than you think.'},
   {id:'pushup',day:'push',name:'Push-Ups',
     primary:['Pec minor','Serratus anterior'],secondary:['Triceps','Anterior delt'],
-    sets:'2',reps:'Fail',
-    desc:'Hands slightly wider than shoulder-width. Go to failure or slow negatives (3 sec down). Great for serratus anterior and pec minor activation.'},
+    sets:'2',reps:'Fail',rest:'60s',
+    desc:'Hands slightly wider than shoulder-width. Go to failure or do slow negatives (3 sec down). Great for serratus anterior and pec minor activation.'},
   {id:'db-ohp',day:'push',name:'Seated DB Overhead Press',
     primary:['Anterior delt','Medial delt'],secondary:['Triceps','Upper traps'],
-    sets:'4',reps:'8-10',
-    desc:'Bench fully upright. Press to full extension, lower to ear level. Core tight throughout. Primary shoulder mass builder.'},
+    sets:'4',reps:'8-10',rest:'90s',
+    desc:'Bench fully upright. Press to full extension, lower to ear level. Core tight throughout.'},
   {id:'lateral-raise',day:'push',name:'DB Lateral Raise',
     primary:['Medial delt'],secondary:[],
-    sets:'4',reps:'12-15',
-    desc:'Lead with the elbow, slight forward tilt, raise to shoulder height. Avoid shrugging. Slow and controlled, not swung. Bread and butter for shoulder width.'},
+    sets:'4',reps:'12-15',rest:'60s',
+    desc:'Lead with the elbow, slight forward tilt, raise to shoulder height. Avoid shrugging. Slow and controlled.'},
   {id:'front-raise',day:'push',name:'DB Front Raise',
     primary:['Anterior delt'],secondary:[],
-    sets:'3',reps:'12',
-    desc:'Alternating or both arms. Raise to shoulder height, no higher. Slight bend in elbow. Rounds out the front delt pressing alone doesn\'t fully isolate.'},
+    sets:'3',reps:'12',rest:'60s',
+    desc:'Alternating or both arms. Raise to shoulder height, no higher. Slight bend in elbow.'},
   {id:'skull-crusher',day:'push',name:'DB Skull Crushers',
     primary:['Triceps (long head)','Triceps (medial head)'],secondary:[],
-    sets:'3',reps:'10-12',
-    desc:'Flat bench. Lower dumbbells to the sides of your head, elbows pointing up. The long head gets the best stretch here. Key for overall tricep size.'},
+    sets:'3',reps:'10-12',rest:'75s',
+    desc:'Flat bench. Lower dumbbells to the sides of your head, elbows pointing up. The long head gets the best stretch here.'},
   {id:'overhead-ext',day:'push',name:'Overhead DB Extension',
-    primary:['Triceps (long head — stretch)'],secondary:[],
-    sets:'3',reps:'12',
-    desc:'One dumbbell held with both hands overhead. Lower behind your head, elbows in tight. The stretch-loaded position on the long head is unmatched for growth.'},
+    primary:['Triceps (long head)'],secondary:[],
+    sets:'3',reps:'12',rest:'60s',
+    desc:'One dumbbell held with both hands overhead. Lower behind your head, elbows in tight.'},
   {id:'diamond-pushup',day:'push',name:'Diamond Push-Ups',
     primary:['Triceps (lateral head)','Triceps (medial head)'],secondary:['Chest'],
-    sets:'2',reps:'Fail',
-    desc:'Hands form a diamond or stay close. Elbows track back along your torso, not flared. Great finisher hitting the lateral head differently than DB work.'},
-  {id:'cable-fly',day:'push',name:'Cable / Band Chest Fly',
-    primary:['Pec major (squeeze)'],secondary:['Pec minor'],
-    sets:'3',reps:'15',
-    desc:'If you have a cable machine or resistance band. Constant tension through the full ROM, especially at peak contraction. Pairs well as a finisher after heavy pressing.'},
+    sets:'2',reps:'Fail',rest:'60s',
+    desc:'Hands form a diamond or stay close. Elbows track back along your torso, not flared.'},
   {id:'arnold-press',day:'push',name:'Arnold Press',
     primary:['Anterior delt','Medial delt'],secondary:['Posterior delt','Triceps'],
-    sets:'3',reps:'10-12',
-    desc:'Start with palms facing you, rotate to forward-facing as you press up. Hits all three delt heads through the rotation. Named after the man himself.'},
+    sets:'3',reps:'10-12',rest:'75s',
+    desc:'Start with palms facing you, rotate to forward-facing as you press up. Hits all three delt heads.'},
+  {id:'cable-fly',day:'push',name:'Band / Cable Chest Fly',
+    primary:['Pec major (squeeze)'],secondary:['Pec minor'],
+    sets:'3',reps:'15',rest:'60s',
+    desc:'Constant tension through the full ROM, especially at peak contraction. Great as a finisher after heavy pressing.'},
 
   // ── PULL ──
   {id:'db-row',day:'pull',name:'DB Row',
     primary:['Latissimus dorsi','Mid traps'],secondary:['Biceps','Rear delt'],
-    sets:'4',reps:'8-10',
-    desc:'Brace a knee and hand on the bench. Row the dumbbell to your hip, leading with the elbow. Full stretch at the bottom, full squeeze at the top.'},
+    sets:'4',reps:'8-10',rest:'90s',
+    desc:'Brace a knee and hand on the bench. Row to your hip, leading with the elbow. Full stretch at the bottom, full squeeze at the top.'},
   {id:'pullup',day:'pull',name:'Pull-Ups / Chin-Ups',
     primary:['Lats (width)'],secondary:['Biceps','Rear delt'],
-    sets:'3',reps:'Fail',
-    desc:'Pull-ups (overhand) bias lats more; chin-ups (underhand) bring in more biceps. Go to failure every set. Even 3–5 reps per set adds up over time.'},
+    sets:'3',reps:'Fail',rest:'90s',
+    desc:'Pull-ups (overhand) bias lats; chin-ups (underhand) bring in more biceps. Go to failure every set.'},
   {id:'prone-row',day:'pull',name:'Incline Prone DB Row',
     primary:['Mid traps','Lower traps','Rhomboids'],secondary:['Rear delt'],
-    sets:'3',reps:'12',
-    desc:'Set bench to 45°, lie chest-down, dumbbells hanging. Row both up, elbows flared to 90°. Excellent for postural muscles and upper back thickness.'},
+    sets:'3',reps:'12',rest:'75s',
+    desc:'Set bench to 45°, lie chest-down, dumbbells hanging. Row both up, elbows flared to 90°.'},
   {id:'db-deadlift',day:'pull',name:'DB Deadlift',
     primary:['Erector spinae','Lower back'],secondary:['Hamstrings','Glutes'],
-    sets:'3',reps:'10',
-    desc:'Dumbbells at your sides, hip hinge (not a squat), flat back throughout. Push the floor away on the way up. Builds spinal erectors and teaches the hinge.'},
-  {id:'db-curl',day:'pull',name:'DB Curl',
-    primary:['Biceps brachii (short head)'],secondary:['Brachialis'],
-    sets:'3',reps:'10-12',
-    desc:'Standing, alternating. Supinate the wrist as you curl up. Full range of motion, no swinging. Primary bicep builder.'},
-  {id:'incline-curl',day:'pull',name:'Incline DB Curl',
-    primary:['Biceps brachii (long head)'],secondary:[],
-    sets:'3',reps:'10-12',
-    desc:'Bench at 45–60°, lean back, arms hang fully behind you. Puts the long head in a deep stretch standing curls can\'t replicate. Slower and more controlled.'},
-  {id:'hammer-curl',day:'pull',name:'Hammer Curl',
-    primary:['Brachialis','Brachioradialis'],secondary:[],
-    sets:'3',reps:'12',
-    desc:'Neutral (thumbs-up) grip throughout. The brachialis sits beneath the bicep and when developed pushes the bicep up making arms look thicker.'},
-  {id:'conc-curl',day:'pull',name:'Concentration Curl',
-    primary:['Biceps (short head — peak isolation)'],secondary:[],
-    sets:'2',reps:'12/side',
-    desc:'Seated, elbow braced against the inside of your thigh, curl up. Eliminates all momentum. Best as a finisher after heavier curl work.'},
-  {id:'zottman',day:'pull',name:'Zottman Curl',
-    primary:['Brachioradialis','Biceps brachii','Brachialis'],secondary:[],
-    sets:'3',reps:'10',
-    desc:'Curl up supinated (palms up), rotate to pronated (palms down) at the top, lower slowly. Trains all three elbow flexors through their strongest positions.'},
-  {id:'reverse-curl',day:'pull',name:'Reverse Curl',
-    primary:['Brachioradialis','Extensor carpi'],secondary:[],
-    sets:'3',reps:'10-12',
-    desc:'Overhand (pronated) grip, curl up. Brachioradialis does most work. Also hits wrist extensors — important for elbow health.'},
-  {id:'wrist-curl-sup',day:'pull',name:'Wrist Curl (Supinated)',
-    primary:['Flexor carpi radialis','Flexor carpi ulnaris'],secondary:[],
-    sets:'3',reps:'15-20',
-    desc:'Forearms on thighs or bench edge, palms up. Curl the wrist up and lower slowly. Builds the inner forearm belly. Go light — pure isolation.'},
-  {id:'wrist-curl-pro',day:'pull',name:'Wrist Curl (Pronated)',
-    primary:['Extensor carpi radialis','Extensor carpi ulnaris'],secondary:[],
-    sets:'3',reps:'15-20',
-    desc:'Same setup but palms down. Extend the wrist up against gravity. Most neglected forearm muscles — common source of lateral elbow pain when weak.'},
-  {id:'rev-fly',day:'pull',name:'Bent-Over Reverse Fly',
-    primary:['Posterior delt','Lower traps'],secondary:['Rhomboids'],
-    sets:'4',reps:'12-15',
-    desc:'Hinge forward to ~45°, arms hanging. Raise arms out to the sides with a slight bend at the elbow, pinch the shoulder blades. Rear delts matter a lot for shoulder health.'},
-  {id:'face-pull',day:'pull',name:'Face Pull (floor variation)',
-    primary:['Posterior delt','Rotator cuff'],secondary:['Mid traps'],
-    sets:'3',reps:'15',
-    desc:'Lie face-down on the bench with light dumbbells, arms hanging. Row the weights up and back, externally rotating at the top. Crucial for shoulder health.'},
+    sets:'3',reps:'10',rest:'90s',
+    desc:'Dumbbells at your sides, hip hinge, flat back throughout. Push the floor away on the way up.'},
   {id:'chest-supported-row',day:'pull',name:'Chest-Supported DB Row',
     primary:['Mid traps','Rhomboids'],secondary:['Rear delt','Biceps'],
-    sets:'3',reps:'12',
-    desc:'Set bench to a low incline, lie face down. Row both dumbbells up simultaneously. Takes the lower back out of the equation — great for strict back work.'},
+    sets:'3',reps:'12',rest:'75s',
+    desc:'Set bench to a low incline, lie face down. Row both dumbbells up simultaneously. Takes the lower back out of it.'},
+  {id:'db-curl',day:'pull',name:'DB Curl',
+    primary:['Biceps brachii (short head)'],secondary:['Brachialis'],
+    sets:'3',reps:'10-12',rest:'60s',
+    desc:'Standing, alternating. Supinate the wrist as you curl up. Full range of motion, no swinging.'},
+  {id:'incline-curl',day:'pull',name:'Incline DB Curl',
+    primary:['Biceps brachii (long head)'],secondary:[],
+    sets:'3',reps:'10-12',rest:'60s',
+    desc:'Bench at 45–60°, lean back, arms hang fully behind you. Puts the long head in a deep stretch.'},
+  {id:'hammer-curl',day:'pull',name:'Hammer Curl',
+    primary:['Brachialis','Brachioradialis'],secondary:[],
+    sets:'3',reps:'12',rest:'60s',
+    desc:'Neutral (thumbs-up) grip throughout. Brachialis development pushes the bicep up, making arms look thicker.'},
+  {id:'conc-curl',day:'pull',name:'Concentration Curl',
+    primary:['Biceps (peak isolation)'],secondary:[],
+    sets:'2',reps:'12/side',rest:'45s',
+    desc:'Seated, elbow braced against the inside of your thigh, curl up. Eliminates all momentum.'},
+  {id:'zottman',day:'pull',name:'Zottman Curl',
+    primary:['Brachioradialis','Biceps brachii','Brachialis'],secondary:[],
+    sets:'3',reps:'10',rest:'60s',
+    desc:'Curl up supinated (palms up), rotate to pronated (palms down) at the top, lower slowly.'},
+  {id:'reverse-curl',day:'pull',name:'Reverse Curl',
+    primary:['Brachioradialis','Extensor carpi'],secondary:[],
+    sets:'3',reps:'10-12',rest:'60s',
+    desc:'Overhand (pronated) grip, curl up. Also hits wrist extensors — important for elbow health.'},
+  {id:'wrist-curl-sup',day:'pull',name:'Wrist Curl (Supinated)',
+    primary:['Flexor carpi radialis','Flexor carpi ulnaris'],secondary:[],
+    sets:'3',reps:'15-20',rest:'no rest',
+    desc:'Forearms on thighs, palms up. Curl the wrist up and lower slowly. Go light — pure isolation.'},
+  {id:'wrist-curl-pro',day:'pull',name:'Wrist Curl (Pronated)',
+    primary:['Extensor carpi radialis','Extensor carpi ulnaris'],secondary:[],
+    sets:'3',reps:'15-20',rest:'30s',
+    desc:'Same setup but palms down. Extend the wrist up against gravity. Most neglected forearm muscles.'},
+  {id:'rev-fly',day:'pull',name:'Bent-Over Reverse Fly',
+    primary:['Posterior delt','Lower traps'],secondary:['Rhomboids'],
+    sets:'4',reps:'12-15',rest:'60s',
+    desc:'Hinge forward to ~45°, arms hanging. Raise arms out to the sides with a slight bend at the elbow.'},
+  {id:'face-pull',day:'pull',name:'Face Pull (floor variation)',
+    primary:['Posterior delt','Rotator cuff'],secondary:['Mid traps'],
+    sets:'3',reps:'15',rest:'60s',
+    desc:'Lie face-down on the bench with light dumbbells. Row up and back, externally rotating at the top.'},
 
   // ── LEGS ──
+  {id:'legs-warmup-note',day:'legs',name:'Dynamic Warmup (8 min)',
+    primary:['Hip mobility','Ankle mobility'],secondary:['Glutes','Hip flexors'],
+    sets:'1',reps:'Full circuit',rest:'flow',
+    desc:'Seated heel-to-hip switch, 90/90 hip stretch, ASLR, 90/90 to hip lift, kneeling hip flexor lunge, deep squat hold, deep lateral lunge. Do this every legs session before loading any weight.'},
   {id:'goblet-squat',day:'legs',name:'Goblet Squat',
     primary:['Quad (rectus femoris)','VMO'],secondary:['Glutes','Core'],
-    sets:'4',reps:'10-12',
-    desc:'Hold one dumbbell vertically at your chest. Upright torso, wide stance, squat deep. The goblet position keeps your torso more vertical, maximizing quad load.'},
+    sets:'4',reps:'10-12',rest:'90s',
+    desc:'Hold one dumbbell vertically at your chest. Upright torso, wide stance, squat deep.'},
   {id:'bss',day:'legs',name:'Bulgarian Split Squat',
-    primary:['Quad (vastus lateralis)','Glutes'],secondary:['Hamstrings','Hip flexors'],
-    sets:'3',reps:'8-10/side',
+    primary:['Quad (vastus lateralis)','Glutes'],secondary:['Hamstrings'],
+    sets:'3',reps:'8-10/side',rest:'90s',
     desc:'Rear foot elevated on the bench, dumbbells at sides. Lower the back knee toward the floor. Brutal but one of the best single-leg exercises you can do.'},
   {id:'step-up',day:'legs',name:'DB Step-Up',
     primary:['VMO','Rectus femoris'],secondary:['Glutes'],
-    sets:'3',reps:'10/side',
-    desc:'Use the bench as the step, dumbbells at sides. Drive through the heel of your lead foot. Don\'t push off with the back leg. The VMO loves this movement.'},
+    sets:'3',reps:'10/side',rest:'75s',
+    desc:'Use the bench as the step. Drive through the heel of your lead foot. Don\'t push off with the back leg.'},
   {id:'cossack',day:'legs',name:'Cossack Squat',
-    primary:['Vastus medialis (VMO)','Adductors'],secondary:['Hip abductors','Glutes'],
-    sets:'3',reps:'8/side',
-    desc:'Wide stance, squat deeply to one side while the other leg stays fully extended with toes pointing up. Hold a dumbbell at chest for counterbalance.'},
+    primary:['VMO','Adductors'],secondary:['Hip abductors','Glutes'],
+    sets:'3',reps:'8/side',rest:'75s',
+    desc:'Wide stance, squat deeply to one side while the other leg stays fully extended. Hold a dumbbell at chest for counterbalance.'},
   {id:'rdl',day:'legs',name:'Romanian Deadlift (RDL)',
     primary:['Biceps femoris','Semitendinosus'],secondary:['Glutes','Erectors'],
-    sets:'4',reps:'10-12',
-    desc:'Dumbbells in front of thighs, slight knee bend. Hinge at the hips, lower along your legs until you feel a deep hamstring stretch. Drive hips forward to come back up.'},
+    sets:'4',reps:'10-12',rest:'90s',
+    desc:'Dumbbells in front of thighs, slight knee bend. Hinge at the hips, lower until you feel a deep hamstring stretch. Drive hips forward to come back up.'},
   {id:'lying-leg-curl',day:'legs',name:'DB Lying Leg Curl',
     primary:['Semimembranosus','Biceps femoris'],secondary:[],
-    sets:'3',reps:'10-12',
-    desc:'Lie face down on the bench, hold a dumbbell between your feet. Curl heels toward glutes, squeeze at the top, lower slowly. Trains hamstring through knee flexion.'},
+    sets:'3',reps:'10-12',rest:'75s',
+    desc:'Lie face down on the bench, hold a dumbbell between your feet. Curl heels toward glutes, squeeze at the top, lower slowly.'},
   {id:'seated-good-morning',day:'legs',name:'Seated Good Morning',
     primary:['Erector spinae','Semimembranosus'],secondary:['Lower back'],
-    sets:'3',reps:'12',
-    desc:'Sit on the bench edge, hold a dumbbell at chest. Hinge forward with a flat back until you feel a hamstring stretch, then drive back up.'},
+    sets:'3',reps:'12',rest:'75s',
+    desc:'Sit on the bench edge, hold a dumbbell at chest. Hinge forward with a flat back until you feel a hamstring stretch.'},
   {id:'hip-thrust',day:'legs',name:'DB Hip Thrust',
     primary:['Gluteus maximus'],secondary:['Hamstrings'],
-    sets:'4',reps:'12-15',
-    desc:'Upper back on the bench, dumbbell on your hips. Drive through your heels, squeeze your glutes hard at the top, hold 1 second. The glute max is the largest muscle in the body.'},
+    sets:'4',reps:'12-15',rest:'75s',
+    desc:'Upper back on the bench, dumbbell on your hips. Drive through your heels, squeeze glutes hard at the top, hold 1 second.'},
   {id:'sumo-squat',day:'legs',name:'DB Sumo Squat',
     primary:['Gluteus medius','Inner quad'],secondary:['Adductors'],
-    sets:'3',reps:'12',
-    desc:'Wide stance, toes out ~45°, one dumbbell hanging between your legs. Lower deep. The wide stance shifts work to the glute medius and inner quad.'},
+    sets:'3',reps:'12',rest:'75s',
+    desc:'Wide stance, toes out ~45°, one dumbbell hanging between your legs. Lower deep.'},
   {id:'standing-calf',day:'legs',name:'Standing DB Calf Raise',
     primary:['Gastrocnemius'],secondary:[],
-    sets:'4',reps:'15-20',
-    desc:'Hold dumbbells, raise on the balls of your feet, squeeze at the top, lower slowly. Toes forward. Trains the gastroc best with knee extended.'},
+    sets:'4',reps:'15-20',rest:'no rest',
+    desc:'Hold dumbbells, raise on the balls of your feet, squeeze at the top, lower slowly. Toes forward.'},
   {id:'seated-calf',day:'legs',name:'Seated Calf Raise',
     primary:['Soleus'],secondary:[],
-    sets:'3',reps:'15-20',
-    desc:'Sit on the bench, dumbbell balanced on knee, raise up. Knees bent shifts load to the soleus — the deeper calf muscle giving overall calf thickness.'},
+    sets:'3',reps:'15-20',rest:'45s',
+    desc:'Sit on the bench, dumbbell balanced on knee. Knees bent shifts load to the soleus — the deeper calf muscle.'},
   {id:'tib-raise',day:'legs',name:'Tibialis Raise',
     primary:['Tibialis anterior'],secondary:[],
-    sets:'3',reps:'20-25',
-    desc:'Back against a wall, heels about 6 inches from the baseboard. Lift toes and forefoot off the ground repeatedly. Key for ankle stability and shin splint prevention.'},
+    sets:'3',reps:'20-25',rest:'30s',
+    desc:'Back against a wall, heels about 6 inches from the baseboard. Lift toes and forefoot off the ground repeatedly.'},
   {id:'lunge',day:'legs',name:'DB Walking Lunge',
     primary:['Quads','Glutes'],secondary:['Hamstrings','Core'],
-    sets:'3',reps:'10/side',
-    desc:'Step forward into a deep lunge, back knee nearly touching the floor, then bring the rear foot forward to meet the front. Builds single-leg strength and stability.'},
+    sets:'3',reps:'10/side',rest:'75s',
+    desc:'Step forward into a deep lunge, back knee nearly touching the floor, then bring the rear foot forward.'},
   {id:'nordic-curl',day:'legs',name:'Nordic Curl',
     primary:['Biceps femoris (eccentric)','Semitendinosus'],secondary:[],
-    sets:'3',reps:'6-8',
-    desc:'Secure your ankles, kneel upright, then slowly lower your torso toward the floor resisting with your hamstrings. One of the best injury-prevention movements you can do.'},
+    sets:'3',reps:'6-8',rest:'90s',
+    desc:'Secure your ankles, kneel upright, then slowly lower your torso toward the floor resisting with your hamstrings.'},
 
   // ── ABS ──
   {id:'plank',day:'abs',name:'Plank',
     primary:['Transverse abdominis','Deep core'],secondary:['Glutes','Quads'],
-    sets:'3',reps:'30-60s',
-    desc:'Forearms or hands, straight line from head to heels. Squeeze everything: glutes, abs, quads. The TVA is your internal weight belt — foundation of all core work.'},
+    sets:'3',reps:'30-60s',rest:'45s',
+    desc:'Forearms or hands, straight line from head to heels. Squeeze everything: glutes, abs, quads.'},
   {id:'weighted-crunch',day:'abs',name:'Weighted Crunch',
     primary:['Rectus abdominis (upper)'],secondary:[],
-    sets:'3',reps:'15-20',
-    desc:'Hold a dumbbell at your chest. Curl your shoulders off the floor, exhale hard at the top. Slow and intentional reps beat high-rep sloppy ones.'},
+    sets:'3',reps:'15-20',rest:'45s',
+    desc:'Hold a dumbbell at your chest. Curl your shoulders off the floor, exhale hard at the top.'},
   {id:'reverse-crunch',day:'abs',name:'Reverse Crunch',
     primary:['Rectus abdominis (lower)'],secondary:['Hip flexors'],
-    sets:'3',reps:'12-15',
-    desc:'Lie flat, bring your knees to your chest and curl your hips off the floor. Lower with control. One of the few moves that genuinely isolates the lower rectus abdominis.'},
+    sets:'3',reps:'12-15',rest:'45s',
+    desc:'Lie flat, bring your knees to your chest and curl your hips off the floor. Lower with control.'},
   {id:'bicycle-crunch',day:'abs',name:'Bicycle Crunch',
     primary:['External obliques','Rectus abdominis'],secondary:['Hip flexors'],
-    sets:'3',reps:'20',
-    desc:'Hands behind your head. Bring the opposite elbow toward the opposite knee while extending the other leg, alternating sides. Go slow — fast sloppy reps become a hip flexor exercise.'},
+    sets:'3',reps:'20',rest:'45s',
+    desc:'Hands behind your head. Opposite elbow to opposite knee while extending the other leg. Go slow.'},
   {id:'russian-twist',day:'abs',name:'DB Russian Twist',
     primary:['External obliques','Internal obliques'],secondary:[],
-    sets:'3',reps:'16-20',
-    desc:'Seated, torso leaned back slightly, feet up or down. Hold one dumbbell and rotate side to side, touching the weight to the floor. Rotate from your torso, not just your arms.'},
+    sets:'3',reps:'16-20',rest:'45s',
+    desc:'Seated, torso leaned back slightly, feet up or down. Hold one dumbbell and rotate side to side.'},
   {id:'side-plank',day:'abs',name:'Side Plank',
     primary:['Internal obliques','Quadratus lumborum'],secondary:['Glute medius'],
-    sets:'3',reps:'30s/side',
-    desc:'Forearm on the floor, body in a straight line, hips elevated. Add a dumbbell on the hip for extra load. Trains the obliques and QL as stabilizers.'},
+    sets:'3',reps:'30s/side',rest:'30s',
+    desc:'Forearm on the floor, body in a straight line, hips elevated. Add a dumbbell on the hip for extra load.'},
   {id:'dead-bug',day:'abs',name:'Dead Bug',
     primary:['Transverse abdominis','Deep core'],secondary:['Hip flexors'],
-    sets:'3',reps:'10/side',
-    desc:'Lie on back, arms up, knees at 90°. Slowly lower one arm and the opposite leg toward the floor while keeping your lower back pressed down. The anti-extension king.'},
-  {id:'leg-raise',day:'abs',name:'Hanging / Lying Leg Raise',
+    sets:'3',reps:'10/side',rest:'45s',
+    desc:'Lie on back, arms up, knees at 90°. Lower one arm and the opposite leg toward the floor while keeping your lower back pressed down.'},
+  {id:'leg-raise',day:'abs',name:'Lying Leg Raise',
     primary:['Rectus abdominis (lower)','Hip flexors'],secondary:['Obliques'],
-    sets:'3',reps:'12-15',
-    desc:'Lie flat or hang from a bar. Keeping legs straight or slightly bent, raise them to 90° and lower slowly. The lower abs fire hardest when hips come off the floor at the top.'},
+    sets:'3',reps:'12-15',rest:'45s',
+    desc:'Lie flat. Keeping legs straight, raise them to 90° and lower slowly. Lower abs fire hardest when hips come off the floor at the top.'},
   {id:'ab-rollout',day:'abs',name:'DB Ab Rollout',
     primary:['Transverse abdominis','Rectus abdominis'],secondary:['Lats','Shoulders'],
-    sets:'3',reps:'8-10',
-    desc:'Kneel with a dumbbell on each hand (or use a wheel). Roll forward until your body is nearly parallel to the floor, then pull back. One of the hardest core exercises you can do.'},
+    sets:'3',reps:'8-10',rest:'60s',
+    desc:'Kneel with a dumbbell on each hand. Roll forward until your body is nearly parallel to the floor, then pull back. One of the hardest core exercises you can do.'},
 ];
 
-// Per-day muscle groups for coverage analysis
-var BANK_MUSCLE_MAP = {
-  push: {
-    'Chest (lower/mid)':   ['db-flat-press','db-fly','pushup','cable-fly'],
-    'Chest (upper)':       ['db-incline-press'],
-    'Anterior Delt':       ['db-ohp','front-raise','arnold-press'],
-    'Medial Delt':         ['lateral-raise','db-ohp','arnold-press'],
-    'Triceps (long head)': ['skull-crusher','overhead-ext'],
-    'Triceps (lateral)':   ['diamond-pushup','skull-crusher'],
-    'Serratus / Pec minor':['pushup','cable-fly'],
-  },
-  pull: {
-    'Lats':                ['db-row','pullup','chest-supported-row'],
-    'Mid / Upper Traps':   ['prone-row','rev-fly','chest-supported-row'],
-    'Rhomboids':           ['prone-row','rev-fly','chest-supported-row'],
-    'Biceps (long head)':  ['incline-curl','pullup','db-curl'],
-    'Biceps (short head)': ['db-curl','conc-curl','hammer-curl'],
-    'Brachialis':          ['hammer-curl','zottman','incline-curl'],
-    'Forearms':            ['zottman','reverse-curl','wrist-curl-sup','wrist-curl-pro'],
-    'Posterior Delt':      ['rev-fly','face-pull'],
-    'Rotator Cuff':        ['face-pull'],
-    'Lower Back':          ['db-deadlift'],
-  },
-  legs: {
-    'Quads (rectus femoris)':['goblet-squat','step-up','lunge'],
-    'VMO':                   ['goblet-squat','step-up','cossack'],
-    'Hamstrings (hip-hinge)':['rdl','seated-good-morning','nordic-curl'],
-    'Hamstrings (knee-flex)':['lying-leg-curl','nordic-curl'],
-    'Gluteus Maximus':       ['hip-thrust','bss','rdl','lunge'],
-    'Gluteus Medius':        ['sumo-squat','cossack'],
-    'Adductors':             ['sumo-squat','cossack'],
-    'Gastrocnemius':         ['standing-calf'],
-    'Soleus':                ['seated-calf'],
-    'Tibialis Anterior':     ['tib-raise'],
-  },
-  abs: {
-    'Transverse Abdominis':  ['plank','dead-bug','ab-rollout'],
-    'Rectus Abdominis (upper)':['weighted-crunch','bicycle-crunch'],
-    'Rectus Abdominis (lower)':['reverse-crunch','leg-raise','ab-rollout'],
-    'External Obliques':     ['bicycle-crunch','russian-twist','side-plank'],
-    'Internal Obliques':     ['russian-twist','side-plank'],
-    'Quadratus Lumborum':    ['side-plank'],
-  }
+/* ── Default routines (used when no customization saved) ── */
+var DEFAULT_ROUTINES = {
+  push: ['db-flat-press','db-incline-press','db-fly','pushup','db-ohp','lateral-raise','front-raise','skull-crusher','overhead-ext','diamond-pushup'],
+  pull: ['db-row','pullup','prone-row','db-deadlift','db-curl','incline-curl','hammer-curl','conc-curl','zottman','reverse-curl','wrist-curl-sup','wrist-curl-pro','rev-fly','face-pull'],
+  legs: ['legs-warmup-note','goblet-squat','bss','step-up','cossack','rdl','lying-leg-curl','seated-good-morning','hip-thrust','sumo-squat','standing-calf','seated-calf','tib-raise'],
+  abs:  ['plank','weighted-crunch','reverse-crunch','bicycle-crunch','russian-twist','side-plank'],
 };
 
-/* ════════ STATE ════════ */
-var _bankFilter = 'all';
-var _currentWorkout = []; // [{id, name, sets, reps, day}]
-var _savedWorkouts  = [];
-var WORKOUT_STORE   = 'ppl_workouts_v1';
 
-function loadSavedWorkouts(){
-  try{_savedWorkouts=JSON.parse(localStorage.getItem(WORKOUT_STORE)||'[]');}catch(e){_savedWorkouts=[];}
+/* persist sets/reps overrides */
+var SR_STORE = 'ppl_sr_v1';
+function getSROverrides() {
+  try { return JSON.parse(localStorage.getItem(SR_STORE)) || {}; } catch(e) { return {}; }
 }
-function saveSavedWorkouts(){
-  try{localStorage.setItem(WORKOUT_STORE,JSON.stringify(_savedWorkouts));}catch(e){}
+function saveSROverrides(o) {
+  try { localStorage.setItem(SR_STORE, JSON.stringify(o)); } catch(e) {}
 }
-loadSavedWorkouts();
-
-/* ════════ BUILD SUB-TABS ════════ */
-function switchBuildTab(tab, btn){
-  document.querySelectorAll('.build-subtab').forEach(function(el){el.style.display='none';});
-  document.querySelectorAll('.build-tab').forEach(function(b){b.classList.remove('active');});
-  document.getElementById('build-'+tab).style.display='block';
-  btn.classList.add('active');
-  if(tab==='builder'){renderWorkoutList();renderCoverage();}
-  if(tab==='saved'){renderSaved();}
-}
-
-/* ════════ BANK ════════ */
-function setBankFilter(f, btn){
-  _bankFilter = f;
-  document.querySelectorAll('.bank-filter').forEach(function(b){
-    b.className = 'bank-filter';
-  });
-  btn.className = 'bank-filter active-' + f;
-  renderBank();
-}
-
-function renderBank(){
-  var q = (document.getElementById('bankSearch').value||'').toLowerCase().trim();
-  var inWorkoutIds = _currentWorkout.map(function(e){return e.id;});
-  var filtered = EXERCISE_BANK.filter(function(ex){
-    if(_bankFilter !== 'all' && ex.day !== _bankFilter) return false;
-    if(q){
-      var haystack = ex.name.toLowerCase() + ' ' + ex.primary.join(' ').toLowerCase() + ' ' + ex.secondary.join(' ').toLowerCase();
-      if(haystack.indexOf(q) < 0) return false;
-    }
-    return true;
-  });
-  if(!filtered.length){
-    document.getElementById('bankList').innerHTML = '<div class="workout-empty">No exercises match your search.</div>';
-    return;
+// Apply overrides on top of bank defaults when rendering
+function getExData(id) {
+  var ex = EXERCISE_BANK.find(function(e){ return e.id === id; });
+  if (!ex) return null;
+  var overrides = getSROverrides();
+  if (overrides[id]) {
+    ex = Object.assign({}, ex, overrides[id]);
   }
+  return ex;
+}
+
+var ROUTINE_STORE = 'ppl_routines_v1';
+
+function getRoutines() {
+  if (window._mockRoutines) return window._mockRoutines;
+  try { return JSON.parse(localStorage.getItem(ROUTINE_STORE)) || JSON.parse(JSON.stringify(DEFAULT_ROUTINES)); }
+  catch(e) { return JSON.parse(JSON.stringify(DEFAULT_ROUTINES)); }
+}
+function saveRoutines(r) {
+  try { localStorage.setItem(ROUTINE_STORE, JSON.stringify(r)); } catch(e) {}
+}
+
+/* ── Superset store ── */
+var SS_STORE = 'ppl_ss_v1';
+function getSupersets() {
+  if (window._mockSS) return window._mockSS;
+  try { return JSON.parse(localStorage.getItem(SS_STORE)) || {}; } catch(e) { return {}; }
+}
+function saveSupersets(s) {
+  try { localStorage.setItem(SS_STORE, JSON.stringify(s)); } catch(e) {}
+}
+// _editSS: working copy for edit sheet {id: true/false}
+var _editSS = {};
+
+/* ── Render a panel's exercises from stored routine data ── */
+function renderPanel(day) {
+  var routines = getRoutines();
+  var ids = routines[day] || [];
+  var ss = getSupersets();
+  var container = document.getElementById('exercises-' + day);
+  if (!container) return;
+
   var html = '';
-  filtered.forEach(function(ex){
-    var inW = inWorkoutIds.indexOf(ex.id) >= 0;
-    var allMuscles = ex.primary.concat(ex.secondary);
-    var tagHtml = ex.primary.map(function(m){return '<span class="tag target">'+m+'</span>';}).join('')
-                + ex.secondary.map(function(m){return '<span class="tag">'+m+'</span>';}).join('');
-    html += '<div class="bank-card'+(inW?' in-workout':'')+'" id="bcard-'+ex.id+'">'
-      + '<div class="bank-card-header" onclick="toggleBankCard(\''+ex.id+'\')">'
-      +   '<div class="bank-card-info">'
-      +     '<div class="bank-card-name">'+ex.name+'</div>'
-      +     '<div class="bank-card-tags">'+tagHtml+'<span class="bank-day-badge badge-'+ex.day+'">'+ex.day+'</span></div>'
+  var i = 0;
+  while (i < ids.length) {
+    var id = ids[i];
+    var ex = getExData(id);
+    if (!ex) { i++; continue; }
+
+    var nextId = ids[i+1];
+    var nextEx = nextId ? getExData(nextId) : null;
+    // superset: current AND next both have ss flag
+    var isSSStart = ss[id] && nextEx && ss[nextId];
+
+    var primaryTags = ex.primary.map(function(m){ return '<span class="tag target">'+m+'</span>'; }).join('');
+    var secTags = ex.secondary.map(function(m){ return '<span class="tag">'+m+'</span>'; }).join('');
+    var exCard = '<div class="exercise">'
+      + '<div class="ex-header" onclick="toggle(this)">'
+      +   '<div class="ex-header-left">'
+      +     '<div class="ex-name">' + ex.name + '</div>'
+      +     '<div class="ex-tags">' + primaryTags + secTags + '</div>'
       +   '</div>'
-      +   '<button class="btn-add-ex'+(inW?' added':'')+'" onclick="event.stopPropagation();toggleWorkoutEx(\''+ex.id+'\')">'
-      +     (inW ? '✓' : '+')
-      +   '</button>'
+      +   '<div class="ex-header-right">'
+      +     '<div class="sets-reps">' + ex.sets + ' × ' + ex.reps + '</div>'
+      +     '<div class="rest-label">' + ex.rest + ' rest</div>'
+      +   '</div>'
+      +   '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>'
       + '</div>'
-      + '<div class="bank-card-body">'
-      +   '<div class="bank-card-desc">'+ex.desc+'</div>'
-      +   '<div class="bank-card-muscles"><strong>Primary:</strong> '+ex.primary.join(', ')
-      +     (ex.secondary.length ? ' &nbsp;·&nbsp; <strong>Secondary:</strong> '+ex.secondary.join(', ') : '')+'</div>'
-      + '</div>'
-      + '</div>';
-  });
-  document.getElementById('bankList').innerHTML = html;
-}
-
-function toggleBankCard(id){
-  var card = document.getElementById('bcard-'+id);
-  if(card) card.classList.toggle('open');
-}
-
-/* ════════ WORKOUT BUILDER ════════ */
-function toggleWorkoutEx(exId){
-  var ex = EXERCISE_BANK.find(function(e){return e.id===exId;});
-  if(!ex) return;
-  var idx = _currentWorkout.findIndex(function(e){return e.id===exId;});
-  if(idx >= 0){
-    _currentWorkout.splice(idx, 1);
-    showToast(ex.name+' removed');
-  } else {
-    _currentWorkout.push({id:ex.id, name:ex.name, sets:ex.sets, reps:ex.reps, day:ex.day});
-    showToast(ex.name+' added');
-  }
-  renderBank();
-  renderWorkoutList();
-  renderCoverage();
-}
-
-function renderWorkoutList(){
-  var list = document.getElementById('workoutList');
-  if(!_currentWorkout.length){
-    list.innerHTML = '<div class="workout-empty">No exercises yet. Add from the Exercise Bank.</div>';
-    renderCoverage();
-    return;
-  }
-  var html = '';
-  _currentWorkout.forEach(function(ex, idx){
-    html += '<div class="workout-ex-item" id="wex-'+ex.id+'">'
-      + '<div class="workout-ex-header">'
-      +   '<span class="bank-day-badge badge-'+ex.day+'">'+ex.day+'</span>'
-      +   '<div class="workout-ex-name">'+ex.name+'</div>'
-      +   '<button class="btn-remove-ex" onclick="removeWorkoutEx(\''+ex.id+'\')">✕</button>'
-      + '</div>'
-      + '<div class="sets-reps-row">'
-      +   '<span class="sr-label">Sets</span>'
-      +   '<input class="sr-input" type="text" value="'+ex.sets+'" onchange="updateSR(\''+ex.id+'\',\'sets\',this.value)" placeholder="4"/>'
-      +   '<span class="sr-sep">×</span>'
-      +   '<span class="sr-label">Reps</span>'
-      +   '<input class="sr-input" type="text" value="'+ex.reps+'" onchange="updateSR(\''+ex.id+'\',\'reps\',this.value)" placeholder="10"/>'
+      + '<div class="ex-body"><div class="ex-desc">' + ex.desc + '</div>'
+      +   '<div style="margin-top:6px;font-size:0.65rem;color:var(--dim)">'
+      +     '<strong style="color:var(--muted)">Primary:</strong> ' + ex.primary.join(', ')
+      +     (ex.secondary.length ? ' &nbsp;·&nbsp; <strong style="color:var(--muted)">Secondary:</strong> ' + ex.secondary.join(', ') : '')
+      +   '</div>'
       + '</div>'
       + '</div>';
-  });
-  list.innerHTML = html;
-}
 
-function removeWorkoutEx(exId){
-  _currentWorkout = _currentWorkout.filter(function(e){return e.id!==exId;});
-  renderBank();renderWorkoutList();renderCoverage();
-}
-
-function updateSR(exId, field, val){
-  var ex = _currentWorkout.find(function(e){return e.id===exId;});
-  if(ex) ex[field] = val;
-}
-
-function clearWorkout(){
-  if(!_currentWorkout.length){return;}
-  openModal('Clear workout?','This will remove all exercises from the current workout.',function(){
-    _currentWorkout = [];
-    renderBank();renderWorkoutList();renderCoverage();
-    showToast('Workout cleared');
-  });
-}
-
-function saveWorkout(){
-  var name = (document.getElementById('workoutTitle').value||'').trim() || 'My Workout';
-  if(!_currentWorkout.length){showToast('Add some exercises first');return;}
-  var workout = {
-    id: 'w_'+Date.now(),
-    name: name,
-    exercises: _currentWorkout.slice(),
-    created: todayStr()
-  };
-  _savedWorkouts.unshift(workout);
-  saveSavedWorkouts();
-  renderSaved();
-  showToast('Saved: '+name);
-}
-
-/* ════════ COVERAGE ════════ */
-function renderCoverage(){
-  var coverageEl = document.getElementById('coverageGrid');
-  var suggestEl  = document.getElementById('suggestions');
-  if(!coverageEl || !suggestEl) return;
-
-  // collect which exercise IDs are in current workout
-  var wIds = _currentWorkout.map(function(e){return e.id;});
-
-  // figure out which days are represented
-  var daysInWorkout = {};
-  _currentWorkout.forEach(function(e){daysInWorkout[e.day]=true;});
-  var days = Object.keys(daysInWorkout);
-
-  if(!days.length){
-    coverageEl.innerHTML='<div class="workout-empty" style="grid-column:1/-1;border:none">Add exercises to see muscle coverage.</div>';
-    suggestEl.innerHTML='';
-    return;
+    if (isSSStart) {
+      var nextPrimaryTags = nextEx.primary.map(function(m){ return '<span class="tag target">'+m+'</span>'; }).join('');
+      var nextSecTags = nextEx.secondary.map(function(m){ return '<span class="tag">'+m+'</span>'; }).join('');
+      var nextCard = '<div class="exercise">'
+        + '<div class="ex-header" onclick="toggle(this)">'
+        +   '<div class="ex-header-left">'
+        +     '<div class="ex-name">' + nextEx.name + '</div>'
+        +     '<div class="ex-tags">' + nextPrimaryTags + nextSecTags + '</div>'
+        +   '</div>'
+        +   '<div class="ex-header-right">'
+        +     '<div class="sets-reps">' + nextEx.sets + ' × ' + nextEx.reps + '</div>'
+        +     '<div class="rest-label">' + nextEx.rest + ' rest</div>'
+        +   '</div>'
+        +   '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>'
+        + '</div>'
+        + '<div class="ex-body"><div class="ex-desc">' + nextEx.desc + '</div>'
+        +   '<div style="margin-top:6px;font-size:0.65rem;color:var(--dim)">'
+        +     '<strong style="color:var(--muted)">Primary:</strong> ' + nextEx.primary.join(', ')
+        +     (nextEx.secondary.length ? ' &nbsp;·&nbsp; <strong style="color:var(--muted)">Secondary:</strong> ' + nextEx.secondary.join(', ') : '')
+        +   '</div>'
+        + '</div>'
+        + '</div>';
+      html += '<div class="superset-group"><span class="superset-label">Superset</span>'
+        + exCard + nextCard + '</div>';
+      i += 2;
+    } else {
+      html += exCard;
+      i++;
+    }
   }
 
-  var hitMuscles = [], missMuscles = [];
-  var addSugg = [], removeSugg = [];
+  if (!html) html = '<div class="no-history" style="padding:20px 0">No exercises. Tap the pencil to add some.</div>';
+  container.innerHTML = html;
+  renderReview(day);
+}
 
-  days.forEach(function(day){
-    var map = BANK_MUSCLE_MAP[day];
-    if(!map) return;
-    Object.keys(map).forEach(function(muscle){
-      var exIds = map[muscle];
-      var covered = exIds.some(function(id){return wIds.indexOf(id)>=0;});
-      if(covered){ hitMuscles.push({muscle:muscle,day:day}); }
-      else { missMuscles.push({muscle:muscle,day:day,exIds:exIds}); }
+function renderAllPanels() {
+  ['push','pull','legs','abs'].forEach(renderPanel);
+}
+
+/* ── Routine Review ── */
+function renderReview(day) {
+  var el = document.getElementById('review-' + day);
+  if (!el) return;
+  var routines = getRoutines();
+  var ss = getSupersets();
+  var ids = routines[day] || [];
+  if (!ids.length) { el.innerHTML = '<span class="review-box-title">Routine Review</span><div class="review-text">No exercises yet.</div>'; return; }
+
+  var lines = [];
+  var warnings = [];
+  var positives = [];
+
+  // Build order description with superset awareness
+  var i = 0;
+  var orderParts = [];
+  while (i < ids.length) {
+    var ex = getExData(ids[i]);
+    if (!ex) { i++; continue; }
+    var nextId = ids[i+1];
+    var nextEx = nextId ? getExData(nextId) : null;
+    if (ss[ids[i]] && nextEx && ss[nextId]) {
+      orderParts.push('<strong>' + ex.name + ' + ' + nextEx.name + '</strong> (superset)');
+      i += 2;
+    } else {
+      orderParts.push('<strong>' + ex.name + '</strong>');
+      i++;
+    }
+  }
+
+  // Detect compounds vs isolations
+  var COMPOUNDS = ['db-flat-press','db-incline-press','db-ohp','arnold-press',
+    'db-row','pullup','prone-row','db-deadlift','chest-supported-row',
+    'goblet-squat','bss','rdl','hip-thrust','lunge','nordic-curl','step-up'];
+  var compounds = ids.filter(function(id){ return COMPOUNDS.indexOf(id) >= 0; });
+  var isolations = ids.filter(function(id){ return COMPOUNDS.indexOf(id) < 0; });
+
+  // Check: compounds first?
+  var firstIsolIdx = ids.findIndex(function(id){ return COMPOUNDS.indexOf(id) < 0 && id !== 'legs-warmup-note'; });
+  var lastCompIdx = -1;
+  ids.forEach(function(id,i){ if(COMPOUNDS.indexOf(id)>=0) lastCompIdx=i; });
+  if (firstIsolIdx >= 0 && lastCompIdx > firstIsolIdx) {
+    warnings.push('Move <strong>' + (getExData(ids[lastCompIdx])||{name:'a compound'}).name + '</strong> earlier — compounds should come before isolation work.');
+  } else if (compounds.length > 0) {
+    positives.push('Good sequencing — compounds are placed before isolation work.');
+  }
+
+  // Check: volume
+  if (ids.length < 4) warnings.push('Only ' + ids.length + (ids.length===1?' exercise':' exercises') + ' — consider adding more for a complete session.');
+  else if (ids.length >= 4) positives.push(ids.length + ' exercises — solid volume.');
+
+  // Check: muscle overlaps (same primary muscle hit 3+ times)
+  var muscleCounts = {};
+  ids.forEach(function(id) {
+    var ex = getExData(id);
+    if (!ex) return;
+    ex.primary.forEach(function(m) {
+      var base = m.split('(')[0].trim().toLowerCase();
+      muscleCounts[base] = (muscleCounts[base]||0) + 1;
     });
   });
-
-  // Build coverage grid
-  var gridHtml = '';
-  hitMuscles.forEach(function(m){
-    gridHtml += '<div class="coverage-chip hit"><b>✓ '+m.muscle+'</b><span class="chip-label">'+m.day+'</span></div>';
-  });
-  missMuscles.forEach(function(m){
-    gridHtml += '<div class="coverage-chip miss"><b>✗ '+m.muscle+'</b><span class="chip-label">'+m.day+' — not covered</span></div>';
-  });
-  coverageEl.innerHTML = gridHtml || '<div style="grid-column:1/-1;color:var(--dim);font-size:0.78rem">All muscle groups covered!</div>';
-
-  // Suggestions — add
-  missMuscles.slice(0,4).forEach(function(m){
-    var candidates = m.exIds.map(function(id){return EXERCISE_BANK.find(function(e){return e.id===id;});}).filter(Boolean);
-    var notInWorkout = candidates.filter(function(e){return wIds.indexOf(e.id)<0;});
-    if(!notInWorkout.length) return;
-    var best = notInWorkout[0];
-    addSugg.push('<div class="suggestion-card">'
-      + '<div class="suggestion-title">Consider Adding</div>'
-      + '<div class="suggestion-body">Your <strong>'+m.muscle+'</strong> isn\'t covered. '
-      + '<strong>'+best.name+'</strong> would fix this ('+best.primary.join(', ')+').</div>'
-      + '</div>');
-  });
-
-  // Suggestions — overlap / redundancy
-  var excessMuscles = {};
-  hitMuscles.forEach(function(m){
-    excessMuscles[m.muscle] = (excessMuscles[m.muscle]||0) + 1;
-  });
-  // find exercises that cover only muscles already well-covered
-  _currentWorkout.forEach(function(wex){
-    var ex = EXERCISE_BANK.find(function(e){return e.id===wex.id;});
-    if(!ex) return;
-    var allM = ex.primary;
-    var allCoveredElsewhere = allM.every(function(muscle){
-      // count how many OTHER exercises cover this muscle
-      var others = _currentWorkout.filter(function(w){
-        if(w.id===wex.id) return false;
-        var we = EXERCISE_BANK.find(function(e){return e.id===w.id;});
-        return we && (we.primary.indexOf(muscle)>=0 || we.secondary.indexOf(muscle)>=0);
-      });
-      return others.length >= 2;
-    });
-    if(allCoveredElsewhere && missMuscles.length > 0){
-      removeSugg.push('<div class="suggestion-card remove-sugg">'
-        + '<div class="suggestion-title">Possible Overlap</div>'
-        + '<div class="suggestion-body"><strong>'+wex.name+'</strong> covers muscles already hit 2+ times. '
-        + 'Consider swapping it for an exercise targeting: <strong>'+missMuscles[0].muscle+'</strong>.</div>'
-        + '</div>');
+  Object.keys(muscleCounts).forEach(function(m) {
+    if (muscleCounts[m] >= 3) {
+      warnings.push('<strong>' + m.charAt(0).toUpperCase()+m.slice(1) + '</strong> is targeted ' + muscleCounts[m] + ' times — consider replacing one with an underworked muscle.');
     }
   });
 
-  var allSugg = addSugg.concat(removeSugg.slice(0,2));
-  suggestEl.innerHTML = allSugg.length ? allSugg.join('') : '<div class="suggestion-card"><div class="suggestion-title">Looking Good</div><div class="suggestion-body">No major gaps detected in this workout.</div></div>';
-}
+  // Check: sets range
+  ids.forEach(function(id) {
+    var ex = getExData(id);
+    if (!ex) return;
+    var s = parseInt(ex.sets);
+    if (!isNaN(s) && s > 5) warnings.push('<strong>' + ex.name + '</strong> has ' + s + ' sets — that\'s high for one exercise. 3–5 is the typical range.');
+  });
 
-/* ════════ SAVED WORKOUTS ════════ */
-function renderSaved(){
-  var el = document.getElementById('savedList');
-  if(!_savedWorkouts.length){
-    el.innerHTML = '<div class="workout-empty">No saved workouts yet.</div>';
-    return;
+  // Check supersets — are they complementary (different primary muscle)?
+  var i2 = 0;
+  while (i2 < ids.length - 1) {
+    if (ss[ids[i2]] && ss[ids[i2+1]]) {
+      var a = getExData(ids[i2]), b = getExData(ids[i2+1]);
+      if (a && b) {
+        var aBase = a.primary[0].split('(')[0].trim().toLowerCase();
+        var bBase = b.primary[0].split('(')[0].trim().toLowerCase();
+        if (aBase === bBase) {
+          warnings.push('Superset <strong>' + a.name + ' + ' + b.name + '</strong> targets the same muscle both times — best supersets pair different muscles.');
+        } else {
+          positives.push('Superset <strong>' + a.name + ' + ' + b.name + '</strong> pairs ' + aBase + ' with ' + bBase + ' — efficient use of rest time.');
+        }
+      }
+      i2 += 2;
+    } else { i2++; }
   }
-  var html = '';
-  _savedWorkouts.forEach(function(w){
-    var days = {};
-    w.exercises.forEach(function(e){days[e.day]=true;});
-    var tags = Object.keys(days).map(function(d){return '<span class="multi-tag t-'+d+'">'+d+'</span>';}).join('');
-    html += '<div class="saved-workout-item">'
-      + '<div class="sw-info">'
-      +   '<div class="sw-name">'+w.name+'</div>'
-      +   '<div class="sw-meta">'+w.exercises.length+' exercises · Saved '+fmtDate(w.created)+'</div>'
-      +   '<div class="sw-tags" style="margin-top:5px">'+tags+'</div>'
-      + '</div>'
-      + '<div class="sw-actions">'
-      +   '<button class="btn-sw load" onclick="loadWorkout(\''+w.id+'\')">Load</button>'
-      +   '<button class="btn-sw del" onclick="deleteSaved(\''+w.id+'\')">Del</button>'
-      + '</div>'
-      + '</div>';
+
+  var html = '<span class="review-box-title">Routine Review</span>';
+  // Order
+  html += '<div class="review-line"><span class="review-icon">📋</span><span class="review-text">Order: ' + orderParts.join(' → ') + '</span></div>';
+  positives.forEach(function(p) {
+    html += '<div class="review-line"><span class="review-icon">✓</span><span class="review-text">' + p + '</span></div>';
+  });
+  warnings.forEach(function(w) {
+    html += '<div class="review-line"><span class="review-icon">⚠</span><span class="review-text">' + w + '</span></div>';
   });
   el.innerHTML = html;
 }
 
-function loadWorkout(wid){
-  var w = _savedWorkouts.find(function(x){return x.id===wid;});
-  if(!w) return;
-  _currentWorkout = w.exercises.slice();
-  document.getElementById('workoutTitle').value = w.name;
-  // switch to builder tab
-  var builderBtn = document.querySelector('.build-tab:nth-child(2)');
-  if(builderBtn) switchBuildTab('builder', builderBtn);
-  renderBank();renderWorkoutList();renderCoverage();
-  showToast('Loaded: '+w.name);
+
+/* ════════════════════════════════════════
+   EDIT SHEET
+════════════════════════════════════════ */
+var _editDay = null;
+var _editRoutine = []; // working copy of IDs
+
+function openEditSheet(day) {
+  _editDay = day;
+  var routines = getRoutines();
+  _editRoutine = routines[day].slice();
+
+  var sheet = document.getElementById('editSheet');
+  sheet.setAttribute('data-day', day);
+  document.getElementById('editSheetTitle').textContent = 'Edit ' + day.charAt(0).toUpperCase() + day.slice(1);
+  document.getElementById('editSheetOverlay').classList.add('open');
+  var curSS = getSupersets();
+  _editSS = {};
+  routines[day].forEach(function(id){ if(curSS[id]) _editSS[id]=true; });
+  document.getElementById('editBankSearch').value = '';
+  renderEditActive();
+  renderEditBank();
 }
 
-function deleteSaved(wid){
-  openModal('Delete saved workout?','This can\'t be undone.',function(){
-    _savedWorkouts = _savedWorkouts.filter(function(w){return w.id!==wid;});
-    saveSavedWorkouts();renderSaved();showToast('Deleted');
+function closeEditSheet(e) {
+  if (e && e.target !== document.getElementById('editSheetOverlay')) return;
+  closeEditSheetBtn();
+}
+
+function closeEditSheetBtn() {
+  if (_editDay) {
+    var routines = getRoutines();
+    routines[_editDay] = _editRoutine.slice();
+    saveRoutines(routines);
+    // commit superset flags
+    var ss = getSupersets();
+    // clear old ss flags for this day's exercises (use real routines)
+    var oldIds = realOrDefault(_editDay);
+    oldIds.forEach(function(id){ delete ss[id]; });
+    // set new
+    Object.keys(_editSS).forEach(function(id){ if(_editSS[id]) ss[id]=true; else delete ss[id]; });
+    saveSupersets(ss);
+    renderPanel(_editDay);
+  }
+  document.getElementById('editSheetOverlay').classList.remove('open');
+  _editDay = null;
+  _editSS = {};
+}
+
+function realOrDefault(day) {
+  try { return JSON.parse(localStorage.getItem(ROUTINE_STORE))[day] || DEFAULT_ROUTINES[day]; }
+  catch(e) { return DEFAULT_ROUTINES[day] || []; }
+}
+
+// override the close button
+document.addEventListener('DOMContentLoaded', function() {
+  var closeBtn = document.querySelector('.btn-edit-close');
+  if (closeBtn) closeBtn.onclick = closeEditSheetBtn;
+});
+
+function renderEditActive() {
+  var html = '';
+  _editRoutine.forEach(function(id) {
+    var ex = getExData(id);
+    if (!ex) return;
+    var ssOn = !!_editSS[id];
+    var primaryTags = ex.primary.map(function(m){
+      return '<span class="tag target">'+m+'</span>';
+    }).join('');
+    var secTags = ex.secondary.map(function(m){
+      return '<span class="tag">'+m+'</span>';
+    }).join('');
+    html += '<div class="edit-active-item'+(ssOn?' is-superset':'')+'" id="eai-'+id+'">'
+      // header row: move arrows + name + remove
+      + '<div class="edit-active-header">'
+      +   '<div style="display:flex;gap:3px">'
+      +     '<button class="btn-move" onclick="moveEx(\''+id+'\',-1)" title="Move up">▲</button>'
+      +     '<button class="btn-move" onclick="moveEx(\''+id+'\',1)" title="Move down">▼</button>'
+      +   '</div>'
+      +   '<div class="edit-active-name">'+ex.name+'</div>'
+      +   '<button class="btn-remove-active" onclick="removeExFromRoutine(\''+id+'\')">✕</button>'
+      + '</div>'
+      // primary muscle tags (highlighted like main panels)
+      + '<div class="edit-active-primary">'+primaryTags+secTags+'</div>'
+      // sets/reps/rest + superset toggle
+      + '<div class="edit-active-body">'
+      +   '<div class="edit-sr-row">'
+      +     '<span class="edit-sr-label">Sets</span>'
+      +     '<input class="edit-sr-input" value="'+ex.sets+'" onchange="updateExSR(\''+id+'\',\'sets\',this.value)" placeholder="4"/>'
+      +     '<span class="edit-sr-sep">×</span>'
+      +     '<span class="edit-sr-label">Reps</span>'
+      +     '<input class="edit-sr-input" value="'+ex.reps+'" onchange="updateExSR(\''+id+'\',\'reps\',this.value)" placeholder="10"/>'
+      +     '<span class="edit-sr-label" style="margin-left:4px">Rest</span>'
+      +     '<input class="edit-sr-input" style="width:46px" value="'+ex.rest+'" onchange="updateExSR(\''+id+'\',\'rest\',this.value)" placeholder="60s"/>'
+      +   '</div>'
+      +   '<div class="edit-action-row">'
+      +     '<button class="btn-ss-toggle'+(ssOn?' active':'')+'" onclick="toggleSS(\''+id+'\')">⚡ Superset</button>'
+      +     '<span style="font-size:0.6rem;color:var(--dim)">'+(ssOn?'Will pair with next exercise':'Mark consecutive exercises to superset')+'</span>'
+      +   '</div>'
+      + '</div>'
+      + '</div>';
   });
+  if (!html) html = '<div style="color:var(--dim);font-size:0.75rem;padding:12px 0">No exercises. Add some from the bank →</div>';
+  document.getElementById('editActiveList').innerHTML = html;
+  renderEditReview();
 }
 
+function toggleSS(id) {
+  _editSS[id] = !_editSS[id];
+  renderEditActive();
+}
+
+/* live preview review while editing */
+function renderEditReview() {
+  // update the panel's review box with current _editRoutine + _editSS
+  // (without committing to storage)
+  var day = _editDay;
+  var el = document.getElementById('review-' + day);
+  if (!el) return;
+  // temporarily apply edits
+  var realRoutines = getRoutines();
+  var realSS = getSupersets();
+  // mock
+  var mockRoutines = {}; Object.assign(mockRoutines, realRoutines);
+  mockRoutines[day] = _editRoutine.slice();
+  var mockSS = {}; Object.assign(mockSS, realSS);
+  Object.keys(_editSS).forEach(function(id){ mockSS[id] = _editSS[id]; if(!_editSS[id]) delete mockSS[id]; });
+  // patch globals temporarily
+  var origGet = window._mockRoutines; window._mockRoutines = mockRoutines;
+  var origSS  = window._mockSS;      window._mockSS = mockSS;
+  renderReview(day);
+  window._mockRoutines = origGet;
+  window._mockSS = origSS;
+}
+
+function renderEditBank() {
+  var q = (document.getElementById('editBankSearch').value || '').toLowerCase().trim();
+  var filtered = EXERCISE_BANK.filter(function(ex) {
+    if (ex.day !== _editDay) return false;
+    if (q) {
+      var hay = ex.name.toLowerCase() + ' ' + ex.primary.join(' ').toLowerCase() + ' ' + ex.secondary.join(' ').toLowerCase();
+      if (hay.indexOf(q) < 0) return false;
+    }
+    return true;
+  });
+
+  var html = '';
+  filtered.forEach(function(ex) {
+    var inList = _editRoutine.indexOf(ex.id) >= 0;
+    var primaryTags = ex.primary.map(function(m){
+      return '<span class="tag target">'+m+'</span>';
+    }).join('');
+    var secTags = ex.secondary.map(function(m){
+      return '<span class="tag">'+m+'</span>';
+    }).join('');
+    html += '<div class="edit-bank-item'+(inList?' in-list':'')+'" id="ebi-'+ex.id+'">'
+      + '<div class="edit-bank-item-info">'
+      +   '<div class="edit-bank-item-name">'+ex.name+'</div>'
+      +   '<div class="edit-bank-primary">'+primaryTags+secTags+'</div>'
+      +   '<div class="edit-bank-desc">'+ex.desc.substring(0,100)+'…</div>'
+      + '</div>'
+      + '<button class="btn-add-from-bank" onclick="addExToRoutine(\''+ex.id+'\')" title="Add">'+(inList?'✓':'+')+'</button>'
+      + '</div>';
+  });
+  if (!html) html = '<div style="color:var(--dim);font-size:0.75rem;padding:12px 0">No exercises match.</div>';
+  document.getElementById('editBankList').innerHTML = html;
+}
+
+function addExToRoutine(id) {
+  if (_editRoutine.indexOf(id) >= 0) return;
+  _editRoutine.push(id);
+  renderEditActive();
+  renderEditBank();
+  // renderEditActive already calls renderEditReview
+}
+
+function removeExFromRoutine(id) {
+  _editRoutine = _editRoutine.filter(function(x){ return x !== id; });
+  delete _editSS[id];
+  renderEditActive();
+  renderEditBank();
+}
+
+function moveEx(id, dir) {
+  var idx = _editRoutine.indexOf(id);
+  if (idx < 0) return;
+  var newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= _editRoutine.length) return;
+  var tmp = _editRoutine[idx];
+  _editRoutine[idx] = _editRoutine[newIdx];
+  _editRoutine[newIdx] = tmp;
+  renderEditActive();
+}
+
+function updateExSR(id, field, val) {
+  var overrides = getSROverrides();
+  if (!overrides[id]) overrides[id] = {};
+  overrides[id][field] = val;
+  saveSROverrides(overrides);
+  // also update in-memory bank
+  var ex = EXERCISE_BANK.find(function(e){ return e.id === id; });
+  if (ex) ex[field] = val;
+}
+
+
+
+// Apply persisted SR overrides to bank
+(function(){
+  var o=getSROverrides();
+  Object.keys(o).forEach(function(id){
+    var ex=EXERCISE_BANK.find(function(e){return e.id===id;});
+    if(ex)Object.assign(ex,o[id]);
+  });
+})();
+// Init panels
+renderAllPanels();
 </script>
+
+<!-- EDIT SHEET -->
+<div class="edit-sheet-overlay" id="editSheetOverlay" onclick="closeEditSheet(event)">
+  <div class="edit-sheet" id="editSheet">
+    <div class="edit-sheet-handle"></div>
+    <div class="edit-sheet-header">
+      <div class="edit-sheet-title" id="editSheetTitle">Edit Exercises</div>
+      <button class="btn-edit-close" onclick="closeEditSheetBtn()">✕</button>
+    </div>
+    <div class="edit-sheet-body">
+      <!-- LEFT: current exercises -->
+      <div class="edit-col">
+        <div class="edit-col-header">In this workout — tap × to remove, ↑↓ to reorder</div>
+        <div class="edit-col-scroll" id="editActiveList"></div>
+      </div>
+      <!-- RIGHT: bank -->
+      <div class="edit-col">
+        <div class="edit-col-header">Exercise bank — tap + to add</div>
+        <div class="edit-col-scroll">
+          <input class="edit-bank-search" id="editBankSearch" placeholder="Search..." oninput="renderEditBank()"/>
+          <div id="editBankList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

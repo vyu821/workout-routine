@@ -1,141 +1,143 @@
-# PPL Routine Tracker
+<div align="center">
 
-A mobile-first PWA for tracking Push / Pull / Legs workouts, building custom routines, and gamifying your training progress with a Solo Leveling-inspired hunter stats system.
+# ⚡ PPL Routine Tracker
 
-Built for dumbbell-based training with an adjustable bench. No gym membership, no barbell required.
+**A mobile-first PWA for Push / Pull / Legs training with a Solo Leveling-inspired hunter stats system.**
+
+Built for dumbbell-based training with an adjustable bench.
+
+[![Version](https://img.shields.io/badge/version-1.3.0-4a9eff?style=flat-square&labelColor=03030e)](.)
+[![PWA](https://img.shields.io/badge/PWA-ready-26c47a?style=flat-square&labelColor=03030e)](.)
+[![Storage](https://img.shields.io/badge/storage-localStorage-7744ff?style=flat-square&labelColor=03030e)](.)
+
+</div>
 
 ---
 
-## Files
+## 📁 Files
 
 | File | Purpose |
 |---|---|
-| `index.html` | Main workout tracker and routine builder |
-| `hunter-stats.html` | Hunter stats — XP, levels, muscle attribute diagram |
+| `index.html` | Workout tracker, routine editor, session logger |
+| `hunter-stats.html` | Hunter stats — XP, levels, anime body diagram |
 
-Deploy both files to the same folder (e.g. GitHub Pages). They link to each other.
-
----
-
-## Features
-
-### Workout Panels (Push / Pull / Legs / Abs)
-- Each panel lists all exercises for that day with sets, reps, rest intervals, and coaching cues
-- Tap any exercise card to expand the full description and target muscles
-- Exercises auto-expand on desktop for easy reference
-- A tip box at the top of each panel covers sequencing and time-saving supersets
-
-### Logging
-- **Log Today** — tap the log button on any panel to record that muscle group for the current day
-- **Multi-group days** — log Legs and Abs on the same day; they stack rather than replace each other
-- **Log a Previous Day** — in the Log tab, pick any past date and select what you trained. Merges with existing entries so you won't overwrite anything already logged
-- **Rest Day** — marks the day without counting toward session streaks
-- **Delete entries** — swipe to delete any history entry from the Log tab
-
-### Log Tab
-- **Streak counter** — current streak, total sessions, sessions this week
-- **Calendar view** — color-coded dots show which muscle groups you trained each day; navigate months with the arrows
-- **Muscle volume chart** — bar chart of every muscle group hit in the last 7 days
-- **Session history** — last 60 entries with date, muscle groups, and delete button
-
-### Build Tab (Custom Workout Builder)
-The Build tab has three sub-sections:
-
-**Exercise Bank**
-- 40+ exercises across all four days (Push, Pull, Legs, Abs)
-- Filter by muscle group or search by name or target muscle
-- Each card shows primary and secondary muscles targeted, plus full coaching cues
-- Tap `+` to add to your current workout; it turns to `✓` when added
-- Cards already in your workout are highlighted with a purple border
-
-**My Workout**
-- Name your workout and build it by adding exercises from the bank
-- Adjust sets and reps for each exercise inline — tap the input fields and type
-- Remove individual exercises with the `✕` button or clear the whole workout
-- **Muscle Coverage panel** shows every muscle group for the days represented in your workout, color-coded green (covered) or red (missing)
-- **Suggestions** auto-generate based on gaps — it'll tell you which exercise to add for an uncovered muscle, and flag any redundancy if a muscle is hit 3+ times while others go untrained
-- Save the workout to the Saved tab
-
-**Saved Workouts**
-- All saved workouts persist in localStorage
-- Load any saved workout back into the builder to edit or review
-- Delete saved workouts you no longer need
-
-### Hunter Stats (`hunter-stats.html`)
-- Tracks XP and levels for 11 individual muscle attributes (Chest, Back, Biceps, Triceps, Shoulders, Forearms, Quads, Hamstrings, Glutes, Calves, Core)
-- Each logged session grants 10 XP to each muscle in that day's group
-- Muscles visually fill in and glow on the anime-style body diagram as they level up
-- Rank progression: E → D → C → B → A → S (Shadow Sovereign at 150 total sessions)
-- **Quests tab** — daily, weekly, and milestone targets
-- **Feats tab** — 14 unlockable achievements; new unlocks trigger a notification banner
-- Blue scan-line animation and Solo Leveling aesthetic throughout
+Deploy both to the same folder. They share data through `localStorage` and link to each other.
 
 ---
 
-## How to Use
+## ✨ Features
 
-### Option 1 — GitHub Pages (recommended)
-1. Fork or upload both HTML files to a GitHub repo
-2. Go to **Settings → Pages** and set the source to the main branch root
-3. Your app will be live at `https://yourusername.github.io/your-repo/`
-4. On mobile: open the link in Safari (iOS) or Chrome (Android), tap **Share → Add to Home Screen** to install as a PWA
+### 🏋️ Workout Panels (Push / Pull / Legs / Abs)
+- Exercise cards with sets, reps, rest, and coaching cues
+- Tap to expand full description and muscle targets
+- Auto-expand on desktop
 
-### Option 2 — Local
-1. Download both files to the same folder
-2. Open `index.html` in any browser
-3. Data saves to `localStorage` automatically — no server or account needed
+### ✏️ Inline Routine Editor
+Tap the **pencil icon** on any panel to open the edit sheet — no code changes needed.
 
-### Data Storage
-All data lives in your browser's `localStorage` under the key `ppl_v3`. It persists across sessions on the same device and browser. Clearing browser data or using incognito mode will reset it. Saved workouts use the key `ppl_workouts_v1`.
+**Left column — Your workout**
+- `↑ ↓` reorder · `✕` remove · inline **Sets / Reps / Rest** fields
+- **⚡ Superset** toggle — mark consecutive exercises; they render as a bracketed superset pair on the panel
+
+**Right column — Exercise bank**
+- 40+ exercises per day, searchable by name or muscle
+- Same highlighted muscle tags as the main panels
+- Coaching cue preview on each card
+
+### 📋 Live Routine Review
+The tips box shows a live analysis that updates as you edit:
+- Full exercise order with supersets labeled inline
+- Sequencing warnings (compounds before isolations)
+- Volume check
+- Muscle overlap warnings (same primary hit 3+ times)
+- Superset quality feedback
+
+### 📅 Session Logging
+- **Log today** — multi-group days stack (Legs + Abs on the same day both register)
+- **Log a previous day** — backfill any date from the Log tab
+- **Rest day** tracking
+- **Delete** any history entry
+
+### 📊 Log Tab
+Streak counter · color-coded monthly calendar · 7-day muscle volume bars · 60-entry history
 
 ---
 
-## Patch Notes
+## ⚡ Hunter Stats (`hunter-stats.html`)
 
-### v1.2.1
-- Exercise bank and custom workout builder added (Build tab)
-- 40+ exercises covering all four training days with full coaching cues and muscle targeting
-- Sets and reps are adjustable per exercise in the builder
-- Muscle coverage analysis shows which muscles are hit and which are missing in your custom workout
-- Smart suggestions recommend exercises to add for gaps and flag redundancy when muscles overlap
-- Saved workouts persist in localStorage; can be loaded back and edited
-- Filter and search in the exercise bank
+| Attribute | Day | XP Source |
+|---|---|---|
+| Chest, Shoulders, Triceps | Push | 10 XP / session |
+| Back, Biceps, Forearms | Pull | 10 XP / session |
+| Quads, Hamstrings, Glutes, Calves | Legs | 10 XP / session |
+| Core | Abs | 10 XP / session |
 
-### v1.2.0
-- Log a Previous Day feature added to the Log tab
-- Date picker defaults to today; selecting multiple muscle groups merges with any existing entry for that date
-- Rest Day option available in the backlog widget
+**Visual progression:** dark tint → color fill (Lv 5) → glow (Lv 10) → max glow (Lv 20)
 
-### v1.1.2
-- Hunter Stats body diagram visibility improved at low levels — muscles now show a visible tint from level 0 rather than appearing near-black
-- Abs grid lines always visible from the start; brighten and take on the attribute color as Core levels up
-- Desktop layout for index.html fixed — page now scrolls naturally at 768px+ without inner scroll containers conflicting with the sticky top bar
-- Sidebar nav uses `position:sticky` on desktop so it stays anchored while scrolling through exercise panels
+**Rank system:** `E` → `D` → `C` → `B` → `A` → `S — Shadow Sovereign` (150 sessions)
 
-### v1.1.1
-- Anime body figure added to Hunter Stats with proper V-taper anatomy (wide shoulders, narrow waist, segmented abs, quad separation, diamond calves)
-- Solo Leveling aesthetic: deep navy background, blue ambient glow, corner accent lines, scan-line animation
-- Muscle regions fill and glow progressively — soft tint at level 1, colored fill at level 5, glow filter at level 10, max glow at level 20
-- Eye glow scales with total sessions logged
+**Tabs:** Stats (profile + anime body diagram) · Quests (daily/weekly/milestones) · Feats (14 achievements)
 
-### v1.1.0
-- Hunter Stats companion page (`hunter-stats.html`) launched
-- XP system: 10 XP per muscle group per session; quadratic leveling curve
-- Rank system: E through S with unlock titles
-- 11 muscle attributes with SVG body diagram and label connectors
-- Quests tab: daily missions, weekly targets, milestone progression
-- Feats tab: 14 unlockable achievements with unlock notifications
-- Navigation link between index.html and hunter-stats.html
-- Multi-type logging: Push + Abs or Legs + Abs now stack on the same day
-- Calendar updated to show per-group color dots for multi-type days
-- Schedule bar removed from workout panels (was misaligned after rest days)
-- Desktop responsive layout with sidebar navigation
+---
 
-### v1.0.0
-- Initial release
-- Push, Pull, Legs, and Abs workout panels with 50 exercises
-- Exercise cards with sets, reps, rest intervals, and coaching descriptions
-- Day logging with rest day support
-- Log tab with streak counter, monthly calendar, 7-day muscle volume chart, and session history
-- Daily motivational quote
-- Mobile PWA with bottom navigation, safe area insets, and home screen install support
+## 🚀 Setup
+
+### GitHub Pages (recommended)
+1. Upload both files to a GitHub repo
+2. **Settings → Pages** → source: main branch root
+3. Live at `https://yourusername.github.io/your-repo/`
+4. Mobile: **Share → Add to Home Screen** to install as a PWA
+
+### Local
+Download both files to the same folder, open `index.html` in any browser.
+
+---
+
+## 💾 Data Storage
+
+| Key | Contents |
+|---|---|
+| `ppl_v3` | Session log (dates + muscle groups) |
+| `ppl_routines_v1` | Custom exercise order per day |
+| `ppl_sr_v1` | Sets / reps / rest overrides |
+| `ppl_ss_v1` | Superset pairings |
+
+All data is local to your browser. Clearing browser storage resets everything.
+
+---
+
+## 📋 Patch Notes
+
+### v1.3.0 — Inline Routine Editor + Superset System + Live Review
+- Pencil icon on each panel opens a two-column edit sheet — no separate tab required
+- Add, remove, reorder exercises and edit sets/reps/rest inline
+- **⚡ Superset toggle** — mark consecutive exercises to render as a superset pair
+- **Live Routine Review** — replaces static tips with sequencing, overlap, and superset analysis
+- All changes persist independently in separate localStorage keys
+- Edit sheet matches main panel aesthetic (dark cards, colored muscle tags, day-accent border)
+- Orphaned Build tab UI fully removed
+
+### v1.2.0 — Previous Day Logging
+- Log a Previous Day widget in the Log tab
+- Date picker defaults to today; merges with existing entries
+
+### v1.1.2 — Desktop Fix + Body Visibility
+- Desktop scrolling fixed — natural page scroll at 768px+
+- Hunter Stats body visible at low levels (tint from level 0)
+- Abs grid lines visible from the start
+
+### v1.1.1 — Anime Body Diagram
+- V-taper anatomy, segmented abs, diamond calves
+- Solo Leveling aesthetic: navy background, blue ambient glow, scan-line animation
+- Eye glow scales with total sessions
+
+### v1.1.0 — Hunter Stats Launch
+- XP system, quadratic leveling, rank E→S
+- 11 muscle attributes with SVG body diagram
+- Quests + Feats tabs
+- Multi-type logging, color-coded calendar, desktop sidebar
+
+### v1.0.0 — Initial Release
+- Push / Pull / Legs / Abs panels with 50 exercises
+- Day logging, streak counter, calendar, session history
+- Daily motivational quote, mobile PWA
